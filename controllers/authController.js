@@ -6,7 +6,13 @@ const AppError = require("../utils/appError");
 const UserModel = require("../models/userModel");
 
 const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  let JWT;
+  if (process.env.NODE_ENV.trim() == "development") {
+    JWT = process.env.JWT_SECRET_DEV;
+  } else {
+    JWT = process.env.JWT_SECRET;
+  }
+  return jwt.sign({ id }, JWT, {
     expiresIn: process.env.JWT_EXPIRE_TIME,
   });
 };
@@ -64,17 +70,25 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
-
+  console.log(token);
   if (!token) {
     next(new AppError("You can not access with logged in", 401));
   }
+  let JWT;
+  if (process.env.NODE_ENV.trim() == "development") {
+    JWT = process.env.JWT_SECRET_DEV;
+  } else {
+    JWT = process.env.JWT_SECRET;
+  }
 
-  const decoded = await promisify(jwt.verify)(
-    token,
-    process.env.JWT_SECRET,
-  );
+  const decoded = await promisify(jwt.verify)(token, JWT);
 
   const user = await UserModel.findById(decoded.id);
+
+  console.log(user);
+  console.log(user);
+  console.log(user);
+  console.log(user);
   if (!user) {
     return next(new AppError("this user is no longer exist", 401));
   }
@@ -224,7 +238,7 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
   if (!token) {
     next(new AppError("You can not access with logged in", 401));
   }
-
+  console.log("developmentdevelopmentdevelopmentdevelopment");
   let JWT;
   if (process.env.NODE_ENV.trim() == "development") {
     JWT = process.env.JWT_SECRET_DEV;

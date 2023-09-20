@@ -11,6 +11,7 @@ const xss = require("xss-clean");
 const RateLimit = require("express-rate-limit");
 const errorHandler = require("./controllers/errorHandlerController");
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 const parentRoutes = require("./routes/parentRoutes");
 
 const cron = require("node-cron");
@@ -57,6 +58,7 @@ app.use(bodyParser.json({ limit: "5mb" }));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/parents", parentRoutes);
+app.use("/api/v1/students", userRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`can not find ${req.originalUrl} route`, 404));

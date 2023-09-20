@@ -12,6 +12,12 @@ const appId = "6463e1f2f9b6e6b2caa51c68";
  */
 exports.getCode = async (_, collectionName, modifier, digitCount = 4) => {
   const appDoc = await AppModel.findById(appId);
+  console.log("appDoc");
+  console.log("appDoc");
+  console.log("appDoc");
+  console.log("appDoc");
+  console.log("appDoc");
+  console.log(appDoc);
   const codeNumber = appDoc.get(collectionName) ?? 1;
 
   if (!appDoc) return next(new AppError("Could not get new code", 404));

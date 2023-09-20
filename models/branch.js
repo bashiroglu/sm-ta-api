@@ -1,14 +1,22 @@
 const mongoose = require("mongoose");
 
-const collectionName = "app";
+const collectionName = "branch";
 
-const appModelSchema = new mongoose.Schema(
+const branchModelSchema = new mongoose.Schema(
   {
-    name: {
+    balance: {
       type: Number,
       required: [true, "balance is required"],
     },
-    active: Boolean,
+    address: {
+      type: Number,
+      required: [true, "address is required"],
+    },
+    branchManager: {
+      type: mongoose.Schema.ObjectId,
+      ref: "user",
+    },
+    archived: Boolean,
   },
   {
     timestamps: true,
@@ -17,7 +25,6 @@ const appModelSchema = new mongoose.Schema(
   },
 );
 
-
-const AppModel = mongoose.model(collectionName, appModelSchema);
+const AppModel = mongoose.model(collectionName, branchModelSchema);
 
 module.exports = AppModel;

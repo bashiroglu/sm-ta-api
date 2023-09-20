@@ -1,5 +1,5 @@
 const UserModel = require("../models/userModel");
-// const catchAsync = require("../../utils/catchAsync");
+const catchAsync = require("../utils/catchAsync");
 const factory = require("./handlerFactory");
 // const filterObject = require("../../utils/filterObject");
 
@@ -29,42 +29,38 @@ exports.getUsers = factory.getAll(UserModel);
 //   next();
 // });
 
-// exports.creatUser = catchAsync(async (req, res, next) => {
-//   const {
-//     name,
-//     surname,
-//     fatherName,
-//     email,
-//     dateOfBirth,
-//     tags,
-//     phoneNumbers,
-//     roles,
-//     socialMediaProfiles,
-//   } = req.body;
+exports.creatUser = catchAsync(async (req, res, next) => {
+  const {
+    name,
+    surname,
+    fatherName,
+    email,
+    dateOfBirth,
+    phoneNumbers, //TODO:
 
-//   const password = "123456";
+    // socialMediaProfiles,
+  } = req.body;
 
-//   const userObject = {
-//     name,
-//     surname,
-//     fatherName,
-//     email,
-//     passwordConfirm: password,
-//     password,
-//     dateOfBirth,
-//     tags,
-//     phoneNumbers: phoneNumbers ?? null,
-//     roles,
-//     socialMediaProfiles,
-//   };
+  const password = "123456";
 
-//   const newUser = await UserModel.create(userObject);
+  const userObject = {
+    name,
+    surname,
+    fatherName,
+    password,
+    passwordConfirm: password,
+    email,
+    dateOfBirth,
+    phoneNumbers: phoneNumbers.length ? phoneNumbers : undefined,
+  };
 
-//   res.status(201).json({
-//     status: "success",
-//     data: newUser,
-//   });
-// });
+  const newUser = await UserModel.create(userObject);
+
+  res.status(201).json({
+    status: "success",
+    data: newUser,
+  });
+});
 
 // exports.updateUser = factory.updateOne(UserModel, { allowedFields });
 

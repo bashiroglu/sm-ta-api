@@ -25,8 +25,14 @@ const userSchema = new mongoose.Schema(
     fatherName: {
       type: String,
     },
+    email: {
+      type: String,
+      // required: [true, "email is required"],
+      unique: true,
+      lowercase: [true, "email should be lovercased"],
+    },
     phoneNumbers: {
-      required: [true, "At least one phone number required."],
+      // required: [true, "At least one phone number required."],
       type: [
         {
           type: String,
@@ -63,12 +69,7 @@ const userSchema = new mongoose.Schema(
     paswordResetTokenExpires: {
       type: Date,
     },
-    email: {
-      type: String,
-      required: [true, "email is required"],
-      unique: true,
-      lowercase: [true, "email should be lovercased"],
-    },
+
     roles: {
       type: [String],
       default: ["student"],
