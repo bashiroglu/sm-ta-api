@@ -1,7 +1,7 @@
 {
-  "name": "all-apps-api",
+  "name": "sm-api-aspirans",
   "version": "1.0.0",
-  "description": "all-apps-api",
+  "description": "sm-api-aspirans",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
@@ -40,7 +40,7 @@
     "xss-clean": "^0.1.1"
   },
   "engines": {
-    "node": ">=19.7.0"
+    "node": "19.7.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
