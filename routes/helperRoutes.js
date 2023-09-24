@@ -1,5 +1,5 @@
 const express = require("express");
-const { getRegisterData } = require("../controllers/helperController");
+const { getRegisterData } = require("../controllers/helpers/helperController");
 
 const router = express.Router();
 

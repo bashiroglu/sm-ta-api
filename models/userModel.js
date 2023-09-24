@@ -6,7 +6,7 @@ const { getCode } = require("../utils/app");
 const { uniqueArrValidator } = require("../utils/validators");
 const catchAsync = require("../utils/catchAsync");
 
-const collectionName = "user";
+const collectionName = "User";
 
 const userSchema = new mongoose.Schema(
   {
@@ -84,15 +84,7 @@ const userSchema = new mongoose.Schema(
     },
     referalId: {
       type: mongoose.Schema.ObjectId,
-      ref: "user",
-    },
-    branch: {
-      type: mongoose.Schema.ObjectId,
-      ref: "branch",
-    },
-    parent: {
-      type: mongoose.Schema.ObjectId,
-      ref: "user",
+      ref: "User",
     },
     socialMediaProfiles: {
       type: {
@@ -109,23 +101,63 @@ const userSchema = new mongoose.Schema(
         message: "male, female, unknown",
       },
     },
+
+    branch: {
+      type: mongoose.Schema.ObjectId,
+      ref: "branch",
+    },
+    guardian: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+    relationship: {
+      type: String,
+      enum: ["father", "mother", "other"],
+      required: [
+        () => !!this.guardian,
+        "Guardian's repationship field is reuqired.",
+      ],
+    },
+    schoolAdmittionYear: {
+      type: Number,
+      required: [
+        () => this.roles.includes("student"),
+        "Student's school admittion year is required.",
+      ],
+    },
+
+    subjects: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required: [
+          () => this.roles.includes("teacher"),
+          "Teahcer must have at least one subject.",
+        ],
+      },
+    ],
+
     permissions: [String],
     active: Boolean,
     note: String,
     region: String,
     query: String,
+
+    createdBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
     collation: { locale: "en", strength: 2 },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isNew)
-    this.code = await getCode(next, collectionName, "USER", 6);
+  if (this.isNew) this.code = await getCode(next, collectionName, "USER", 6);
 
   const name = this.name ? this.name + " " : "";
   const surname = this.surname ? this.surname + " " : "";
@@ -151,12 +183,12 @@ userSchema.pre(/^find/, function (next) {
 
 userSchema.methods.checkPassword = async function (
   cadidatePassword,
-  userPassword,
+  userPassword
 ) {
   return await bcrypt.compare(cadidatePassword, userPassword);
 };
 
-userSchema.methods.passwordChanged = function (JWTTimeStamp) {
+userSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
   if (this.passwordChangedAt) {
     const passwordChangedTime = this.passwordChangedAt.getTime() / 1000;
     return passwordChangedTime >= JWTTimeStamp;

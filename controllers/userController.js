@@ -1,135 +1,106 @@
-const UserModel = require("../models/userModel");
-const catchAsync = require("../utils/catchAsync");
-const factory = require("./handlerFactory");
-// const filterObject = require("../../utils/filterObject");
+const sharp = require("sharp");
+const multer = require("multer");
 
-// these field names have been applied in
-// updateUser and updateMe functions
-const allowedFields = [
-  "name",
-  "surname",
-  "fatherName",
-  "email",
-  "dateOfBirth",
-  "tags",
-  "permissions",
-  "archived",
-  "phoneNumbers",
-  "socialMediaProfiles",
-  "gender",
-  "roles",
-];
+const UserModel = require("./../models/userModel");
+const catchAsync = require("./../utils/catchAsync");
+const AppError = require("./../utils/appError");
+const factory = require("./helpers/handlerFactory");
 
-exports.getUser = factory.getOne(UserModel);
+const multerStorage = multer.memoryStorage();
 
-exports.getUsers = factory.getAll(UserModel);
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Not an image! Please upload only images.", 400), false);
+  }
+};
 
-// exports.getTinyUsers = catchAsync(async (req, res, next) => {
-//   req.query.fields = "name surname roles code note";
-//   next();
-// });
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
 
-exports.creatUser = catchAsync(async (req, res, next) => {
-  const {
-    name,
-    surname,
-    fatherName,
-    email,
-    dateOfBirth,
-    phoneNumbers, //TODO:
+exports.uploadUserPhoto = upload.single("photo");
 
-    // socialMediaProfiles,
-  } = req.body;
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
 
-  const password = "123456";
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
 
-  const userObject = {
-    name,
-    surname,
-    fatherName,
-    password,
-    passwordConfirm: password,
-    email,
-    dateOfBirth,
-    phoneNumbers: phoneNumbers.length ? phoneNumbers : undefined,
-  };
+  await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
 
-  const newUser = await UserModel.create(userObject);
+  next();
+});
 
-  res.status(201).json({
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
+
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+  // 1) Create error if user POSTs password data
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        "This route is not for password updates. Please use /updateMyPassword.",
+        400
+      )
+    );
+  }
+
+  // 2) Filtered out unwanted fields names that are not allowed to be updated
+  const filteredBody = filterObj(req.body, "name", "email");
+  if (req.file) filteredBody.photo = req.file.filename;
+
+  // 3) Update user document
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    req.user.id,
+    filteredBody,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({
     status: "success",
-    data: newUser,
+    data: {
+      user: updatedUser,
+    },
   });
 });
 
-// exports.updateUser = factory.updateOne(UserModel, { allowedFields });
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await UserModel.findByIdAndUpdate(req.user.id, { active: false });
 
-// exports.makeDeletedUser = factory.makeDeletedOne(UserModel);
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
 
-// exports.getUserPermissions = catchAsync(async (req, res, next) => {
-//   req.query = { fields: "permissions name surname" };
-//   next();
-// });
+exports.getAllByRole = (req, res, next) => {
+  req.query.roles = req.params.role;
+  next();
+};
 
-// exports.updateUserPermissions = catchAsync(async (req, res, next) => {
-//   const { permissions } = req.body;
-//   req.body = { permissions };
-//   next();
-// });
+exports.createUser = factory.createOne(UserModel);
+exports.getUser = factory.getOne(UserModel);
+exports.getUsers = factory.getAll(UserModel);
 
-// exports.getUserTags = catchAsync(async (req, res, next) => {
-//   req.query = { fields: "tags name surname" };
-//   next();
-// });
-
-// exports.updateUserTags = catchAsync(async (req, res, next) => {
-//   const { tags } = req.body;
-//   req.body = { tags };
-//   next();
-// });
-
-// exports.getMe = (req, res, next) => {
-//   req.params.id = req.user.id;
-//   next();
-// };
-
-// exports.updateMe = catchAsync(async (req, res, next) => {
-//   // 1) Create error if user POSTs password data
-//   if (req.body.password || req.body.passwordConfirm) {
-//     return next(
-//       // TODO: change updateMyPassword
-//       new AppError(
-//         "This route is not for password updates. Please use /updateMyPassword.",
-//         400
-//       )
-//     );
-//   }
-
-//   // 2) Filtered out unwanted fields names that are not allowed to be updated
-//   const filteredBody = filterObject(req.body, allowedFields);
-//   if (req.file) filteredBody.photo = req.file.filename;
-
-//   // 3) Update user document
-//   const updatedUser = await UserModel.findByIdAndUpdate(
-//     req.user.id,
-//     filteredBody,
-//     {
-//       new: true,
-//       runValidators: true,
-//     }
-//   );
-
-//   res.status(200).json({
-//     status: "success",
-//     data: updatedUser,
-//   });
-// });
-
-// exports.deleteMe = catchAsync(async (req, res, next) => {
-//   await UserModel.findByIdAndUpdate(req.user.id, { active: false });
-
-//   res.status(204).json({
-//     status: "success",
-//     data: null,
-//   });
-// });
+// Do NOT update passwords with this!
+exports.updateUser = factory.updateOne(UserModel);
+exports.deleteUser = factory.deleteOne(UserModel);
