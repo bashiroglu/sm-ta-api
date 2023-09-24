@@ -41,14 +41,26 @@ const createTokenAndSignIn = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  const {
+    surname,
+    name,
+    email,
+    phoneNumbers,
+    dateOfBirth,
+    password,
+    passwordConfirm,
+  } = req.body;
+  const roles = process.env.ADMIN_EMAIL === email ? ["admin"] : null;
+
   const newUser = await User.create({
-    surname: req.body.surname,
-    name: req.body.name,
-    email: req.body.email,
-    phoneNumbers: req.body.phoneNumbers,
-    dateOfBirth: req.body.dateOfBirth,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
+    roles,
+    surname,
+    name,
+    email,
+    phoneNumbers,
+    dateOfBirth,
+    password,
+    passwordConfirm,
   });
 
   if (process.env.NODE_ENV.trim() == "production") {
