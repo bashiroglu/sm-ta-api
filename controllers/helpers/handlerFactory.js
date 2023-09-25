@@ -121,20 +121,22 @@ exports.getOne = (Model, { permissionSlug = null, popOptions = null } = {}) =>
 exports.getAll = (Model, { permissionSlug = null, isFiltered = false } = {}) =>
   catchAsync(async (req, res, next) => {
     if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
-    const total = await Model.find({});
+
     let filter = isFiltered ? createFilter(req) : {};
-    const features = new APIFeatures(Model.find(filter), req.query)
+    let features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
-      .limitFields()
-      .paginate();
+      .limitFields();
+    const total = await features.query;
+
+    features = features.paginate();
     // const doc = await features.query.explain();
     const doc = await features.query;
 
     // SEND RESPONSE
     res.status(200).json({
       status: "success",
-      total: total.length,
+      total,
       results: doc.length,
       data: doc,
     });

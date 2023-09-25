@@ -1,21 +1,22 @@
 const express = require("express");
 
 const {
-  protect,
+  signup,
   login,
+  logout,
+  forgotPassword,
+  resetPassword,
   getCurrentUser,
-  createUser,
 } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.route("/register").post(createUser);
-router.route("/login").post(login);
-// router.route("/logout").get(protectMg, logout);
-// router.route("/forgot-password").post(forgetPassword);
-// router.route("/reset-password/:token").patch(resetPassword);
-// router.route("/update-password").patch(protectMg, updatePassword);
+router.post("/signup", signup);
+router.post("/login", login);
+router.get("/logout", logout);
 
+router.post("/forgotPassword", forgotPassword);
+router.patch("/resetPassword/:token", resetPassword);
 router.route("/get-user").get(protect, getCurrentUser);
 
 module.exports = router;

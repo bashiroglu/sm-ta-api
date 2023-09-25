@@ -9,10 +9,11 @@ const cors = require("cors");
 const sanitizer = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const RateLimit = require("express-rate-limit");
-const errorHandler = require("./controllers/errorHandlerController");
+const errorHandler = require("./controllers/helpers/errorHandlerController");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const parentRoutes = require("./routes/parentRoutes");
+const branchRoutes = require("./routes/branchRoutes");
+const groupRoutes = require("./routes/groupRoutes");
 
 const cron = require("node-cron");
 
@@ -45,20 +46,18 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept,authorization ",
+    "Origin, X-Requested-With, Content-Type, Accept,authorization "
   );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE",
-  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
   next();
 });
 // app.use(express.json());
 app.use(bodyParser.json({ limit: "5mb" }));
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/parents", parentRoutes);
-app.use("/api/v1/students", userRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/branches", branchRoutes);
+app.use("/api/v1/groups", groupRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`can not find ${req.originalUrl} route`, 404));

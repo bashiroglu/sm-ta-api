@@ -1,4 +1,4 @@
-const AppError = require("./../utils/appError");
+const AppError = require("../../utils/appError");
 
 const handleCastError = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
@@ -58,8 +58,7 @@ module.exports = (err, req, res, next) => {
     error.message = err.message;
 
     if (err.name === "CastError") error = handleCastError(error);
-    if (err.name === "ValidationError")
-      error = handleValidationErrorDB(error);
+    if (err.name === "ValidationError") error = handleValidationErrorDB(error);
     if (err.name === "JsonWebTokenError")
       error = handleJsonWebTokenError(error);
     if (err.name === "TokenExpiredError")
