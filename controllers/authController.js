@@ -42,19 +42,21 @@ const createTokenAndSignIn = (user, statusCode, req, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   const {
-    surname,
     name,
-    email,
+    surname,
+    fatherName,
     phoneNumbers,
+    email,
     dateOfBirth,
     password,
     passwordConfirm,
   } = req.body;
   const roles = process.env.ADMIN_EMAIL === email ? ["admin"] : null;
 
-  const newUser = await User.create({
+  const newUser = await UserModel.create({
     roles,
     surname,
+    fatherName,
     name,
     email,
     phoneNumbers,
@@ -172,7 +174,7 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
   }
 
   let JWT_SECRET;
-  if (process.env.NODE_ENV.trim() == "development") {
+  if (process.env.NODE_ENV.trim() === "development") {
     JWT_SECRET = process.env.JWT_SECRET_DEV;
   } else {
     JWT_SECRET = process.env.JWT_SECRET;

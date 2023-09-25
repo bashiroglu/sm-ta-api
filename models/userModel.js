@@ -41,6 +41,18 @@ const userSchema = new mongoose.Schema(
       ],
       validate: uniqueArrValidator,
     },
+    dateOfBirth: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      default: "unknown",
+      enum: {
+        values: ["male", "female"],
+        message: "male, female",
+      },
+    },
+
     password: {
       type: String,
       required: [true, "password is required"],
@@ -58,9 +70,6 @@ const userSchema = new mongoose.Schema(
       },
     },
     passwordChangedAt: {
-      type: Date,
-    },
-    dateOfBirth: {
       type: Date,
     },
     paswordResetToken: {
@@ -82,6 +91,10 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    permissions: {
+      type: [String],
+      default: [],
+    },
     referalId: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -91,14 +104,6 @@ const userSchema = new mongoose.Schema(
         facebook: String,
         instagram: String,
         linkedin: String,
-      },
-    },
-    gender: {
-      type: String,
-      default: "unknown",
-      enum: {
-        values: ["male", "female", "unknown", "other"],
-        message: "male, female, unknown",
       },
     },
 
@@ -125,22 +130,23 @@ const userSchema = new mongoose.Schema(
         "Student's school admittion year is required.",
       ],
     },
+    subjects: {
+      description: "The subjects field is filled for teachers",
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "Subjects",
+          required: [
+            () => this.roles.includes("teacher"),
+            "Teahcer must have at least one subject.",
+          ],
+        },
+      ],
+    },
 
-    subjects: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-        required: [
-          () => this.roles.includes("teacher"),
-          "Teahcer must have at least one subject.",
-        ],
-      },
-    ],
-
-    permissions: [String],
     active: Boolean,
     note: String,
-    region: String,
+    description: String,
     query: String,
 
     createdBy: {
