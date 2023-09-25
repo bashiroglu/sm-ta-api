@@ -11,9 +11,14 @@ const xss = require("xss-clean");
 const RateLimit = require("express-rate-limit");
 const errorHandler = require("./controllers/helpers/errorHandlerController");
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
 const branchRoutes = require("./routes/branchRoutes");
+const companyRoutes = require("./routes/companyRoutes");
+const examRoutes = require("./routes/examRoutes");
 const groupRoutes = require("./routes/groupRoutes");
+const lessonRoutes = require("./routes/lessonRoutes");
+const scoreRoutes = require("./routes/scoreRoutes");
+const subjectRoutes = require("./routes/subjectRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const cron = require("node-cron");
 
@@ -55,9 +60,14 @@ app.use((req, res, next) => {
 app.use(bodyParser.json({ limit: "5mb" }));
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/branches", branchRoutes);
+app.use("/api/v1/company", companyRoutes);
+app.use("/api/v1/exams", examRoutes);
 app.use("/api/v1/groups", groupRoutes);
+app.use("/api/v1/lessons", groupRoutes);
+app.use("/api/v1/scores", scoreRoutes);
+app.use("/api/v1/subjects", subjectRoutes);
+app.use("/api/v1/users", userRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`can not find ${req.originalUrl} route`, 404));
