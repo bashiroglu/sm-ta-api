@@ -9,6 +9,7 @@ const branchModelSchema = new mongoose.Schema(
       ref: "Company",
       required: [true, "Branch must belong to a company"],
     },
+    name: String,
     balance: {
       type: Number,
       required: [true, "balance is required"],
@@ -21,12 +22,6 @@ const branchModelSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    teachers: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-      },
-    ],
     archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
