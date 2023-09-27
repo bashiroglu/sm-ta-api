@@ -4,7 +4,6 @@ const crypto = require("crypto");
 
 const { getCode } = require("../utils/app");
 const { uniqueArrValidator } = require("../utils/validators");
-const catchAsync = require("../utils/catchAsync");
 
 const collectionName = "User";
 
@@ -151,6 +150,7 @@ const userSchema = new mongoose.Schema(
     },
 
     active: Boolean,
+    archived: Boolean,
     note: String,
     description: String,
     query: String,

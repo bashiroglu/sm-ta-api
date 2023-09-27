@@ -113,11 +113,9 @@ exports.getUsers = factory.getAll(UserModel);
 exports.updateUser = factory.updateOne(UserModel);
 exports.deleteUser = factory.deleteOne(UserModel);
 
-exports.archiveUser = catchAsync(async (req, res, next) => {
-  await UserModel.findByIdAndUpdate(req.params.id, { archived: true });
+exports.archiveUser = factory.makeDeletedOne(UserModel);
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
+exports.activateUser = catchAsync(async (req, res, next) => {
+  req.body = { active: true };
+  next();
 });

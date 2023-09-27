@@ -51,7 +51,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     password,
     passwordConfirm,
   } = req.body;
-  const roles = process.env.ADMIN_EMAIL === email ? ["admin"] : null;
+
+  const roles = process.env.OWNER_EMAIL === email ? ["owner"] : undefined;
+  const active = process.env.OWNER_EMAIL === email || undefined;
 
   const newUser = await UserModel.create({
     roles,
@@ -63,18 +65,15 @@ exports.signup = catchAsync(async (req, res, next) => {
     dateOfBirth,
     password,
     passwordConfirm,
+    active,
   });
 
+  // TODO: Fix below:
   if (process.env.NODE_ENV.trim() == "production") {
     const url = `${req.protocol}://${req.get("host")}/me`;
     await new Email(newUser, url).sendWelcome();
-    createSendToken(newUser, 201, req, res);
-  } else {
-    res.status(201).json({
-      status: "success",
-      user: newUser,
-    });
   }
+  createTokenAndSignIn(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -92,7 +91,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user.active) {
     return next(
       new AppError(
-        "Zəhmət olmasa, profilinin aktivləşməsini gözləyin, ehtiyac bilirsinizsə proqramçı ilə əlaqə saxlayın",
+        "Zəhmət olmasa, profilinin aktivləşməsini gözləyin, ehtiyac bilirsinizsə, proqramçı ilə əlaqə saxlayın",
         400
       )
     );

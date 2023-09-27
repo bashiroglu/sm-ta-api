@@ -5,7 +5,7 @@ const collectionName = "Company";
 const appModelSchema = new mongoose.Schema(
   {
     name: {
-      type: Number,
+      type: String,
       required: [true, "A company must have a name."],
     },
     code: String,
