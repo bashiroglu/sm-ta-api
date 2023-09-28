@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Score";
 
-const scoreModelSchema = new mongoose.Schema(
+const scoreSchema = new mongoose.Schema(
   {
     exam: {
       type: mongoose.Schema.ObjectId,
@@ -27,11 +27,11 @@ const scoreModelSchema = new mongoose.Schema(
   }
 );
 
-scoreModelSchema.pre(/^find/, function (next) {
+scoreSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const ScoreModel = mongoose.model(collectionName, scoreModelSchema);
+const ScoreModel = mongoose.model(collectionName, scoreSchema);
 
 module.exports = ScoreModel;

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Lesson";
 
-const lessonModelSchema = new mongoose.Schema(
+const lessonSchema = new mongoose.Schema(
   {
     group: {
       type: mongoose.Schema.ObjectId,
@@ -49,11 +49,11 @@ const lessonModelSchema = new mongoose.Schema(
   }
 );
 
-lessonModelSchema.pre(/^find/, function (next) {
+lessonSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const LessonModel = mongoose.model(collectionName, lessonModelSchema);
+const LessonModel = mongoose.model(collectionName, lessonSchema);
 
 module.exports = LessonModel;

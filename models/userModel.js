@@ -82,8 +82,8 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: ["student"],
       enum: {
-        values: ["student", "teacher", "manager", "owner", "parent", "admin"],
-        message: `Roles have to be some of them: student, teacher, manager, owner, parent, admin`,
+        values: ["student", "teacher", "manager", "owner", "guardian", "admin"],
+        message: `Roles have to be some of them: student, teacher, manager, owner, guardian, admin`,
       },
     },
     tags: {

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Room";
 
-const roomModelSchema = new mongoose.Schema(
+const roomSchema = new mongoose.Schema(
   {
     branch: {
       type: mongoose.Schema.ObjectId,
@@ -28,11 +28,11 @@ const roomModelSchema = new mongoose.Schema(
   }
 );
 
-roomModelSchema.pre(/^find/, function (next) {
+roomSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const RoomModel = mongoose.model(collectionName, roomModelSchema);
+const RoomModel = mongoose.model(collectionName, roomSchema);
 
 module.exports = RoomModel;

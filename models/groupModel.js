@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const { getCode } = require("../utils/app");
 
 const collectionName = "Group";
 
-const groupModelSchema = new mongoose.Schema(
+const groupSchema = new mongoose.Schema(
   {
     branch: {
       type: mongoose.Schema.ObjectId,
@@ -37,11 +38,15 @@ const groupModelSchema = new mongoose.Schema(
   }
 );
 
-groupModelSchema.pre(/^find/, function (next) {
+groupSchema.pre("save", async function (next) {
+  if (this.isNew) this.code = await getCode(next, collectionName, "GRP");
+});
+
+groupSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const GroupModel = mongoose.model(collectionName, groupModelSchema);
+const GroupModel = mongoose.model(collectionName, groupSchema);
 
 module.exports = GroupModel;

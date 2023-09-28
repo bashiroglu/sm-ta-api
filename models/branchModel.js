@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const { getCode } = require("../utils/app");
 
 const collectionName = "Branch";
 
-const branchModelSchema = new mongoose.Schema(
+const branchSchema = new mongoose.Schema(
   {
     company: {
       type: mongoose.Schema.ObjectId,
@@ -35,11 +36,15 @@ const branchModelSchema = new mongoose.Schema(
   }
 );
 
-branchModelSchema.pre(/^find/, function (next) {
+branchSchema.pre("save", async function (next) {
+  if (this.isNew) this.code = await getCode(next, collectionName, "BRNC");
+});
+
+branchSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const BranchModel = mongoose.model(collectionName, branchModelSchema);
+const BranchModel = mongoose.model(collectionName, branchSchema);
 
 module.exports = BranchModel;

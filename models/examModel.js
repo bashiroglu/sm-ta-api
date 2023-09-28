@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const { getCode } = require("../utils/app");
 
 const collectionName = "Exam";
 
-const examModelSchema = new mongoose.Schema(
+const examSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -24,11 +25,15 @@ const examModelSchema = new mongoose.Schema(
   }
 );
 
-examModelSchema.pre(/^find/, function (next) {
+examSchema.pre("save", async function (next) {
+  if (this.isNew) this.code = await getCode(next, collectionName, "EXAM", 8);
+});
+
+examSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const ExamModel = mongoose.model(collectionName, examModelSchema);
+const ExamModel = mongoose.model(collectionName, examSchema);
 
 module.exports = ExamModel;
