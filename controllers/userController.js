@@ -62,7 +62,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
 
   // 2) Filtered out unwanted fields names that are not allowed to be updated
-  const filteredBody = filterObj(req.body, "name", "email");
+  const filteredBody = filterObj(
+    req.body,
+    "name",
+    "surname",
+    "fatherName",
+    "phoneNumbers",
+    "email",
+    "dateOfBirth"
+  );
   if (req.file) filteredBody.photo = req.file.filename;
 
   // 3) Update user document
@@ -84,7 +92,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await UserModel.findByIdAndUpdate(req.user.id, { active: false });
+  await UserModel.findByIdAndUpdate(req.user.id, { archived: true });
 
   res.status(204).json({
     status: "success",
@@ -104,3 +112,10 @@ exports.getUsers = factory.getAll(UserModel);
 // Do NOT update passwords with this!
 exports.updateUser = factory.updateOne(UserModel);
 exports.deleteUser = factory.deleteOne(UserModel);
+
+exports.archiveUser = factory.makeDeletedOne(UserModel);
+
+exports.activateUser = catchAsync(async (req, res, next) => {
+  req.body = { active: true };
+  next();
+});

@@ -5,9 +5,15 @@ const collectionName = "Company";
 const appModelSchema = new mongoose.Schema(
   {
     name: {
-      type: Number,
+      type: String,
       required: [true, "A company must have a name."],
     },
+    code: String,
+    balance: { type: Number, default: 0 },
+    branch: { type: Number, default: 0 },
+    group: { type: Number, default: 0 },
+    user: { type: Number, default: 0 },
+    exam: { type: Number, default: 0 },
     active: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,

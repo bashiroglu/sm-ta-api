@@ -1,6 +1,7 @@
 const express = require("express");
 
 const {
+  protect,
   signup,
   login,
   logout,

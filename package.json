@@ -34,6 +34,7 @@
     "nodemailer": "^6.4.6",
     "pug": "^3.0.2",
     "schedule": "^0.5.0",
+    "sharp": "^0.32.6",
     "short-unique-id": "^3.0.2",
     "slugify": "^1.6.6",
     "xlsx": "^0.18.5",

@@ -4,7 +4,6 @@ const crypto = require("crypto");
 
 const { getCode } = require("../utils/app");
 const { uniqueArrValidator } = require("../utils/validators");
-const catchAsync = require("../utils/catchAsync");
 
 const collectionName = "User";
 
@@ -41,6 +40,18 @@ const userSchema = new mongoose.Schema(
       ],
       validate: uniqueArrValidator,
     },
+    dateOfBirth: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      default: "unknown",
+      enum: {
+        values: ["male", "female", "unknown"],
+        message: "male, female",
+      },
+    },
+
     password: {
       type: String,
       required: [true, "password is required"],
@@ -60,9 +71,6 @@ const userSchema = new mongoose.Schema(
     passwordChangedAt: {
       type: Date,
     },
-    dateOfBirth: {
-      type: Date,
-    },
     paswordResetToken: {
       type: String,
     },
@@ -74,11 +82,15 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: ["student"],
       enum: {
-        values: ["student", "teacher", "manager", "owner", "parent"],
-        message: `Roles have to be some of them: "owner", "admin", "manager", "guide", "vendor", "client"`,
+        values: ["student", "teacher", "manager", "owner", "parent", "admin"],
+        message: `Roles have to be some of them: student, teacher, manager, owner, parent, admin`,
       },
     },
     tags: {
+      type: [String],
+      default: [],
+    },
+    permissions: {
       type: [String],
       default: [],
     },
@@ -91,14 +103,6 @@ const userSchema = new mongoose.Schema(
         facebook: String,
         instagram: String,
         linkedin: String,
-      },
-    },
-    gender: {
-      type: String,
-      default: "unknown",
-      enum: {
-        values: ["male", "female", "unknown", "other"],
-        message: "male, female, unknown",
       },
     },
 
@@ -114,33 +118,41 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["father", "mother", "other"],
       required: [
-        () => !!this.guardian,
-        "Guardian's repationship field is reuqired.",
+        function () {
+          return !!this.guardian;
+        },
+        'Guardian"s repationship field is reuqired.',
       ],
     },
     schoolAdmittionYear: {
       type: Number,
       required: [
-        () => this.roles.includes("student"),
+        function () {
+          return this.roles?.includes("student");
+        },
         "Student's school admittion year is required.",
       ],
     },
+    subjects: {
+      description: "The subjects field is filled for teachers",
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "Subjects",
+          required: [
+            function () {
+              return this.roles?.includes("teacher");
+            },
+            "Teahcer must have at least one subject.",
+          ],
+        },
+      ],
+    },
 
-    subjects: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-        required: [
-          () => this.roles.includes("teacher"),
-          "Teahcer must have at least one subject.",
-        ],
-      },
-    ],
-
-    permissions: [String],
     active: Boolean,
+    archived: Boolean,
     note: String,
-    region: String,
+    description: String,
     query: String,
 
     createdBy: {
@@ -157,7 +169,11 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "USER", 6);
+  if (this.isNew)
+    this.code =
+      this.email === process.env.OWNER_EMAIL
+        ? "OWNER_CODE"
+        : await getCode(next, collectionName, "USER", 6);
 
   const name = this.name ? this.name + " " : "";
   const surname = this.surname ? this.surname + " " : "";

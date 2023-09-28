@@ -1,8 +1,8 @@
-const catchAsync = require("./../utils/catchAsync");
-const filterObject = require("../utils/filterObject");
-const createFilter = require("./../utils/createFilter");
-const AppError = require("./../utils/appError");
-const APIFeatures = require("./../utils/apiFeatures");
+const catchAsync = require("../../utils/catchAsync");
+const filterObject = require("../../utils/filterObject");
+const createFilter = require("../../utils/createFilter");
+const AppError = require("../../utils/appError");
+const APIFeatures = require("../../utils/apiFeatures");
 
 const checkPermission = (slug, req) =>
   slug && !req.user.permissions.includes(slug);
