@@ -30,11 +30,11 @@ const lessonModelSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Subject",
     },
-
     // TODO: In future versions topics also can be gotten from a Topic Module.
     topic: {
       type: String,
     },
+    isAdditional: Boolean,
 
     archived: Boolean,
     createdBy: {

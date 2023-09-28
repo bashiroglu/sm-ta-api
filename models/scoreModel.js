@@ -12,7 +12,7 @@ const scoreModelSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    results: String,
+    results: Number,
 
     archived: Boolean,
     createdBy: {
