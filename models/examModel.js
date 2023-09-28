@@ -24,6 +24,11 @@ const examModelSchema = new mongoose.Schema(
   }
 );
 
+examModelSchema.pre(/^find/, function (next) {
+  this.find({ archived: { $ne: true } });
+  next();
+});
+
 const ExamModel = mongoose.model(collectionName, examModelSchema);
 
 module.exports = ExamModel;

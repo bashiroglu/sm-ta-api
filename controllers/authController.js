@@ -68,7 +68,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     active,
   });
 
-  // TODO: Fix below:
+  // TODO: Fix below (It will depend on desision):
   if (process.env.NODE_ENV.trim() == "production") {
     const url = `${req.protocol}://${req.get("host")}/me`;
     await new Email(newUser, url).sendWelcome();

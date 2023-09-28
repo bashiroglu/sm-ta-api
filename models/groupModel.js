@@ -37,6 +37,11 @@ const groupModelSchema = new mongoose.Schema(
   }
 );
 
+groupModelSchema.pre(/^find/, function (next) {
+  this.find({ archived: { $ne: true } });
+  next();
+});
+
 const GroupModel = mongoose.model(collectionName, groupModelSchema);
 
 module.exports = GroupModel;

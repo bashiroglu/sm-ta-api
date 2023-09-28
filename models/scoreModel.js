@@ -12,7 +12,7 @@ const scoreModelSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    results: String,
+    results: Number,
 
     archived: Boolean,
     createdBy: {
@@ -26,6 +26,11 @@ const scoreModelSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+scoreModelSchema.pre(/^find/, function (next) {
+  this.find({ archived: { $ne: true } });
+  next();
+});
 
 const ScoreModel = mongoose.model(collectionName, scoreModelSchema);
 

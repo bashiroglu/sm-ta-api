@@ -106,10 +106,7 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    branch: {
-      type: mongoose.Schema.ObjectId,
-      ref: "branch",
-    },
+    groupDP: Number,
     guardian: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
