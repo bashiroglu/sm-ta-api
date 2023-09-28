@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Company";
 
-const companyModelschema = new mongoose.Schema(
+const companySchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -10,10 +10,12 @@ const companyModelschema = new mongoose.Schema(
     },
     code: String,
     balance: { type: Number, default: 0 },
+
     branch: { type: Number, default: 0 },
     group: { type: Number, default: 0 },
     user: { type: Number, default: 0 },
     exam: { type: Number, default: 0 },
+
     active: Boolean,
     archived: Boolean,
     createdBy: {
@@ -28,11 +30,11 @@ const companyModelschema = new mongoose.Schema(
   }
 );
 
-companyModelschema.pre(/^find/, function (next) {
+companySchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const AppModel = mongoose.model(collectionName, companyModelschema);
+const AppModel = mongoose.model(collectionName, companySchema);
 
 module.exports = AppModel;

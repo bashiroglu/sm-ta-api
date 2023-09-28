@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Recurrence";
 
-const recurrenceModelSchema = new mongoose.Schema(
+const recurrenceSchema = new mongoose.Schema(
   {
     spender: {
       type: mongoose.Schema.ObjectId,
@@ -55,12 +55,12 @@ const recurrenceModelSchema = new mongoose.Schema(
   }
 );
 
-recurrenceModelSchema.pre(/^find/, function (next) {
+recurrenceSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-recurrenceModelSchema.pre(/^find/, function (next) {
+recurrenceSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } })
     .populate("spender")
     .populate("recipient")
@@ -68,6 +68,6 @@ recurrenceModelSchema.pre(/^find/, function (next) {
   next();
 });
 
-const RecurrenceModel = mongoose.model(collectionName, recurrenceModelSchema);
+const RecurrenceModel = mongoose.model(collectionName, recurrenceSchema);
 
 module.exports = RecurrenceModel;
