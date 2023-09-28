@@ -35,6 +35,11 @@ const branchModelSchema = new mongoose.Schema(
   }
 );
 
+branchModelSchema.pre(/^find/, function (next) {
+  this.find({ archived: { $ne: true } });
+  next();
+});
+
 const BranchModel = mongoose.model(collectionName, branchModelSchema);
 
 module.exports = BranchModel;

@@ -6,9 +6,6 @@ const handleCastError = (err) => {
 };
 const handleDublicatedFieldErrors = (err) => {
   const value = err.message.match(/{.*\./)[0];
-  console.log("valuevaluevaluevaluevaluevaluevaluevalue");
-  console.log(value);
-  console.log("valuevaluevaluevaluevaluevaluevaluevalue");
   const message = `+${value.split(": ")[1].slice(0, -1)} sistemdə var.`;
 
   return new AppError(message, 400);

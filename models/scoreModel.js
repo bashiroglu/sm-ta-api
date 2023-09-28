@@ -27,6 +27,11 @@ const scoreModelSchema = new mongoose.Schema(
   }
 );
 
+scoreModelSchema.pre(/^find/, function (next) {
+  this.find({ archived: { $ne: true } });
+  next();
+});
+
 const ScoreModel = mongoose.model(collectionName, scoreModelSchema);
 
 module.exports = ScoreModel;

@@ -49,6 +49,11 @@ const lessonModelSchema = new mongoose.Schema(
   }
 );
 
+lessonModelSchema.pre(/^find/, function (next) {
+  this.find({ archived: { $ne: true } });
+  next();
+});
+
 const LessonModel = mongoose.model(collectionName, lessonModelSchema);
 
 module.exports = LessonModel;

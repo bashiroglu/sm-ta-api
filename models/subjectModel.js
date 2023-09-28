@@ -26,6 +26,11 @@ const subjectModelSchema = new mongoose.Schema(
   }
 );
 
+subjectModelSchema.pre(/^find/, function (next) {
+  this.find({ archived: { $ne: true } });
+  next();
+});
+
 const SubjectModel = mongoose.model(collectionName, subjectModelSchema);
 
 module.exports = SubjectModel;
