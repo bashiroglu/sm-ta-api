@@ -87,10 +87,13 @@ exports.updateOne = (
     });
   });
 
-exports.createOne = (Model, { permissionSlug = null } = {}) =>
+exports.createOne = (Model, { permissionSlug = null, password = false } = {}) =>
   catchAsync(async (req, res, next) => {
     if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
 
+    if (password)
+      req.body.password = req.body.passwordConfirm =
+        process.env.DEFAULT_USER_PASSWORD;
     req.body.createdBy = req.user.id;
 
     const doc = await Model.create(req.body);

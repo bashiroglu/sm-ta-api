@@ -105,7 +105,7 @@ exports.getAllByRole = (req, res, next) => {
   next();
 };
 
-exports.createUser = factory.createOne(UserModel);
+exports.createUser = factory.createOne(UserModel, { password: true });
 exports.getUser = factory.getOne(UserModel);
 exports.getUsers = factory.getAll(UserModel);
 
