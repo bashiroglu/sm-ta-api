@@ -5,8 +5,13 @@ const handleCastError = (err) => {
   return new AppError(message, 400);
 };
 const handleDublicatedFieldErrors = (err) => {
-  const value = err.message.match(/{.*\./)[0];
-  const message = `+${value.split(": ")[1].slice(0, -1)} sistemdə var.`;
+  const value = err.message.match(/dup key:.*:/)[0];
+  const message = `Daxil etmэk istэdiyiniz "${value
+    .split("{")
+    .at(1)
+    .split(":")
+    .at(0)
+    .trim()}" sistemdə var.`;
 
   return new AppError(message, 400);
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   createUser,
+  createUserByRole,
   getUser,
   getUsers,
   getAllByRole,
@@ -31,8 +32,12 @@ router.patch("/updateMe", uploadUserPhoto, resizeUserPhoto, updateMe);
 router.delete("/deleteMe", deleteMe);
 
 router.use(restrictTo("owner", "admin"));
+
 router.route("/").get(getUsers).post(createUser);
-router.get("/:role", getAllByRole, getUsers);
+router
+  .route("/:role")
+  .get(getAllByRole, getUsers)
+  .post(createUserByRole, createUser);
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 router.route("/:id/archive").patch(archiveUser);
 router.route("/:id/active").patch(activateUser, updateUser);

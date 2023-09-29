@@ -80,7 +80,6 @@ const userSchema = new mongoose.Schema(
 
     roles: {
       type: [String],
-      default: ["student"],
       enum: {
         values: ["student", "teacher", "manager", "owner", "guardian", "admin"],
         message: `Roles have to be some of them: student, teacher, manager, owner, guardian, admin`,
@@ -106,11 +105,7 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    groupDP: Number,
-    guardian: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
+    // Groups of degree programs (ixtisas qrupu)
     relationship: {
       type: String,
       enum: ["father", "mother", "other"],
@@ -121,6 +116,12 @@ const userSchema = new mongoose.Schema(
         'Guardian"s repationship field is reuqired.',
       ],
     },
+
+    groupDP: Number,
+    guardian: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
     schoolAdmittionYear: {
       type: Number,
       required: [
@@ -130,18 +131,12 @@ const userSchema = new mongoose.Schema(
         "Student's school admittion year is required.",
       ],
     },
+
     subjects: {
-      description: "The subjects field is filled for teachers",
       type: [
         {
           type: mongoose.Schema.ObjectId,
           ref: "Subjects",
-          required: [
-            function () {
-              return this.roles?.includes("teacher");
-            },
-            "Teahcer must have at least one subject.",
-          ],
         },
       ],
     },

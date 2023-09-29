@@ -139,7 +139,7 @@ exports.getAll = (Model, { permissionSlug = null, isFiltered = false } = {}) =>
     // SEND RESPONSE
     res.status(200).json({
       status: "success",
-      total,
+      total: total.length,
       results: doc.length,
       data: doc,
     });
