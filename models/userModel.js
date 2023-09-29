@@ -131,6 +131,14 @@ const userSchema = new mongoose.Schema(
         "Student's school admittion year is required.",
       ],
     },
+    packages: {
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "Package",
+        },
+      ],
+    },
 
     subjects: {
       type: [
