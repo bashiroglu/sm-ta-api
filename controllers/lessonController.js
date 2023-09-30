@@ -5,4 +5,5 @@ exports.getLessons = factory.getAll(LessonModel);
 exports.getLesson = factory.getOne(LessonModel);
 exports.createLesson = factory.createOne(LessonModel);
 exports.updateLesson = factory.updateOne(LessonModel);
+exports.archiveLesson = factory.archiveOne(LessonModel);
 exports.deleteLesson = factory.deleteOne(LessonModel);

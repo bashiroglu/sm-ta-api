@@ -110,9 +110,7 @@ exports.getUsers = factory.getAll(UserModel);
 // Do NOT update passwords with this!
 exports.updateUser = factory.updateOne(UserModel);
 exports.deleteUser = factory.deleteOne(UserModel);
-
-exports.archiveUser = factory.makeDeletedOne(UserModel);
-
+exports.archiveUser = factory.archiveOne(UserModel);
 exports.activateUser = catchAsync(async (req, res, next) => {
   req.body = { active: true };
   next();

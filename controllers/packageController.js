@@ -5,4 +5,5 @@ exports.getPackages = factory.getAll(PackageModel);
 exports.getPackage = factory.getOne(PackageModel);
 exports.createPackage = factory.createOne(PackageModel);
 exports.updatePackage = factory.updateOne(PackageModel);
+exports.archivePackage = factory.archiveOne(PackageModel);
 exports.deletePackage = factory.deleteOne(PackageModel);

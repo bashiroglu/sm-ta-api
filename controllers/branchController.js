@@ -5,4 +5,5 @@ exports.getBranches = factory.getAll(BranchModel);
 exports.getBranch = factory.getOne(BranchModel);
 exports.createBranch = factory.createOne(BranchModel);
 exports.updateBranch = factory.updateOne(BranchModel);
+exports.archiveBranch = factory.archiveOne(BranchModel);
 exports.deleteBranch = factory.deleteOne(BranchModel);

@@ -43,7 +43,7 @@ exports.deleteMany = (Model, { permissionSlug = null } = {}) =>
     });
   });
 
-exports.makeDeletedOne = (Model, { permissionSlug = null } = {}) =>
+exports.archiveOne = (Model, { permissionSlug = null } = {}) =>
   catchAsync(async (req, res, next) => {
     if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
 
