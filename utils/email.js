@@ -10,7 +10,7 @@ module.exports = class Email {
   }
 
   newTransport() {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV.trim() === "production") {
       return nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
         auth: {

@@ -27,7 +27,7 @@ const createTokenAndSignIn = (user, statusCode, req, res) => {
     ),
     httpOnly: true,
   };
-  if (process.env.NODE_ENV === "production")
+  if (process.env.NODE_ENV.trim() === "production")
     cookieOptions.secure =
       req.secure || req.headers["x-forwarded-proto"] === "https";
 
@@ -247,7 +247,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       "host"
     )}/api/v1/users/resetPassword/${resetToken}`;
 
-    if (process.env.NODE_ENV === "production")
+    if (process.env.NODE_ENV.trim() === "production")
       await new Email(user, resetURL).sendPasswordReset();
     else console.log(resetURL);
 
