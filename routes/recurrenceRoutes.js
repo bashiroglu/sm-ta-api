@@ -2,7 +2,7 @@ const express = require("express");
 const {
   getRecurrence,
   createRecurrence,
-  getRecurrence,
+  getRecurrences,
   updateRecurrence,
   archiveRecurrence,
   deleteRecurrence,
@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route("/").get(getRecurrence).post(createRecurrence);
+router.route("/").get(getRecurrences).post(createRecurrence);
 router
   .route("/:id")
   .get(getRecurrence)

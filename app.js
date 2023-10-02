@@ -16,8 +16,12 @@ const companyRoutes = require("./routes/companyRoutes");
 const examRoutes = require("./routes/examRoutes");
 const groupRoutes = require("./routes/groupRoutes");
 const lessonRoutes = require("./routes/lessonRoutes");
+const packageRoutes = require("./routes/packageRoutes");
+const recurrenceRoutes = require("./routes/recurrenceRoutes");
+const roomRoutes = require("./routes/roomRoutes");
 const scoreRoutes = require("./routes/scoreRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 const userRoutes = require("./routes/userRoutes");
 
 const cron = require("node-cron");
@@ -64,9 +68,13 @@ app.use("/api/v1/branches", branchRoutes);
 app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/exams", examRoutes);
 app.use("/api/v1/groups", groupRoutes);
-app.use("/api/v1/lessons", groupRoutes);
+app.use("/api/v1/lessons", lessonRoutes);
+app.use("/api/v1/packages", packageRoutes);
+app.use("/api/v1/recurrences", recurrenceRoutes);
+app.use("/api/v1/rooms", roomRoutes);
 app.use("/api/v1/scores", scoreRoutes);
 app.use("/api/v1/subjects", subjectRoutes);
+app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/users", userRoutes);
 
 app.all("*", (req, res, next) => {
