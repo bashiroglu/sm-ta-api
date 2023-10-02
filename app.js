@@ -65,8 +65,12 @@ app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/exams", examRoutes);
 app.use("/api/v1/groups", groupRoutes);
 app.use("/api/v1/lessons", groupRoutes);
+app.use("/api/v1/packages", groupRoutes);
+app.use("/api/v1/recurrences", groupRoutes);
+app.use("/api/v1/rooms", groupRoutes);
 app.use("/api/v1/scores", scoreRoutes);
 app.use("/api/v1/subjects", subjectRoutes);
+app.use("/api/v1/transactions", groupRoutes);
 app.use("/api/v1/users", userRoutes);
 
 app.all("*", (req, res, next) => {
