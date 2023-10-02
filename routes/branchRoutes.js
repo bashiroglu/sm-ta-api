@@ -4,19 +4,18 @@ const {
   createBranch,
   getBranch,
   updateBranch,
+  archiveBranch,
   deleteBranch,
 } = require("./../controllers/branchController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect);
+router.use(protect, restrictTo("owner"));
+router.route("/").get(getBranches).post(createBranch);
 
-router.route("/").get(getBranches).post(restrictTo("user"), createBranch);
-router
-  .route("/:id")
-  .get(getBranch)
-  .patch(restrictTo("user", "admin"), updateBranch)
-  .delete(restrictTo("user", "admin"), deleteBranch);
+router.use(restrictTo("owner", "admin"));
+router.route("/:id").get(getBranch).patch(updateBranch).delete(deleteBranch);
+router.route("/:id/archive").patch(archiveBranch);
 
 module.exports = router;

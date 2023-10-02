@@ -105,7 +105,6 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    // Groups of degree programs (ixtisas qrupu)
     relationship: {
       type: String,
       enum: ["father", "mother", "other"],
@@ -117,6 +116,7 @@ const userSchema = new mongoose.Schema(
       ],
     },
 
+    // Groups of degree programs (ixtisas qrupu)
     groupDP: Number,
     guardian: {
       type: mongoose.Schema.ObjectId,

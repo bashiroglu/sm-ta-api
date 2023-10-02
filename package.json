@@ -8,7 +8,8 @@
     "dev": "NODE_ENV=development nodemon server.js",
     "prod": "NODE_ENV=production nodemon server.js",
     "dev-w": "SET NODE_ENV=development & nodemon server.js",
-    "start:prod-w": "SET NODE_ENV=production & nodemon server.js"
+    "start:prod-w": "SET NODE_ENV=production & nodemon server.js",
+    "push": "git push && git push heroku-dev"
   },
   "author": "Abdulla Bashiroghlu",
   "license": "ISC",

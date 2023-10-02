@@ -4,6 +4,7 @@ const collectionName = "Package";
 
 const packageSchema = new mongoose.Schema(
   {
+    name: String,
     price: Number,
     subjects: {
       type: [

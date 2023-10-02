@@ -4,22 +4,21 @@ const {
   createTransaction,
   getTransaction,
   updateTransaction,
+  archiveTransaction,
   deleteTransaction,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect);
+router.use(protect, restrictTo("owner", "admin"));
 
-router
-  .route("/")
-  .get(getTransactions)
-  .post(restrictTo("user"), createTransaction);
+router.route("/").get(getTransactions).post(createTransaction);
 router
   .route("/:id")
   .get(getTransaction)
-  .patch(restrictTo("user", "admin"), updateTransaction)
-  .delete(restrictTo("user", "admin"), deleteTransaction);
+  .patch(updateTransaction)
+  .delete(deleteTransaction);
+router.route("/:id/archive").patch(archiveTransaction);
 
 module.exports = router;
