@@ -6,6 +6,7 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./helpers/handlerFactory");
 const { filterObj } = require("../utils/filterObject");
+const { employeeRoles, roles } = require("../utils/constants/enums");
 
 const multerStorage = multer.memoryStorage();
 
@@ -94,7 +95,12 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.createUserByRole = catchAsync(async (req, res, next) => {
-  req.body.roles = [req.params.role];
+  let rolesArr;
+  const role = req.params.role;
+  if (Object.values(employeeRoles).includes(role))
+    rolesArr = [roles.EMPLOYEE, role];
+  else rolesArr = [role];
+  req.body.roles = rolesArr;
   next();
 });
 

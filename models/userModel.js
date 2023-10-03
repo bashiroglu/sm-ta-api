@@ -4,6 +4,7 @@ const crypto = require("crypto");
 
 const { getCode } = require("../utils/app");
 const { uniqueArrValidator } = require("../utils/validators");
+const { roles } = require("../utils/constants/enums");
 
 const collectionName = "User";
 
@@ -81,8 +82,10 @@ const userSchema = new mongoose.Schema(
     roles: {
       type: [String],
       enum: {
-        values: ["student", "teacher", "manager", "owner", "guardian", "admin"],
-        message: `Roles have to be some of them: student, teacher, manager, owner, guardian, admin`,
+        values: Object.values(roles),
+        message: `Roles have to be some of them: ${Object.values(roles).join(
+          ", "
+        )}`,
       },
     },
     tags: {
