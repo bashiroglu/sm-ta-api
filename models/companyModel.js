@@ -11,11 +11,12 @@ const companySchema = new mongoose.Schema(
     code: String,
     balance: { type: Number, default: 0 },
 
-    branch: { type: Number, default: 0 },
-    group: { type: Number, default: 0 },
-    user: { type: Number, default: 0 },
-    exam: { type: Number, default: 0 },
     book: { type: Number, default: 0 },
+    branch: { type: Number, default: 0 },
+    exam: { type: Number, default: 0 },
+    group: { type: Number, default: 0 },
+    program: { type: Number, default: 0 },
+    user: { type: Number, default: 0 },
 
     active: Boolean,
     archived: Boolean,

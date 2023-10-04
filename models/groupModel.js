@@ -5,6 +5,11 @@ const collectionName = "Group";
 
 const groupSchema = new mongoose.Schema(
   {
+    code: {
+      type: String,
+      unique: true,
+    },
+
     branch: {
       type: mongoose.Schema.ObjectId,
       ref: "Branch",

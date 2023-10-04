@@ -1,21 +1,22 @@
 const mongoose = require("mongoose");
 const { getCode } = require("../utils/app");
 
-const collectionName = "Exam";
+const collectionName = "Category";
 
-const examSchema = new mongoose.Schema(
+const categorySchema = new mongoose.Schema(
   {
     code: {
       type: String,
       unique: true,
     },
 
-    name: {
-      type: String,
-      required: [true, "Name of exam is required."],
+    name: { type: String },
+    description: { type: String },
+    parent: {
+      type: mongoose.Schema.ObjectId,
+      ref: "maincategory",
+      required: [true, "createdBy must belong to a user"],
     },
-    date: String,
-    time: String,
 
     archived: Boolean,
     createdBy: {
@@ -30,15 +31,11 @@ const examSchema = new mongoose.Schema(
   }
 );
 
-examSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "EXAM", 8);
-});
-
-examSchema.pre(/^find/, function (next) {
+categorySchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const ExamModel = mongoose.model(collectionName, examSchema);
+const ExamModel = mongoose.model(collectionName, categorySchema);
 
 module.exports = ExamModel;

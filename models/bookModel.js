@@ -8,7 +8,6 @@ const bookSchema = new mongoose.Schema(
     code: {
       type: String,
       unique: true,
-      required: [true, "Code is required"],
     },
     barcodes: [
       {

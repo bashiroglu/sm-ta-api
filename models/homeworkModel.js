@@ -5,7 +5,7 @@ const collectionName = "Homework";
 
 const homeworkSchema = new mongoose.Schema(
   {
-    lessonId: {
+    lesson: {
       type: mongoose.Schema.ObjectId,
       ref: "Lesson",
       required: [true, "Homework must belong to lesson"],
