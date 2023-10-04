@@ -33,7 +33,7 @@ const companySchema = new mongoose.Schema(
 );
 
 companySchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ archived: { $ne: true } }).select("-balance");
   next();
 });
 

@@ -35,9 +35,10 @@ router.use(restrictTo("owner", "admin"));
 
 router.route("/").get(getUsers).post(createUser);
 router
-  .route("/:role")
+  .route("/role/:role")
   .get(getAllByRole, getUsers)
   .post(createUserByRole, createUser);
+
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 router.route("/:id/archive").patch(archiveUser);
 router.route("/:id/active").patch(activateUser, updateUser);
