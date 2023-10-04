@@ -82,10 +82,8 @@ const userSchema = new mongoose.Schema(
     roles: {
       type: [String],
       enum: {
-        values: Object.values(roles),
-        message: `Roles have to be some of them: ${Object.values(roles).join(
-          ", "
-        )}`,
+        values: roles.values(),
+        message: `Roles have to be some of them: ${roles.values().join(", ")}`,
       },
     },
     tags: {

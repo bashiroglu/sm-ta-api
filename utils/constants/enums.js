@@ -3,6 +3,9 @@ const employeeRoles = Object.freeze({
   EMPLOYEE: "employee",
   MANAGER: "manager",
   TEACHER: "teacher",
+  values() {
+    return Object.values(this).filter((v) => typeof v !== "function");
+  },
 });
 
 const roles = Object.freeze({
@@ -10,6 +13,11 @@ const roles = Object.freeze({
   ADMIN: "admin",
   STUDENT: "student",
   GUARDIAN: "guardian",
+  values() {
+    return Object.values(this).filter((v) => typeof v !== "function");
+  },
 });
+
+// roles.values = () => Object.values(roles);
 
 module.exports = { roles, employeeRoles };

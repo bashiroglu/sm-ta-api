@@ -95,11 +95,9 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.createUserByRole = catchAsync(async (req, res, next) => {
-  let rolesArr;
   const role = req.params.role;
-  if (Object.values(employeeRoles).includes(role))
-    rolesArr = [roles.EMPLOYEE, role];
-  else rolesArr = [role];
+  const rolesArr = [role];
+  if (employeeRoles.values().includes(role)) rolesArr.push(roles.EMPLOYEE);
   req.body.roles = rolesArr;
   next();
 });
