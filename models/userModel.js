@@ -155,11 +155,11 @@ const userSchema = new mongoose.Schema(
     },
 
     active: Boolean,
-    archived: Boolean,
     note: String,
     description: String,
     query: String,
 
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

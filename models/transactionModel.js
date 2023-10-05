@@ -43,7 +43,7 @@ const transactionSchema = new mongoose.Schema(
     },
     repeatingTransaction: {
       type: mongoose.Schema.ObjectId,
-      ref: "mg-repeatingTransaction",
+      ref: "Recurrence",
     },
     executed: Boolean,
 

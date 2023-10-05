@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { getCode } = require("../utils/app");
 
 const collectionName = "Inventory";
 
@@ -60,7 +61,7 @@ const inventorySchema = new mongoose.Schema(
 );
 
 inventorySchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "INBTR");
+  if (this.isNew) this.code = await getCode(next, collectionName, "INVTR");
 });
 
 inventorySchema.pre(/^find/, function (next) {

@@ -6,7 +6,7 @@ const {
   updateInventory,
   archiveInventory,
   deleteInventory,
-} = require("../controllers/programController");
+} = require("../controllers/inventoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();

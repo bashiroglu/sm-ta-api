@@ -23,6 +23,7 @@ const homeworkSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
     archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,

@@ -12,11 +12,6 @@ const categorySchema = new mongoose.Schema(
 
     name: { type: String },
     description: { type: String },
-    parent: {
-      type: mongoose.Schema.ObjectId,
-      ref: "maincategory",
-      required: [true, "createdBy must belong to a user"],
-    },
 
     archived: Boolean,
     createdBy: {
@@ -30,6 +25,10 @@ const categorySchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+categorySchema.pre("save", async function (next) {
+  if (this.isNew) this.code = await getCode(next, collectionName, "CTGRY");
+});
 
 categorySchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });

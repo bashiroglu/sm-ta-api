@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { getCode } = require("../utils/app");
 
 const collectionName = "Room";
 
@@ -20,6 +21,7 @@ const roomSchema = new mongoose.Schema(
     size: {
       type: Number,
     },
+
     archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,

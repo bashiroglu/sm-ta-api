@@ -28,6 +28,7 @@ const branchSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+
     archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,

@@ -34,7 +34,7 @@ const lessonSchema = new mongoose.Schema(
     topic: {
       type: String,
     },
-    isAdditional: Boolean,
+    isExtra: Boolean,
 
     archived: Boolean,
     createdBy: {

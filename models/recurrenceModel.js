@@ -4,13 +4,13 @@ const collectionName = "Recurrence";
 
 const recurrenceSchema = new mongoose.Schema(
   {
-    spender: {
+    payer: {
       type: mongoose.Schema.ObjectId,
-      ref: "mg-user",
+      ref: "User",
     },
-    recipient: {
+    payee: {
       type: mongoose.Schema.ObjectId,
-      ref: "mg-user",
+      ref: "User",
     },
     title: {
       type: String,
@@ -42,6 +42,7 @@ const recurrenceSchema = new mongoose.Schema(
       required: true,
     },
     active: Boolean,
+
     archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
