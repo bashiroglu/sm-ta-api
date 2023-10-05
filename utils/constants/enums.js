@@ -18,6 +18,4 @@ const roles = Object.freeze({
   },
 });
 
-// roles.values = () => Object.values(roles);
-
 module.exports = { roles, employeeRoles };
