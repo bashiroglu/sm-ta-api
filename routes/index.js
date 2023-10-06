@@ -15,7 +15,7 @@ const subjectRoutes = require("./subjectRoutes");
 const transactionRoutes = require("./transactionRoutes");
 const userRoutes = require("./userRoutes");
 
-router.use("/auths", authRoutes);
+router.use("/auth", authRoutes);
 router.use("/branches", branchRoutes);
 router.use("/company", companyRoutes);
 router.use("/exams", examRoutes);
