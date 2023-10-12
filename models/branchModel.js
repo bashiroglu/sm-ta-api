@@ -5,6 +5,11 @@ const collectionName = "Branch";
 
 const branchSchema = new mongoose.Schema(
   {
+    code: {
+      type: String,
+      unique: true,
+    },
+
     company: {
       type: mongoose.Schema.ObjectId,
       ref: "Company",

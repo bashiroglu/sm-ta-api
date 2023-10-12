@@ -12,6 +12,7 @@ const recurrenceRoutes = require("./recurrenceRoutes");
 const roomRoutes = require("./roomRoutes");
 const scoreRoutes = require("./scoreRoutes");
 const subjectRoutes = require("./subjectRoutes");
+const teacherRoutes = require("./teacherRoutes");
 const transactionRoutes = require("./transactionRoutes");
 const userRoutes = require("./userRoutes");
 
@@ -28,5 +29,7 @@ router.use("/scores", scoreRoutes);
 router.use("/subjects", subjectRoutes);
 router.use("/transactions", transactionRoutes);
 router.use("/users", userRoutes);
+
+router.use("/teacher", teacherRoutes);
 
 module.exports = router;

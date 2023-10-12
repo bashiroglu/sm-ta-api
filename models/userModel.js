@@ -198,6 +198,12 @@ userSchema.pre("save", async function (next) {
   return next();
 });
 
+userSchema.virtual("groups", {
+  ref: "Group",
+  foreignField: "students",
+  localField: "_id",
+});
+
 userSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();

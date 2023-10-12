@@ -1,6 +1,5 @@
 const catchAsync = require("../../utils/catchAsync");
 const filterObject = require("../../utils/filterObject");
-const createFilter = require("../../utils/createFilter");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
 
@@ -12,7 +11,8 @@ const throwPermissionError = (next) =>
 
 exports.deleteOne = (Model, { permissionSlug = null } = {}) =>
   catchAsync(async (req, res, next) => {
-    if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
+    if (permissionSlug && checkPermission(permissionSlug, req))
+      return throwPermissionError(next);
 
     const doc = await Model.findByIdAndDelete(req.params.id);
 
@@ -28,7 +28,8 @@ exports.deleteOne = (Model, { permissionSlug = null } = {}) =>
 
 exports.deleteMany = (Model, { permissionSlug = null } = {}) =>
   catchAsync(async (req, res, next) => {
-    if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
+    if (permissionSlug && checkPermission(permissionSlug, req))
+      return throwPermissionError(next);
 
     const { ids } = req.body;
     const doc = await Model.deleteMany({ _id: { $in: req.body.ids } });
@@ -45,7 +46,8 @@ exports.deleteMany = (Model, { permissionSlug = null } = {}) =>
 
 exports.archiveOne = (Model, { permissionSlug = null } = {}) =>
   catchAsync(async (req, res, next) => {
-    if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
+    if (permissionSlug && checkPermission(permissionSlug, req))
+      return throwPermissionError(next);
 
     const doc = await Model.findByIdAndUpdate(req.params.id, {
       archived: true,
@@ -66,7 +68,8 @@ exports.updateOne = (
   { permissionSlug = null, allowedFields = null } = {}
 ) =>
   catchAsync(async (req, res, next) => {
-    if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
+    if (permissionSlug && checkPermission(permissionSlug, req))
+      return throwPermissionError(next);
     const filteredBody = allowedFields
       ? filterObject(req.body, allowedFields)
       : req.body;
@@ -89,7 +92,8 @@ exports.updateOne = (
 
 exports.createOne = (Model, { permissionSlug = null, password = false } = {}) =>
   catchAsync(async (req, res, next) => {
-    if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
+    if (permissionSlug && checkPermission(permissionSlug, req))
+      return throwPermissionError(next);
 
     if (password)
       req.body.password = req.body.passwordConfirm =
@@ -104,9 +108,10 @@ exports.createOne = (Model, { permissionSlug = null, password = false } = {}) =>
     });
   });
 
-exports.getOne = (Model, { permissionSlug = null, popOptions = null } = {}) =>
+exports.getOne = (Model, { permissionSlug = null } = {}) =>
   catchAsync(async (req, res, next) => {
-    const query = Model.findById(req.params.id).populate(popOptions);
+    let query = Model.findById(req.params.id);
+    if (req.popOptions) query = query.populate(req.popOptions);
 
     const features = new APIFeatures(query, req.query).limitFields();
     const doc = await features.query;
@@ -121,12 +126,19 @@ exports.getOne = (Model, { permissionSlug = null, popOptions = null } = {}) =>
     });
   });
 
-exports.getAll = (Model, { permissionSlug = null, isFiltered = false } = {}) =>
+exports.getAll = (Model, { permissionSlug = null } = {}) =>
   catchAsync(async (req, res, next) => {
-    if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
+    if (permissionSlug && checkPermission(permissionSlug, req))
+      return throwPermissionError(next);
 
-    let filter = isFiltered ? createFilter(req) : {};
-    let features = new APIFeatures(Model.find(filter), req.query)
+    let filter;
+    if (req.ids) filter = { _id: { $in: req.ids } };
+
+    let query = Model.find(filter);
+
+    if (req.popOptions) query = query.populate(req.popOptions);
+
+    let features = new APIFeatures(query, req.query)
       .filter()
       .sort()
       .limitFields();
