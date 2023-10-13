@@ -37,11 +37,11 @@ const transactionSchema = new mongoose.Schema(
       default: "other",
       enum: ["other"],
     },
-    paymentMethod: {
+    method: {
       type: String,
       enum: ["online", "cash"],
     },
-    repeatingTransaction: {
+    recurrence: {
       type: mongoose.Schema.ObjectId,
       ref: "Recurrence",
     },
