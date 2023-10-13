@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const { getCode } = require("../utils/app");
 const { uniqueArrValidator } = require("../utils/validators");
 const { roles } = require("../utils/constants/enums");
+const { getFirstOfNextMonth } = require("../utils/helpers");
 
 const collectionName = "User";
 
@@ -110,6 +111,14 @@ const userSchema = new mongoose.Schema(
         linkedin: String,
       },
     },
+    nextPaymentDate: {
+      type: Date,
+      default: function () {
+        return this.roles.includes(roles.STUDENT)
+          ? getFirstOfNextMonth()
+          : undefined;
+      },
+    },
 
     relationship: {
       type: String,
@@ -132,9 +141,9 @@ const userSchema = new mongoose.Schema(
       type: Number,
       required: [
         function () {
-          return this.roles?.includes("student");
+          return this.roles?.includes(roles.STUDENT);
         },
-        "Student's school admittion year is required.",
+        "Student's school admittion year is requi`${roles.musts to the next payment date.d.",
       ],
     },
     packages: {

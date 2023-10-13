@@ -1,9 +1,47 @@
+const cron = require("node-cron");
+
 const UserModel = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./helpers/handlerFactory");
 const { filterObj } = require("../utils/filterObject");
 const { employeeRoles, roles } = require("../utils/constants/enums");
+
+cron.schedule("0 0 3 * *", async () => {
+  const today = new Date();
+  const overdueStudents = await UserModel.find({
+    roles: roles.STUDENT,
+    nextPaymentDate: { $lt: today },
+  })
+    .populate({ path: "guardian", select: "name phoneNumbers email" })
+    .populate({ path: "packages", select: "price" });
+
+  const guardians = overdueStudents.reduce((acc, curr) => {
+    if (!acc[curr.guardian.id])
+      acc[curr.guardian.id] = {
+        phoneNumbers: curr.guardian.phoneNumbers,
+        name: curr.guardian.name,
+        email: curr.guardian.email,
+        students: [],
+        total: 0,
+      };
+    acc[curr.guardian.id].students.push(curr.name);
+    acc[curr.guardian.id].total += curr.packages.reduce((a, c) => {
+      a += c.price;
+      return a;
+    }, 0);
+    return acc;
+  }, {});
+
+  guardians.forEach((guardian) => {
+    const smsText = `Dear, ${guardian.name}. Please pay the amount ${guardian.total}`;
+    if (process.env.NODE_ENV.trim() == "development") {
+      console.log(smsText);
+    } else {
+      // TODO: Send Email and SMS
+    }
+  });
+});
 
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
