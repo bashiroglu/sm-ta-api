@@ -1,13 +1,12 @@
 const mongoose = require("mongoose");
-const { getCode } = require("../utils/app");
 
-const collectionName = "Placement";
+const collectionName = "PlacementMeeting";
 
-const placementSchema = new mongoose.Schema(
+const placementMeetingSchema = new mongoose.Schema(
   {
-    branch: {
+    room: {
       type: mongoose.Schema.ObjectId,
-      ref: "Branch",
+      ref: "Room",
     },
     student: {
       type: mongoose.Schema.ObjectId,
@@ -32,15 +31,14 @@ const placementSchema = new mongoose.Schema(
   }
 );
 
-placementSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "BOOK", 8);
-});
-
-placementSchema.pre(/^find/, function (next) {
+placementMeetingSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const PlacementModel = mongoose.model(collectionName, placementSchema);
+const PlacementMeetingModel = mongoose.model(
+  collectionName,
+  placementMeetingSchema
+);
 
-module.exports = PlacementModel;
+module.exports = PlacementMeetingModel;
