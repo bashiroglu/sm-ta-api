@@ -21,8 +21,8 @@ const branchSchema = new mongoose.Schema(
       required: [true, "balance is required"],
     },
     address: {
-      type: Number,
-      required: [true, "address is required"],
+      type: String,
+      required: [true, "Address is required"],
     },
     manager: {
       type: mongoose.Schema.ObjectId,
