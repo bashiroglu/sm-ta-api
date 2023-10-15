@@ -1,5 +1,4 @@
 const express = require("express");
-const {} = require("../controllers/teacherController");
 const { protect, restrictTo } = require("../controllers/authController");
 const {
   getStudent,

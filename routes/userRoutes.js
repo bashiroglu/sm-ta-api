@@ -12,6 +12,7 @@ const {
   getMe,
   updateMe,
   deleteMe,
+  populateAbsents,
 } = require("./../controllers/userController");
 const {
   protect,
@@ -35,6 +36,8 @@ router
   .route("/role/:role")
   .get(getAllByRole, getUsers)
   .post(createUserByRole, createUser);
+
+router.route("/role/student/:id/absent").get(populateAbsents, getUser);
 
 router.route("/").get(getUsers).post(createUser);
 

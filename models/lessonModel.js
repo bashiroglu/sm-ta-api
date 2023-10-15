@@ -54,7 +54,10 @@ const lessonSchema = new mongoose.Schema(
 );
 
 lessonSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ archived: { $ne: true } }).populate({
+    path: "absent",
+    select: "name surname",
+  });
   next();
 });
 
