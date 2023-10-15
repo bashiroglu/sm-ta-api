@@ -231,6 +231,12 @@ userSchema.virtual("fullName").get(function () {
   return this.name + " " + this.surname;
 });
 
+userSchema.virtual("absents", {
+  ref: "Lesson",
+  foreignField: "absent",
+  localField: "_id",
+});
+
 const UserModel = mongoose.model(collectionName, userSchema);
 
 module.exports = UserModel;

@@ -81,3 +81,8 @@ exports.activateUser = catchAsync(async (req, res, next) => {
   req.body = { active: true };
   next();
 });
+
+exports.populateAbsents = catchAsync(async (req, res, next) => {
+  req.popOptions = { path: "absents", select: "absent group" };
+  next();
+});

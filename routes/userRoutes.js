@@ -14,6 +14,7 @@ const {
   resizeUserPhoto,
   uploadUserPhoto,
   deleteMe,
+  populateAbsents,
 } = require("./../controllers/userController");
 
 const {
@@ -38,6 +39,8 @@ router
   .route("/role/:role")
   .get(getAllByRole, getUsers)
   .post(createUserByRole, createUser);
+
+router.route("/role/student/:id/absent").get(populateAbsents, getUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 router.route("/:id/archive").patch(archiveUser);
