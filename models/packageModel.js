@@ -4,7 +4,11 @@ const collectionName = "Package";
 
 const packageSchema = new mongoose.Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     price: Number,
     // TODO: Apply uniqueness for all lists that needed
     subjects: {

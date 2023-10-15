@@ -17,6 +17,8 @@ const groupSchema = new mongoose.Schema(
     },
     name: {
       type: String,
+      required: true,
+      unique: true,
     },
     teachers: [
       {
@@ -33,6 +35,14 @@ const groupSchema = new mongoose.Schema(
     room: {
       type: mongoose.Schema.ObjectId,
       ref: "Room",
+    },
+    subjects: {
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "Subject",
+        },
+      ],
     },
 
     archived: Boolean,
