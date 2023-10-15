@@ -1,4 +1,6 @@
 const GroupModel = require("../models/groupModel");
+const UserModel = require("../models/userModel");
+const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getStudents = catchAsync(async (req, res, next) => {
@@ -31,8 +33,15 @@ exports.directGroups = catchAsync(async (req, res, next) => {
 });
 
 exports.directLessons = catchAsync(async (req, res, next) => {
-  const teacher = req.user.id;
-  if (req.method === "POST") req.body.teacher = teacher;
-  req.query.teacher = teacher;
+  const teacherId = req.user.id;
+  const teacher = await UserModel.findById(teacherId);
+  if (!teacher) return next(new AppError("Teacher not found!"));
+
+  if (req.method === "POST") {
+    req.body.teacher = teacher.id;
+    req.body.subject = teacher.subject;
+  }
+
+  req.query.teacher = teacherId;
   next();
 });
