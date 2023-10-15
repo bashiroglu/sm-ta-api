@@ -7,6 +7,7 @@ const subjectSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Name of subject is required."],
+      unique: true,
     },
     isTought: {
       type: Boolean,

@@ -6,6 +6,7 @@ const packageSchema = new mongoose.Schema(
   {
     name: String,
     price: Number,
+    // TODO: Apply uniqueness for all lists that needed
     subjects: {
       type: [
         {
