@@ -6,6 +6,7 @@ const packageSchema = new mongoose.Schema(
   {
     name: String,
     price: Number,
+    // TODO: Apply uniqueness for all lists that needed
     subjects: {
       type: [
         {
@@ -29,7 +30,7 @@ const packageSchema = new mongoose.Schema(
 );
 
 packageSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ archived: { $ne: true } }).populate("subjects");
   next();
 });
 
