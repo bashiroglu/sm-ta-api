@@ -30,6 +30,10 @@ const groupSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    room: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Room",
+    },
 
     archived: Boolean,
     createdBy: {

@@ -35,6 +35,10 @@ const lessonSchema = new mongoose.Schema(
       type: String,
     },
     isExtra: Boolean,
+    room: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Room",
+    },
 
     archived: Boolean,
     createdBy: {
