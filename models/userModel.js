@@ -255,6 +255,16 @@ userSchema.virtual("absents", {
   localField: "_id",
 });
 
+userSchema.virtual("presents", {
+  ref: "Lesson",
+  foreignField: "present",
+  localField: "_id",
+});
+
+userSchema.virtual("lessonCount").get(function () {
+  return this.presents?.length;
+});
+
 const UserModel = mongoose.model(collectionName, userSchema);
 
 module.exports = UserModel;

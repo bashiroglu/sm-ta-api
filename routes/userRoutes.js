@@ -9,10 +9,9 @@ const {
   deleteUser,
   archiveUser,
   activateUser,
-  getMe,
+  assignParamsId,
   updateMe,
-  deleteMe,
-  populateAbsents,
+  populateParticipations,
 } = require("./../controllers/userController");
 const {
   protect,
@@ -26,9 +25,12 @@ const router = express.Router();
 router.use(protect);
 
 router.patch("/updateMyPassword", updatePassword);
-router.get("/me", getMe, getUser);
-router.patch("/updateMe", updateMe);
-router.delete("/deleteMe", deleteMe);
+
+router
+  .route("/me")
+  .get(assignParamsId, getUser)
+  .patch(assignParamsId, updateMe, updateUser)
+  .delete(assignParamsId, archiveUser);
 
 router.use(restrictTo("owner", "admin", "manager"));
 
@@ -37,7 +39,13 @@ router
   .get(getAllByRole, getUsers)
   .post(createUserByRole, createUser);
 
-router.route("/role/student/:id/absent").get(populateAbsents, getUser);
+router
+  .route("/role/student/participation")
+  .get(getAllByRole, populateParticipations, getUsers);
+
+router
+  .route("/role/student/:id/participation")
+  .get(populateParticipations, getUser);
 
 router.route("/").get(getUsers).post(createUser);
 
