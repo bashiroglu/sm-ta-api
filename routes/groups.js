@@ -9,7 +9,7 @@ const {
   crudGroupLessons,
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
-const lessonRouter = require("./lessonRoutes");
+const lessonRouter = require("./lessons");
 
 const router = express.Router();
 

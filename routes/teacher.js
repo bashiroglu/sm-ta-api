@@ -7,8 +7,8 @@ const {
   directLessons,
 } = require("../controllers/teacherController");
 const { getUsers, getUser } = require("../controllers/userController");
-const groupRouter = require("./groupRoutes");
-const lessonRouter = require("./lessonRoutes");
+const groupRouter = require("./groups");
+const lessonRouter = require("./lessons");
 
 const router = express.Router();
 

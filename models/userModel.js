@@ -207,12 +207,6 @@ userSchema.pre("save", async function (next) {
   return next();
 });
 
-userSchema.virtual("groups", {
-  ref: "Group",
-  foreignField: "students",
-  localField: "_id",
-});
-
 userSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
@@ -249,6 +243,12 @@ userSchema.virtual("fullName").get(function () {
   return this.name + " " + this.surname;
 });
 
+userSchema.virtual("groups", {
+  ref: "Group",
+  foreignField: "students",
+  localField: "_id",
+});
+
 userSchema.virtual("absents", {
   ref: "Lesson",
   foreignField: "absent",
@@ -258,6 +258,12 @@ userSchema.virtual("absents", {
 userSchema.virtual("presents", {
   ref: "Lesson",
   foreignField: "present",
+  localField: "_id",
+});
+
+userSchema.virtual("feePayments", {
+  ref: "FeePayment",
+  foreignField: "student",
   localField: "_id",
 });
 

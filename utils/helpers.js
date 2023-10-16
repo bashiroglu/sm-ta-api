@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const getFirstOfNextMonth = () => {
   const currentDate = new Date();
   const nextMonth = new Date(currentDate);
@@ -15,4 +17,14 @@ const filterObject = (obj, ...allowedFields) => {
   return newObj;
 };
 
-module.exports = { getFirstOfNextMonth, filterObject };
+const getDirFileNames = (dirPath) =>
+  fs.readdirSync(dirPath, (err, files) => {
+    if (err) {
+      console.error("Error reading directory:", err);
+      return;
+    }
+
+    return files.filter((file) => fs.statSync(dirPath + "/" + file).isFile());
+  });
+
+module.exports = { getDirFileNames, getFirstOfNextMonth, filterObject };
