@@ -1,48 +1,14 @@
 const express = require("express");
+const { getDirFileNames } = require("../utils/helpers");
+
 const router = express.Router();
 
-const authRoutes = require("./authRoutes");
-const bookRoutes = require("./bookRoutes");
-const branchRoutes = require("./branchRoutes");
-const categoryRoutes = require("./categoryRoutes");
-const companyRoutes = require("./companyRoutes");
-const examRoutes = require("./examRoutes");
-const groupRoutes = require("./groupRoutes");
-const homeworkRoutes = require("./homeworkRoutes");
-const hwtaskRoutes = require("./hwtaskRoutes");
-const inventoryRoutes = require("./inventoryRoutes");
-const lessonRoutes = require("./lessonRoutes");
-const programRoutes = require("./programRoutes");
-const packageRoutes = require("./packageRoutes");
-const placementMeetingResultRoutes = require("./placementMeetingResultRoutes");
-const placementMeetingRoutes = require("./placementMeetingRoutes");
-const recurrenceRoutes = require("./recurrenceRoutes");
-const roomRoutes = require("./roomRoutes");
-const scoreRoutes = require("./scoreRoutes");
-const subjectRoutes = require("./subjectRoutes");
-const transactionRoutes = require("./transactionRoutes");
-const userRoutes = require("./userRoutes");
-
-router.use("/auth", authRoutes);
-router.use("/books", bookRoutes);
-router.use("/branches", branchRoutes);
-router.use("/categories", categoryRoutes);
-router.use("/company", companyRoutes);
-router.use("/exams", examRoutes);
-router.use("/groups", groupRoutes);
-router.use("/homeworks", homeworkRoutes);
-router.use("/hwtasks", hwtaskRoutes);
-router.use("/inventories", inventoryRoutes);
-router.use("/lessons", lessonRoutes);
-router.use("/packages", packageRoutes);
-router.use("/placementMeetings", placementMeetingRoutes);
-router.use("/placementMeetingResults", placementMeetingResultRoutes);
-router.use("/programs", programRoutes);
-router.use("/recurrences", recurrenceRoutes);
-router.use("/rooms", roomRoutes);
-router.use("/scores", scoreRoutes);
-router.use("/subjects", subjectRoutes);
-router.use("/transactions", transactionRoutes);
-router.use("/users", userRoutes);
+const routes = getDirFileNames("./routes");
+routes.forEach((name) => {
+  if (!name.startsWith("index")) {
+    name = name.replace(".js", "");
+    router.use(`/${name}`, require(`./${name}`));
+  }
+});
 
 module.exports = router;

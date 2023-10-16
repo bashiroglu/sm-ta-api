@@ -9,13 +9,13 @@ const {
   deleteUser,
   archiveUser,
   activateUser,
-  getMe,
+  assignParamsId,
   updateMe,
   resizeUserPhoto,
   uploadUserPhoto,
   deleteMe,
-  populateAbsents,
-} = require("./../controllers/userController");
+  populateParticipations,
+} = require("../controllers/userController");
 
 const {
   protect,
@@ -28,9 +28,11 @@ const router = express.Router();
 // Protect all routes after this middleware
 router.use(protect);
 router.patch("/updateMyPassword", updatePassword);
-router.get("/me", getMe, getUser);
-router.patch("/updateMe", updateMe);
-router.delete("/deleteMe", deleteMe);
+router
+  .route("/me")
+  .get(assignParamsId, getUser)
+  .patch(assignParamsId, updateMe, updateUser)
+  .delete(assignParamsId, deleteMe);
 
 router.use(restrictTo("owner", "admin"));
 
@@ -40,7 +42,13 @@ router
   .get(getAllByRole, getUsers)
   .post(createUserByRole, createUser);
 
-router.route("/role/student/:id/absent").get(populateAbsents, getUser);
+router
+  .route("/role/student/participation")
+  .get(populateParticipations, getUsers);
+
+router
+  .route("/role/student/:id/participation")
+  .get(getAllByRole, populateParticipations, getUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 router.route("/:id/archive").patch(archiveUser);

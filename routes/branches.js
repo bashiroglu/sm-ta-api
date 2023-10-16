@@ -6,7 +6,7 @@ const {
   updateBranch,
   archiveBranch,
   deleteBranch,
-} = require("./../controllers/branchController");
+} = require("../controllers/branchController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
