@@ -1,5 +1,5 @@
 const catchAsync = require("../../utils/catchAsync");
-const filterObject = require("../../utils/filterObject");
+const { filterObject } = require("../../utils/helpers");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
 
