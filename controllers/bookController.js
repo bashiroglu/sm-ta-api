@@ -1,5 +1,5 @@
 const factory = require("./helpers/handlerFactory");
-const BookModel = require("../models/bookModel");
+const { BookModel } = require("../models");
 
 exports.getBooks = factory.getAll(BookModel);
 exports.getBook = factory.getOne(BookModel);
