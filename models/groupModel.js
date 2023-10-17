@@ -36,13 +36,9 @@ const groupSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Room",
     },
-    subjects: {
-      type: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "Subject",
-        },
-      ],
+    program: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Program",
     },
 
     archived: Boolean,

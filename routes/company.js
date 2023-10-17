@@ -13,7 +13,10 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route("/").get(getCompanies).post(restrictTo("owner"), createCompany);
+router
+  .route("/")
+  .get(restrictTo("dev"), getCompanies)
+  .post(restrictTo("owner"), createCompany);
 
 router.use(restrictTo("owner", "admin"));
 router.route("/:id").get(getCompany).patch(updateCompany).delete(deleteCompany);

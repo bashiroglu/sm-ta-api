@@ -15,6 +15,7 @@ const {
   uploadUserPhoto,
   deleteMe,
   populateParticipations,
+  assignPassword,
 } = require("../controllers/userController");
 
 const {
@@ -36,11 +37,11 @@ router
 
 router.use(restrictTo("owner", "admin"));
 
-router.route("/").get(getUsers).post(createUser);
+router.route("/").get(getUsers).post(assignPassword, createUser);
 router
   .route("/role/:role")
   .get(getAllByRole, getUsers)
-  .post(createUserByRole, createUser);
+  .post(createUserByRole, assignPassword, createUser);
 
 router
   .route("/role/student/participation")

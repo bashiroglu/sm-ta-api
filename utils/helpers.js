@@ -10,4 +10,12 @@ const getDirFileNames = (dirPath) =>
     return files.filter((file) => fs.statSync(dirPath + "/" + file).isFile());
   });
 
-module.exports = { getDirFileNames };
+const filterObject = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
+
+module.exports = { getDirFileNames, filterObject };

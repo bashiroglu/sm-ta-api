@@ -2,7 +2,7 @@ const UserModel = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./helpers/handlerFactory");
-const { filterObj } = require("../utils/filterObject");
+const { filterObject } = require("../utils/helpers");
 
 exports.assignParamsId = (req, res, next) => {
   req.params.id = req.user.id;
@@ -21,7 +21,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
 
   // 2) Filtered out unwanted fields names that are not allowed to be updated
-  req.body = filterObj(
+  req.body = filterObject(
     req.body,
     "name",
     "surname",
@@ -55,7 +55,7 @@ exports.getAllByRole = (req, res, next) => {
   next();
 };
 
-exports.createUser = factory.createOne(UserModel, { password: true });
+exports.createUser = factory.createOne(UserModel);
 exports.getUser = factory.getOne(UserModel);
 exports.getUsers = factory.getAll(UserModel);
 
@@ -80,5 +80,11 @@ exports.populateParticipations = catchAsync(async (req, res, next) => {
       },
     },
   ];
+  next();
+});
+
+exports.assignPassword = catchAsync(async (req, res, next) => {
+  req.body.password = req.body.passwordConfirm =
+    process.env.DEFAULT_USER_PASSWORD;
   next();
 });
