@@ -233,13 +233,19 @@ userSchema.virtual("fullName").get(function () {
 
 userSchema.virtual("absents", {
   ref: "Lesson",
-  foreignField: "absent group",
+  foreignField: "absent",
   localField: "_id",
 });
 
 userSchema.virtual("presents", {
   ref: "Lesson",
-  foreignField: "present group",
+  foreignField: "present",
+  localField: "_id",
+});
+
+userSchema.virtual("branches", {
+  ref: "Branch",
+  foreignField: "managers",
   localField: "_id",
 });
 

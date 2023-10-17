@@ -18,15 +18,12 @@ const branchSchema = new mongoose.Schema(
     name: String,
     balance: {
       type: Number,
+      default: 0,
       required: [true, "balance is required"],
     },
     address: {
       type: String,
       required: [true, "address is required"],
-    },
-    chiefManager: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
     },
     managers: [
       {
