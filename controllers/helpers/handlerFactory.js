@@ -104,9 +104,10 @@ exports.createOne = (Model, { permissionSlug = null, password = false } = {}) =>
     });
   });
 
-exports.getOne = (Model, { permissionSlug = null, popOptions = null } = {}) =>
+exports.getOne = (Model, { permissionSlug = null } = {}) =>
   catchAsync(async (req, res, next) => {
-    const query = Model.findById(req.params.id).populate(popOptions);
+    let query = Model.findById(req.params.id);
+    if (req.popOptions) query = query.populate(req.popOptions);
 
     const features = new APIFeatures(query, req.query).limitFields();
     const doc = await features.query;
@@ -126,7 +127,10 @@ exports.getAll = (Model, { permissionSlug = null, isFiltered = false } = {}) =>
     if (checkPermission(permissionSlug, req)) return throwPermissionError(next);
 
     let filter = isFiltered ? createFilter(req) : {};
-    let features = new APIFeatures(Model.find(filter), req.query)
+    let query = Model.find(filter);
+    if (req.popOptions) query = query.populate(req.popOptions);
+
+    let features = new APIFeatures(query, req.query)
       .filter()
       .sort()
       .limitFields();

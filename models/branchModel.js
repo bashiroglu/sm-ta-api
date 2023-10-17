@@ -24,10 +24,16 @@ const branchSchema = new mongoose.Schema(
       type: String,
       required: [true, "address is required"],
     },
-    manager: {
+    chiefManager: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    managers: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
 
     archived: Boolean,
     createdBy: {
