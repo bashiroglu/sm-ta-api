@@ -12,6 +12,7 @@ const {
   assignParamsId,
   updateMe,
   populateParticipations,
+  assignPassword,
 } = require("./../controllers/userController");
 const {
   protect,
@@ -37,7 +38,7 @@ router.use(restrictTo("owner", "admin", "manager"));
 router
   .route("/role/:role")
   .get(getAllByRole, getUsers)
-  .post(createUserByRole, createUser);
+  .post(createUserByRole, assignPassword, createUser);
 
 router
   .route("/role/student/participation")
@@ -47,7 +48,7 @@ router
   .route("/role/student/:id/participation")
   .get(populateParticipations, getUser);
 
-router.route("/").get(getUsers).post(createUser);
+router.route("/").get(getUsers).post(assignPassword, createUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 router.route("/:id/archive").patch(archiveUser);

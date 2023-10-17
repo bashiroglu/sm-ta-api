@@ -5,6 +5,10 @@ const collectionName = "Exam";
 
 const examSchema = new mongoose.Schema(
   {
+    code: {
+      type: String,
+      unique: true,
+    },
     name: {
       type: String,
       required: [true, "Name of exam is required."],

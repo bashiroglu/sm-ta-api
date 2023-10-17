@@ -9,10 +9,10 @@ const getFirstOfNextMonth = () => {
   return nextMonth;
 };
 
-const filterObject = (obj, ...allowedFields) => {
+const filterObject = (obj, ...fields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
+    if (fields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
 };
