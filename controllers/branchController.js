@@ -1,5 +1,6 @@
 const factory = require("./helpers/handlerFactory");
 const BranchModel = require("../models/branchModel");
+const catchAsync = require("../utils/catchAsync");
 
 exports.getBranches = factory.getAll(BranchModel);
 exports.getBranch = factory.getOne(BranchModel);

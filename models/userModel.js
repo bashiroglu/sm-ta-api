@@ -58,6 +58,10 @@ const userSchema = new mongoose.Schema(
       default:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
+    permissions: {
+      type: [String],
+      default: [],
+    },
 
     password: {
       type: String,
@@ -93,10 +97,6 @@ const userSchema = new mongoose.Schema(
       },
     },
     tags: {
-      type: [String],
-      default: [],
-    },
-    permissions: {
       type: [String],
       default: [],
     },
@@ -253,22 +253,6 @@ userSchema.virtual("absents", {
   ref: "Lesson",
   foreignField: "absent",
   localField: "_id",
-});
-
-userSchema.virtual("presents", {
-  ref: "Lesson",
-  foreignField: "present",
-  localField: "_id",
-});
-
-userSchema.virtual("feePayments", {
-  ref: "FeePayment",
-  foreignField: "student",
-  localField: "_id",
-});
-
-userSchema.virtual("lessonCount").get(function () {
-  return this.presents?.length;
 });
 
 const UserModel = mongoose.model(collectionName, userSchema);
