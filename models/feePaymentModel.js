@@ -9,9 +9,9 @@ const feePaymentSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    package: {
+    program: {
       type: mongoose.Schema.ObjectId,
-      ref: "Package",
+      ref: "Program",
     },
     amount: {
       type: Number,

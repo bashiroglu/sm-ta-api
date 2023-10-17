@@ -136,11 +136,11 @@ const userSchema = new mongoose.Schema(
         "Student's school admittion year is required.",
       ],
     },
-    packages: {
+    programs: {
       type: [
         {
           type: mongoose.Schema.ObjectId,
-          ref: "Package",
+          ref: "Program",
         },
       ],
     },
@@ -233,13 +233,13 @@ userSchema.virtual("fullName").get(function () {
 
 userSchema.virtual("absents", {
   ref: "Lesson",
-  foreignField: "absent",
+  foreignField: "absent group",
   localField: "_id",
 });
 
 userSchema.virtual("presents", {
   ref: "Lesson",
-  foreignField: "present",
+  foreignField: "present group",
   localField: "_id",
 });
 
