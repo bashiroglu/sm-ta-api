@@ -25,10 +25,6 @@ const branchSchema = new mongoose.Schema(
       type: String,
       required: [true, "Address is required"],
     },
-    chiefManager: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
     managers: [
       {
         type: mongoose.Schema.ObjectId,
@@ -49,19 +45,14 @@ const branchSchema = new mongoose.Schema(
 );
 
 branchSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "BRNC");
+  if (this.isNew) this.code = await getCode(next, collectionName, "BRC");
 });
 
 branchSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } })
-    .populate({
-      path: "chiefManager",
-      select: "name surname fullname",
-    })
-    .populate({
-      path: "managers",
-      select: "name surname fullname",
-    });
+  this.find({ archived: { $ne: true } }).populate({
+    path: "managers",
+    select: "name surname fullname",
+  });
   next();
 });
 

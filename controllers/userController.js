@@ -66,7 +66,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     "surname",
     "fatherName",
     "phoneNumbers",
-    "email",
     "dateOfBirth",
     "profileImage"
   );
@@ -88,7 +87,7 @@ exports.getAllByRole = (req, res, next) => {
   next();
 };
 
-exports.createUser = factory.createOne(UserModel, { password: true });
+exports.createUser = factory.createOne(UserModel);
 exports.getUser = factory.getOne(UserModel);
 exports.getUsers = factory.getAll(UserModel);
 
@@ -103,8 +102,23 @@ exports.activateUser = catchAsync(async (req, res, next) => {
 
 exports.populateParticipations = catchAsync(async (req, res, next) => {
   req.popOptions = [
-    { path: "absents", select: "group" },
-    { path: "presents", select: "_id group" },
+    {
+      path: "packages",
+    },
+    {
+      path: "absents",
+      select: "group",
+    },
+    {
+      path: "presents",
+      select: "_id group",
+    },
   ];
+  next();
+});
+
+exports.assignPassword = catchAsync(async (req, res, next) => {
+  req.body.password = req.body.passwordConfirm =
+    process.env.DEFAULT_USER_PASSWORD;
   next();
 });
