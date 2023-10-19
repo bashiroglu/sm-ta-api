@@ -4,15 +4,8 @@ const createFilter = require("../../utils/createFilter");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
 
-const checkPermission = (req, next) => {
-  if (req.slug && !req.user.permissions.includes(req.slug))
-    next(new AppError("You do not have permission to finish this action", 403));
-};
-
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
@@ -27,8 +20,6 @@ exports.deleteOne = (Model) =>
 
 exports.deleteMany = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     const doc = await Model.deleteMany({ _id: { $in: req.body.ids } });
 
     if (!doc) {
@@ -43,8 +34,6 @@ exports.deleteMany = (Model) =>
 
 exports.archiveOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     const doc = await Model.findByIdAndUpdate(req.params.id, {
       archived: true,
     });
@@ -61,7 +50,6 @@ exports.archiveOne = (Model) =>
 
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
     const filteredBody = allowedFields
       ? filterObject(req.body, allowedFields)
       : req.body;
@@ -84,8 +72,6 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     req.body.createdBy = req.user.id;
 
     const doc = await Model.create(req.body);
@@ -116,8 +102,6 @@ exports.getOne = (Model) =>
 
 exports.getAll = (Model, { isFiltered = false } = {}) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     let filter = isFiltered ? createFilter(req) : {};
     let query = Model.find(filter);
     if (req.popOptions) query = query.populate(req.popOptions);

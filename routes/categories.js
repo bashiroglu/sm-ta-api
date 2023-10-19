@@ -11,10 +11,10 @@ const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect, restrictTo("owner"));
+router.use(protect, restrictTo("roles", "owner"));
 router.route("/").get(getCategories).post(createCategory);
 
-router.use(restrictTo("owner", "admin"));
+router.use(restrictTo("roles", "owner", "admin"));
 router
   .route("/:id")
   .get(getCategory)

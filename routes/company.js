@@ -15,10 +15,10 @@ router.use(protect);
 
 router
   .route("/")
-  .get(restrictTo("dev"), getCompanies)
-  .post(restrictTo("owner"), createCompany);
+  .get(restrictTo("roles", "dev"), getCompanies)
+  .post(restrictTo("roles", "owner"), createCompany);
 
-router.use(restrictTo("owner", "admin"));
+router.use(restrictTo("roles", "owner", "admin"));
 router.route("/:id").get(getCompany).patch(updateCompany).delete(deleteCompany);
 router.route("/:id/archive").patch(archiveCompany);
 

@@ -12,7 +12,7 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
-router.use(protect, localRestrictTo, restrictTo("owner", "admin"));
+router.use(protect, localRestrictTo, restrictTo("roles", "owner", "admin"));
 router.route("/").get(getBranches).post(assignCompany, createBranch);
 router.route("/:id").get(getBranch).patch(updateBranch).delete(deleteBranch);
 router.route("/:id/archive").patch(archiveBranch);
