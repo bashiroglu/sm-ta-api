@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.use(protect);
 
-router.use(restrictTo("owner", "admin"));
+router.use(restrictTo("roles", "owner", "admin"));
 
 router.route("/").get(getSubjects).post(createSubject);
 router.route("/:id").get(getSubject).patch(updateSubject).delete(deleteSubject);

@@ -11,7 +11,7 @@ const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect, restrictTo("owner", "admin"));
+router.use(protect, restrictTo("roles", "owner", "admin"));
 
 router.route("/").get(getTransactions).post(createTransaction);
 router

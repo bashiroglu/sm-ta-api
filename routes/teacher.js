@@ -12,7 +12,7 @@ const lessonRouter = require("./lessons");
 
 const router = express.Router();
 
-router.use(protect, restrictTo("teacher"));
+router.use(protect, restrictTo("roles", "teacher"));
 
 router.use("/groups", directGroups, groupRouter);
 router.use("/lessons", directLessons, lessonRouter);

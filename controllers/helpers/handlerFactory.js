@@ -3,15 +3,8 @@ const { filterObject } = require("../../utils/helpers");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
 
-const checkPermission = (req, next) => {
-  if (req.slug && !req.user?.permissions.includes(req.slug))
-    next(new AppError("You do not have permission to finish this action", 403));
-};
-
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
@@ -26,8 +19,6 @@ exports.deleteOne = (Model) =>
 
 exports.deleteMany = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     const { ids } = req.body;
     const doc = await Model.deleteMany({ _id: { $in: req.body.ids } });
 
@@ -43,8 +34,6 @@ exports.deleteMany = (Model) =>
 
 exports.archiveOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     const doc = await Model.findByIdAndUpdate(req.params.id, {
       archived: true,
     });
@@ -61,7 +50,6 @@ exports.archiveOne = (Model) =>
 
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
     const filteredBody = req.allowedFields
       ? filterObject(req.body, ...req.allowedFields)
       : req.body;
@@ -84,8 +72,6 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     if (password)
       req.body.password = req.body.passwordConfirm =
         process.env.DEFAULT_USER_PASSWORD;
@@ -119,8 +105,6 @@ exports.getOne = (Model) =>
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    checkPermission(req, next);
-
     let filter;
     if (req.ids) filter = { _id: { $in: req.ids } };
 

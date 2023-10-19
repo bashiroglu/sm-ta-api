@@ -224,13 +224,12 @@ exports.isLoggedIn = async (req, res, next) => {
   next();
 };
 
-exports.restrictTo = (...roles) => {
-  return (req, res, next) => {
-    return req.isAllowed ||
-      roles.filter((v) => req.user.roles.includes(v)).length
-      ? next()
-      : next(new AppError("You are not authorized to finish this action", 403));
-  };
+exports.restrictTo = (field, ...items) => {
+  return (req, res, next) =>
+    // checks if there is intersection
+    !items.filter((v) => req.user[field].includes(v)).length
+      ? next(new AppError("You are not authorized to finish this action", 403))
+      : next();
 };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {

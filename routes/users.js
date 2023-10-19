@@ -33,7 +33,7 @@ router
   .patch(assignParamsId, updateMe, updateUser)
   .delete(assignParamsId, archiveUser);
 
-router.use(restrictTo("owner", "admin", "manager"));
+router.use(restrictTo("roles", "owner", "admin", "manager"));
 
 router
   .route("/role/:role")
