@@ -72,9 +72,6 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    if (password)
-      req.body.password = req.body.passwordConfirm =
-        process.env.DEFAULT_USER_PASSWORD;
     req.body.createdBy = req.user.id;
 
     const doc = await Model.create(req.body);
