@@ -6,7 +6,7 @@ const handleCastError = (err) => {
 };
 const handleDublicatedFieldErrors = (err) => {
   const value = err.message.match(/dup key:.*:/)[0];
-  const message = `Daxil etmэk istэdiyiniz "${value
+  const message = `Daxil etmək istədiyiniz "${value
     .split("{")
     .at(1)
     .split(":")
