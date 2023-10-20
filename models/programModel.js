@@ -24,6 +24,7 @@ const programSchema = new mongoose.Schema(
     lessonsDuration: {
       type: Number,
     },
+    maxDefaultParticipantCount: Number,
 
     name: String,
     price: Number,
