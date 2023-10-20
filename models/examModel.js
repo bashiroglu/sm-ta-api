@@ -13,8 +13,7 @@ const examSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name of exam is required."],
     },
-    date: String,
-    time: String,
+    date: Date,
 
     archived: Boolean,
     createdBy: {
