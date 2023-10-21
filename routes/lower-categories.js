@@ -6,6 +6,7 @@ const {
   updateLowerCategory,
   archiveLowerCategory,
   deleteLowerCategory,
+  queryByUpper,
 } = require("../controllers/lowerCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 
@@ -19,5 +20,6 @@ router
   .patch(updateLowerCategory)
   .delete(deleteLowerCategory);
 router.route("/:id/archive").patch(archiveLowerCategory);
+router.route("/upper/:upperId").get(queryByUpper, getLowerCategories);
 
 module.exports = router;

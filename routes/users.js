@@ -35,7 +35,7 @@ router
   .patch(assignParamsId, updateMe, updateUser)
   .delete(assignParamsId, deleteMe);
 
-router.use(restrictTo("roles", "owner", "admin"));
+router.use(restrictTo("roles", "owner", "admin", "manager"));
 
 router.route("/").get(getUsers).post(assignPassword, createUser);
 router
