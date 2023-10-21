@@ -1,4 +1,5 @@
 const factory = require("./helpers/handlerFactory");
+const catchAsync = require("../utils/catchAsync");
 const TransactionModel = require("../models/transactionModel");
 
 exports.getTransactions = factory.getAll(TransactionModel);
