@@ -5,17 +5,11 @@ const collectionName = "Transaction";
 
 const transactionSchema = new mongoose.Schema(
   {
-    // remitter: {
-    payer: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-      required: true,
+    code: {
+      type: String,
+      unique: true,
     },
-    // recipient: {
-    payee: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
+
     title: {
       type: String,
       required: true,
@@ -27,20 +21,27 @@ const transactionSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    type: {
-      type: String,
-      enum: ["income", "expense"],
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: "LowerCategory",
+    },
+    isIncome: {
+      type: Boolean,
       required: true,
     },
-    category: {
+    schoolBalanceAfter: Number,
+    schoolBalanceBefore: Number,
+    realDate: Date,
+    paymentMethod: {
       type: String,
-      default: "other",
-      enum: ["other"],
+      enum: ["cash", "online"],
     },
-    method: {
-      type: String,
-      enum: ["online", "cash"],
+    hidden: Boolean,
+    relatedTo: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
     },
+
     recurrence: {
       type: mongoose.Schema.ObjectId,
       ref: "Recurrence",

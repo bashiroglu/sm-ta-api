@@ -6,14 +6,18 @@ const {
   updateTransaction,
   archiveTransaction,
   deleteTransaction,
+  changeBalanceCreateTransaction,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect, restrictTo("roles", "owner", "admin"));
+router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
 
-router.route("/").get(getTransactions).post(createTransaction);
+router
+  .route("/")
+  .get(getTransactions)
+  .post(changeBalanceCreateTransaction, createTransaction);
 router
   .route("/:id")
   .get(getTransaction)
