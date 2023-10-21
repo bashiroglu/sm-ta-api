@@ -15,6 +15,7 @@ const companySchema = new mongoose.Schema(
     group: { type: Number, default: 0 },
     user: { type: Number, default: 0 },
     exam: { type: Number, default: 0 },
+    transaction: { type: Number, default: 0 },
 
     active: Boolean,
     archived: Boolean,

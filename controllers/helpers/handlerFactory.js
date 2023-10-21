@@ -72,11 +72,9 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    if (!req.doc) {
-      req.body.createdBy = req.user.id;
+    if (!req.doc)
+      req.doc = await Model.create({ ...req.body, createdBy: req.user.id });
 
-      req.doc = await Model.create(req.body);
-    }
     res.status(201).json({
       status: "success",
       data: req.doc,
