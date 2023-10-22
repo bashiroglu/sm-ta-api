@@ -14,11 +14,11 @@ exports.assignCompany = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.localRestrictTo = catchAsync(async (req, res, next) => {
-  const id = req.url.replace("/", "");
-  req.isAllowed =
-    req.user.roles.includes("manager") &&
-    req.method === "GET" &&
-    req.user.branches.map((b) => "" + b.id).includes(id);
-  next();
-});
+// exports.localRestrictTo = catchAsync(async (req, res, next) => {
+//   const id = req.url.replace("/", "");
+//   req.isAllowed =
+//     req.user.roles.includes("manager") &&
+//     req.method === "GET" &&
+//     req.user.branches.map((b) => "" + b.id).includes(id);
+//   next();
+// });
