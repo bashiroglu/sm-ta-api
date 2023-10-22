@@ -255,6 +255,12 @@ userSchema.virtual("absents", {
   localField: "_id",
 });
 
+userSchema.virtual("branches", {
+  ref: "Branch",
+  foreignField: "managers",
+  localField: "_id",
+});
+
 const UserModel = mongoose.model(collectionName, userSchema);
 
 module.exports = UserModel;

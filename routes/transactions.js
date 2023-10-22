@@ -7,6 +7,7 @@ const {
   archiveTransaction,
   deleteTransaction,
   changeBalanceCreateTransaction,
+  checkBranch,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 
@@ -17,7 +18,7 @@ router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
 router
   .route("/")
   .get(getTransactions)
-  .post(changeBalanceCreateTransaction, createTransaction);
+  .post(checkBranch, changeBalanceCreateTransaction, createTransaction);
 router
   .route("/:id")
   .get(getTransaction)
