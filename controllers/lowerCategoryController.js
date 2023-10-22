@@ -10,6 +10,11 @@ exports.archiveLowerCategory = factory.archiveOne(LowerCategoryModel);
 exports.deleteLowerCategory = factory.deleteOne(LowerCategoryModel);
 
 exports.queryByUpper = catchAsync(async (req, res, next) => {
-  req.query = { ...req.query, upperCategory: req.params.upperId };
+  req.query.upperCategory = req.params.upperId;
+  next();
+});
+
+exports.sortDescending = catchAsync(async (req, res, next) => {
+  req.query.sort = "-priority";
   next();
 });
