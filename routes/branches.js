@@ -7,13 +7,12 @@ const {
   archiveBranch,
   deleteBranch,
   assignCompany,
-  localRestrictTo,
 } = require("./../controllers/branchController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect, localRestrictTo, restrictTo("roles", "owner", "admin"));
+router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
 router.route("/").get(getBranches).post(assignCompany, createBranch);
 router.use(restrictTo("roles", "owner", "admin"));
 router.route("/:id").get(getBranch).patch(updateBranch).delete(deleteBranch);

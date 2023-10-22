@@ -5,7 +5,8 @@ const catchAsync = require("../utils/catchAsync");
 
 const AppError = require("../utils/appError");
 const TransactionModel = require("../models/transactionModel");
-const CompanyModel = require("../models/companyModel");
+const BranchModel = require("../models/branchModel");
+const LowerCategory = require("../models/lowerCategoryModel");
 
 exports.getTransactions = factory.getAll(TransactionModel);
 exports.getTransaction = factory.getOne(TransactionModel);
@@ -19,16 +20,28 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const { amount, isIncome } = req.body;
-    const company = await CompanyModel.findById(process.env.COMPANY_ID);
-    if (!company) throw Error("Company not found");
+    let { amount, isIncome, branch: branchId, category } = req.body;
+    amount = amount * (isIncome || -1);
+    const branch = await BranchModel.findByIdAndUpdate(
+      branchId,
+      { $inc: { balance: amount } },
+      { session }
+    );
+    await LowerCategory.findByIdAndUpdate(
+      category,
+      { $inc: { priority: 1 } },
+      { session }
+    );
 
-    req.body.schoolBalanceBefore = company.balance;
-    company.balance += amount * (isIncome || -1);
-    req.body.schoolBalanceAfter = company.balance;
+    console.log(branch);
 
-    req.doc = await TransactionModel.create([req.body], { session });
-    await company.save();
+    const transactionData = {
+      ...req.body,
+      branchBalanceBefore: branch.balance,
+      branchBalanceAfter: branch.balance + amount,
+    };
+
+    req.doc = await TransactionModel.create([transactionData], { session });
     await session.commitTransaction();
     session.endSession();
     next();

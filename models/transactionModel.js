@@ -29,14 +29,18 @@ const transactionSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    schoolBalanceAfter: Number,
-    schoolBalanceBefore: Number,
+    branchBalanceAfter: Number,
+    branchBalanceBefore: Number,
     realDate: Date,
     paymentMethod: {
       type: String,
       enum: ["cash", "online"],
     },
     hidden: Boolean,
+    branch: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Branch",
+    },
     relatedTo: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
