@@ -70,7 +70,10 @@ transactionSchema.pre("save", async function (next) {
 });
 
 transactionSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ archived: { $ne: true } }).populate({
+    path: "category",
+    select: "title",
+  });
   next();
 });
 
