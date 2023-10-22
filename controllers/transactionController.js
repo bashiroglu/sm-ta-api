@@ -29,8 +29,6 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
       { session }
     );
 
-    console.log(branch);
-
     const transactionData = {
       ...req.body,
       branchBalanceBefore: branch.balance,
@@ -46,4 +44,13 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
     session.endSession();
     next(new AppError(error.message));
   }
+});
+
+exports.checkBranch = catchAsync(async (req, res, next) => {
+  if (!req.user.branches?.map((b) => b.id).includes(req.body.branch))
+    return next(
+      new AppError("You are not authorized to finish this action.", 401)
+    );
+
+  next();
 });
