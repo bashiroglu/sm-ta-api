@@ -14,6 +14,14 @@ const examSchema = new mongoose.Schema(
       required: [true, "Name of exam is required."],
     },
     date: Date,
+    subjects: {
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "Subject",
+        },
+      ],
+    },
 
     archived: Boolean,
     createdBy: {
