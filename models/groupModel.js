@@ -34,6 +34,18 @@ const groupSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Room",
     },
+    weekdays: {
+      type: String,
+      validate: {
+        validator: function (val) {
+          if (val.length > 7 || new Set("1123".split("")).size !== val.length)
+            return false;
+          return !/[^1-7]/.test(val);
+        },
+        message: "Weekdays validation failed.",
+      },
+    },
+
     archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
