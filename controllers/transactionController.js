@@ -51,10 +51,14 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
 });
 
 exports.checkBranch = catchAsync(async (req, res, next) => {
-  if (!req.user.branches?.map((b) => b.id).includes(req.body.branch))
-    return next(
-      new AppError("You are not authorized to finish this action.", 401)
-    );
+  if (!req.user.roles.includes("owner"))
+    if (
+      req.user.roles.includes("manager") &&
+      !req.user.branches?.map((b) => b.id).includes(req.body.branch)
+    )
+      return next(
+        new AppError("You are not authorized to finish this action.", 401)
+      );
 
   next();
 });
