@@ -29,9 +29,8 @@ const recurrenceSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: String,
-      default: "other",
-      enum: ["other"],
+      type: mongoose.Schema.ObjectId,
+      ref: "LowerCategory",
     },
     paymentMethod: {
       type: String,
