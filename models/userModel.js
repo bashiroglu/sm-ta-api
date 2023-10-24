@@ -58,10 +58,6 @@ const userSchema = new mongoose.Schema(
       default:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
-    permissions: {
-      type: [String],
-      default: [],
-    },
 
     password: {
       type: String,
@@ -100,6 +96,11 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    permissions: {
+      type: [String],
+      default: [],
+    },
+
     referalId: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
