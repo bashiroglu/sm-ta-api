@@ -9,9 +9,42 @@ exports.updateLowerCategory = factory.updateOne(LowerCategoryModel);
 exports.archiveLowerCategory = factory.archiveOne(LowerCategoryModel);
 exports.deleteLowerCategory = factory.deleteOne(LowerCategoryModel);
 
-exports.queryByUpper = catchAsync(async (req, res, next) => {
-  req.query.upperCategory = req.params.upperId;
-  next();
+exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
+  const docs = await LowerCategoryModel.aggregate([
+    [
+      {
+        $lookup: {
+          from: "uppercategories",
+          localField: "upperCategory",
+          foreignField: "_id",
+          as: "uppers",
+        },
+      },
+      {
+        $sort: {
+          priority: -1,
+        },
+      },
+      {
+        $match: {
+          "uppers.slug": req.params.slug,
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          upperCategory: 1,
+          description: 1,
+          priority: 1,
+        },
+      },
+    ],
+  ]);
+  res.status(200).json({
+    status: "success",
+    results: docs.length,
+    data: docs,
+  });
 });
 
 exports.sortDescending = catchAsync(async (req, res, next) => {

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const collectionName = "LowerCategory";
 
@@ -19,6 +20,7 @@ const lowerCategorySchema = new mongoose.Schema(
       type: Number,
       defaul: 0,
     },
+    slug: String,
 
     archived: Boolean,
     createdBy: {
@@ -35,6 +37,11 @@ const lowerCategorySchema = new mongoose.Schema(
 
 lowerCategorySchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
+  next();
+});
+
+lowerCategorySchema.pre("save", function (next) {
+  this.slug = slugify(this.title, { lower: true });
   next();
 });
 
