@@ -51,6 +51,13 @@ const groupSchema = new mongoose.Schema(
         message: "Weekdays validation failed.",
       },
     },
+    status: {
+      type: String,
+      enum: {
+        values: ["active", "deactive"],
+        message: "Status must be active, deactive",
+      },
+    },
 
     archived: Boolean,
     createdBy: {

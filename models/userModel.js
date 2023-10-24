@@ -98,6 +98,11 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+
+    permissions: {
+      type: [String],
+      default: [],
+    },
     referalId: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
