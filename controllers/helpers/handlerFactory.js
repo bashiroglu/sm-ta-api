@@ -83,19 +83,21 @@ exports.createOne = (Model) =>
 
 exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
-    if (req.popOptions) query = query.populate(req.popOptions);
+    if (!req.doc) {
+      let query = Model.findById(req.params.id);
+      if (req.popOptions) query = query.populate(req.popOptions);
 
-    const features = new APIFeatures(query, req.query).limitFields();
-    const doc = await features.query;
+      const features = new APIFeatures(query, req.query).limitFields();
+      req.doc = await features.query;
 
-    if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      if (!req.doc) {
+        return next(new AppError("No document found with that ID", 404));
+      }
     }
 
     res.status(200).json({
       status: "success",
-      data: doc,
+      data: req.doc,
     });
   });
 

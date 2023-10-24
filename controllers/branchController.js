@@ -14,6 +14,49 @@ exports.assignCompany = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.getOnlyBlance = catchAsync(async (req, res, next) => {
+  req.query.fields = "balance -managers";
+  next();
+});
+
+exports.getStudentCount = catchAsync(async (req, res, next) => {
+  req.doc = await BranchModel.aggregate([
+    {
+      $lookup: {
+        from: "groups",
+        localField: "_id",
+        foreignField: "branch",
+        as: "groups",
+      },
+    },
+    {
+      $unwind: "$groups",
+    },
+    {
+      $unwind: "$groups.students",
+    },
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.params.id),
+      },
+    },
+    {
+      $group: {
+        _id: "$_id", // Group by branch ID
+        studentsCount: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!req.doc.length) {
+    return next(new AppError("No document found with that ID", 404));
+  }
+
+  req.doc = req.doc.at(0);
+
+  next();
+});
+
 // exports.localRestrictTo = catchAsync(async (req, res, next) => {
 //   const id = req.url.replace("/", "");
 //   req.isAllowed =
