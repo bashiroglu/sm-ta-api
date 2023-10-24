@@ -12,6 +12,7 @@ const lowerCategorySchema = new mongoose.Schema(
     upperCategory: {
       type: mongoose.Schema.ObjectId,
       ref: "UpperCategory",
+      required: true,
     },
     description: {
       type: String,
