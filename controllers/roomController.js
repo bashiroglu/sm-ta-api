@@ -10,6 +10,6 @@ exports.archiveRoom = factory.archiveOne(RoomModel);
 exports.deleteRoom = factory.deleteOne(RoomModel);
 
 exports.populate = catchAsync(async (req, res, next) => {
-  req.popOptions = { path: "branch" };
+  req.popOptions = { path: "branch", select: "name -managers" };
   next();
 });
