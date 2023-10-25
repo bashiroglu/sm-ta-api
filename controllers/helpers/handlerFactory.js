@@ -50,23 +50,25 @@ exports.archiveOne = (Model) =>
 
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const filteredBody = req.allowedFields
-      ? filterObject(req.body, ...req.allowedFields)
-      : req.body;
+    if (req.doc) {
+      const filteredBody = req.allowedFields
+        ? filterObject(req.body, ...req.allowedFields)
+        : req.body;
 
-    filteredBody.updatedBy = req.user.id;
-    const doc = await Model.findByIdAndUpdate(req.params.id, filteredBody, {
-      new: true,
-      runValidators: true,
-    });
+      filteredBody.updatedBy = req.user.id;
+      req.doc = await Model.findByIdAndUpdate(req.params.id, filteredBody, {
+        new: true,
+        runValidators: true,
+      });
 
-    if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      if (!req.doc) {
+        return next(new AppError("No document found with that ID", 404));
+      }
     }
 
     res.status(200).json({
       status: "success",
-      data: doc,
+      data: req.doc,
     });
   });
 
