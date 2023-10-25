@@ -50,7 +50,7 @@ exports.archiveOne = (Model) =>
 
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    if (req.doc) {
+    if (!req.doc) {
       const filteredBody = req.allowedFields
         ? filterObject(req.body, ...req.allowedFields)
         : req.body;
