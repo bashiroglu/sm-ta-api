@@ -93,11 +93,21 @@ const userSchema = new mongoose.Schema(
       },
     },
     tags: {
-      type: [String],
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "LowerCategory",
+        },
+      ],
       default: [],
     },
     permissions: {
-      type: [String],
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "LowerCategory",
+        },
+      ],
       default: [],
     },
 

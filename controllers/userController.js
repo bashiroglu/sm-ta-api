@@ -122,3 +122,9 @@ exports.assignPassword = catchAsync(async (req, res, next) => {
     process.env.DEFAULT_USER_PASSWORD;
   next();
 });
+
+exports.assignCategory = catchAsync(async (req, res, next) => {
+  req.query.fields = req.select = req.params.category;
+
+  next();
+});

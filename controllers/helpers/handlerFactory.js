@@ -56,10 +56,11 @@ exports.updateOne = (Model) =>
         : req.body;
 
       filteredBody.updatedBy = req.user.id;
+      console.log(req.params.category);
       req.doc = await Model.findByIdAndUpdate(req.params.id, filteredBody, {
         new: true,
         runValidators: true,
-      });
+      }).select(req.select);
 
       if (!req.doc) {
         return next(new AppError("No document found with that ID", 404));

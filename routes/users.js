@@ -3,6 +3,7 @@ const {
   createUser,
   createUserByRole,
   getUser,
+  assignCategory,
   getUsers,
   getAllByRole,
   updateUser,
@@ -51,6 +52,10 @@ router
 router.route("/").get(getUsers).post(assignPassword, createUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
+router
+  .route("/:id/:category")
+  .get(assignCategory, getUser)
+  .patch(assignCategory, updateUser);
 router.route("/:id/archive").patch(archiveUser);
 router.route("/:id/active").patch(activateUser, updateUser);
 

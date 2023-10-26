@@ -1,5 +1,6 @@
 const employeeRoles = Object.freeze({
   OWNER: "owner",
+  ADMIN: "admin",
   EMPLOYEE: "employee",
   MANAGER: "manager",
   TEACHER: "teacher",
