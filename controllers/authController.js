@@ -82,7 +82,12 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password) {
     return next(new AppError("Şifrə və ya email səhvdir", 400));
   }
-  const user = await UserModel.findOne({ email }).select("+password");
+  const user = await UserModel.findOne({ email })
+    .populate({
+      path: "branches",
+      select: "id -managers",
+    })
+    .select("+password");
 
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new AppError("Şifrə və ya email səhvdir", 401));
@@ -135,7 +140,10 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
 
-  const currentUser = await UserModel.findById(decoded.id).populate("branches");
+  const currentUser = await UserModel.findById(decoded.id).populate({
+    path: "branches",
+    select: "id -managers",
+  });
   if (!currentUser) {
     return next(
       new AppError(
