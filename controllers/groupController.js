@@ -20,7 +20,6 @@ exports.pushPullArray = catchAsync(async (req, res, next) => {
   const { id, field, userId } = req.params;
   const obj = {};
   obj[field] = userId;
-  console.log(req.method);
   const queryObj =
     req.method === "DELETE"
       ? { $pull: obj }

@@ -1,4 +1,5 @@
 const cron = require("node-cron");
+const mongoose = require("mongoose");
 
 const UserModel = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
@@ -6,6 +7,7 @@ const AppError = require("./../utils/appError");
 const factory = require("./helpers/handlerFactory");
 const { filterObject } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
+const GroupModel = require("../models/groupModel");
 
 cron.schedule("0 0 3 * *", async () => {
   const today = new Date();
@@ -79,7 +81,34 @@ exports.createUserByRole = catchAsync(async (req, res, next) => {
   const rolesArr = [role];
   if (employeeRoles.values().includes(role)) rolesArr.push(roles.EMPLOYEE);
   req.body.roles = rolesArr;
-  next();
+
+  if (req.body.group) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const { group } = req.body;
+
+      const user = await UserModel.create({
+        ...req.body,
+        passwordConfirm: process.env.DEFAULT_USER_PASSWORD,
+        password: process.env.DEFAULT_USER_PASSWORD,
+        createdBy: req.user.id,
+      });
+
+      await GroupModel.findByIdAndUpdate(group, {
+        $push: { students: user.id },
+      });
+
+      req.doc = user;
+      await session.commitTransaction();
+      session.endSession();
+      next();
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      next(new AppError(error.message));
+    }
+  } else next();
 });
 
 exports.getAllByRole = (req, res, next) => {
