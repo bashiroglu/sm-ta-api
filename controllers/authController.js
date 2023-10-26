@@ -180,7 +180,10 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
   }
   const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
 
-  const user = await UserModel.findById(decoded.id);
+  const user = await UserModel.findById(decoded.id).populate({
+    path: "branches",
+    select: "id -managers",
+  });
   if (!user) {
     return next(new AppError("this user is no longer exist", 401));
   }
