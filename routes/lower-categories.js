@@ -4,7 +4,7 @@ const {
   createLowerCategory,
   getLowerCategory,
   updateLowerCategory,
-  archiveLowerCategory,
+  makeDeletedLowerCategory,
   deleteLowerCategory,
   queryByUpper,
   sortDescending,
@@ -23,7 +23,7 @@ router
   .get(getLowerCategory)
   .patch(updateLowerCategory)
   .delete(deleteLowerCategory);
-router.route("/:id/archive").patch(archiveLowerCategory);
+router.route("/:id/delete").delete(deleteLowerCategory);
 router
   .route("/upper/:upperId")
   .get(queryByUpper, sortDescending, getLowerCategories);

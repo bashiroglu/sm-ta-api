@@ -4,7 +4,7 @@ const {
   createHomework,
   getHomework,
   updateHomework,
-  archiveHomework,
+  makeDeletedHomework,
   deleteHomework,
 } = require("../controllers/homeworkController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -19,6 +19,6 @@ router
   .get(getHomework)
   .patch(updateHomework)
   .delete(deleteHomework);
-router.route("/:id/archive").patch(archiveHomework);
+router.route("/:id/delete").delete(deleteHomework);
 
 module.exports = router;

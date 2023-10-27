@@ -4,7 +4,7 @@ const {
   createProgram,
   getProgram,
   updateProgram,
-  archiveProgram,
+  makeDeletedProgram,
   deleteProgram,
 } = require("../controllers/programController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -14,7 +14,11 @@ const router = express.Router();
 router.use(protect);
 
 router.route("/").get(getPrograms).post(createProgram);
-router.route("/:id").get(getProgram).patch(updateProgram).delete(deleteProgram);
-router.route("/:id/archive").patch(archiveProgram);
+router
+  .route("/:id")
+  .get(getProgram)
+  .patch(updateProgram)
+  .delete(makeDeletedProgram);
+router.route("/:id/delete").delete(deleteProgram);
 
 module.exports = router;

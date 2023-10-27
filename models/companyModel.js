@@ -20,7 +20,7 @@ const companySchema = new mongoose.Schema(
     transaction: { type: Number, default: 0 },
 
     active: Boolean,
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

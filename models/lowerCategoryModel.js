@@ -23,7 +23,7 @@ const lowerCategorySchema = new mongoose.Schema(
     },
     slug: String,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

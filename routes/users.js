@@ -7,7 +7,7 @@ const {
   getAllByRole,
   updateUser,
   deleteUser,
-  archiveUser,
+  makeDeletedUser,
   activateUser,
   assignParamsId,
   updateMe,
@@ -51,8 +51,8 @@ router
   .route("/role/student/:id/participation")
   .get(getAllByRole, populateParticipations, getUser);
 
-router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
-router.route("/:id/archive").patch(archiveUser);
+router.route("/:id").get(getUser).patch(updateUser).delete(makeDeletedUser);
+router.route("/:id/delete").delete(deleteUser);
 router.route("/:id/active").patch(activateUser, updateUser);
 
 module.exports = router;

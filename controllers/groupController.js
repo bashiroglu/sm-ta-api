@@ -5,5 +5,5 @@ exports.getGroups = factory.getAll(GroupModel);
 exports.getGroup = factory.getOne(GroupModel);
 exports.createGroup = factory.createOne(GroupModel);
 exports.updateGroup = factory.updateOne(GroupModel);
-exports.archiveGroup = factory.archiveOne(GroupModel);
+exports.makeDeletedGroup = factory.makeDeletedOne(GroupModel);
 exports.deleteGroup = factory.deleteOne(GroupModel);

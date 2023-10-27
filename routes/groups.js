@@ -4,7 +4,7 @@ const {
   createGroup,
   getGroup,
   updateGroup,
-  archiveGroup,
+  makeDeletedGroup,
   deleteGroup,
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -14,7 +14,7 @@ const router = express.Router();
 router.use(protect);
 
 router.route("/").get(getGroups).post(createGroup);
-router.route("/:id").get(getGroup).patch(updateGroup).delete(deleteGroup);
-router.route("/:id/archive").patch(archiveGroup);
+router.route("/:id").get(getGroup).patch(updateGroup).delete(makeDeletedGroup);
+router.route("/:id/delete").delete(deleteGroup);
 
 module.exports = router;

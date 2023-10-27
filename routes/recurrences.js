@@ -4,7 +4,7 @@ const {
   createRecurrence,
   getRecurrences,
   updateRecurrence,
-  archiveRecurrence,
+  makeDeletedRecurrence,
   deleteRecurrence,
 } = require("../controllers/recurrenceController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -19,6 +19,6 @@ router
   .get(getRecurrence)
   .patch(updateRecurrence)
   .delete(deleteRecurrence);
-router.route("/:id/archive").patch(archiveRecurrence);
+router.route("/:id/delete").delete(deleteRecurrence);
 
 module.exports = router;

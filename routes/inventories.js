@@ -4,7 +4,7 @@ const {
   createInventory,
   getInventory,
   updateInventory,
-  archiveInventory,
+  makeDeletedInventory,
   deleteInventory,
 } = require("../controllers/inventoryController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -19,6 +19,6 @@ router
   .get(getInventory)
   .patch(updateInventory)
   .delete(deleteInventory);
-router.route("/:id/archive").patch(archiveInventory);
+router.route("/:id/delete").delete(deleteInventory);
 
 module.exports = router;

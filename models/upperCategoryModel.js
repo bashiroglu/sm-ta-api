@@ -17,7 +17,7 @@ const upperCategorySchema = new mongoose.Schema(
       unique: true,
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

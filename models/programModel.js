@@ -37,7 +37,7 @@ const programSchema = new mongoose.Schema(
       ],
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

@@ -37,7 +37,7 @@ const bookSchema = new mongoose.Schema(
       type: String,
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

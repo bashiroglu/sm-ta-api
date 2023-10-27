@@ -42,7 +42,7 @@ const recurrenceSchema = new mongoose.Schema(
     },
     active: Boolean,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

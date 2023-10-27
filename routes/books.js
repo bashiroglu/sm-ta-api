@@ -4,7 +4,7 @@ const {
   createBook,
   getBook,
   updateBook,
-  archiveBook,
+  makeDeletedBook,
   deleteBook,
 } = require("../controllers/bookController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -14,7 +14,7 @@ const router = express.Router();
 router.use(protect);
 
 router.route("/").get(getBooks).post(createBook);
-router.route("/:id").get(getBook).patch(updateBook).delete(deleteBook);
-router.route("/:id/archive").patch(archiveBook);
+router.route("/:id").get(getBook).patch(updateBook).delete(makeDeletedBook);
+router.route("/:id/delete").delete(deleteBook);
 
 module.exports = router;

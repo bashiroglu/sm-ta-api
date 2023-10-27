@@ -22,7 +22,7 @@ const roomSchema = new mongoose.Schema(
       type: Number,
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

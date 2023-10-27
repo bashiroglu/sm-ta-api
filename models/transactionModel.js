@@ -52,7 +52,7 @@ const transactionSchema = new mongoose.Schema(
     },
     executed: Boolean,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

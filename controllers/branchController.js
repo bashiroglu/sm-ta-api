@@ -6,7 +6,7 @@ exports.getBranches = factory.getAll(BranchModel);
 exports.getBranch = factory.getOne(BranchModel);
 exports.createBranch = factory.createOne(BranchModel);
 exports.updateBranch = factory.updateOne(BranchModel);
-exports.archiveBranch = factory.archiveOne(BranchModel);
+exports.makeDeletedBranch = factory.makeDeletedOne(BranchModel);
 exports.deleteBranch = factory.deleteOne(BranchModel);
 
 exports.assignCompany = catchAsync(async (req, res, next) => {

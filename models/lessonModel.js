@@ -40,7 +40,7 @@ const lessonSchema = new mongoose.Schema(
       ref: "Room",
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

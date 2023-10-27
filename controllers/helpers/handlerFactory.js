@@ -32,7 +32,7 @@ exports.deleteMany = (Model) =>
     });
   });
 
-exports.archiveOne = (Model) =>
+exports.makeDeletedOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, {
       archived: true,

@@ -24,7 +24,7 @@ const homeworkSchema = new mongoose.Schema(
       default: false,
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

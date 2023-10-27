@@ -18,7 +18,7 @@ const placementMeetingSchema = new mongoose.Schema(
     },
     dateTime: Date,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

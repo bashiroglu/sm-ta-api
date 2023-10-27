@@ -4,7 +4,7 @@ const {
   createPlacementMeetingResult,
   getPlacementMeetingResult,
   updatePlacementMeetingResult,
-  archivePlacementMeetingResult,
+  makeDeletedPlacementMeetingResult,
   deletePlacementMeetingResult,
 } = require("../controllers/placementMeetingResultController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -22,6 +22,6 @@ router
   .get(getPlacementMeetingResult)
   .patch(updatePlacementMeetingResult)
   .delete(deletePlacementMeetingResult);
-router.route("/:id/archive").patch(archivePlacementMeetingResult);
+router.route("/:id/delete").delete(deletePlacementMeetingResult);
 
 module.exports = router;

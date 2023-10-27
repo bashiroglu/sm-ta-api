@@ -164,7 +164,7 @@ const userSchema = new mongoose.Schema(
     description: String,
     query: String,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
