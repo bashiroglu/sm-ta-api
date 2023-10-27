@@ -3,6 +3,7 @@ const {
   createUser,
   createUserByRole,
   getUser,
+  assignCategory,
   getUsers,
   getAllByRole,
   updateUser,
@@ -31,7 +32,7 @@ router.use(protect);
 router.patch("/updateMyPassword", updatePassword);
 router
   .route("/me")
-  .get(assignParamsId, getUser)
+  .get(assignCategory, assignParamsId, getUser)
   .patch(assignParamsId, updateMe, updateUser)
   .delete(assignParamsId, deleteMe);
 
@@ -52,6 +53,10 @@ router
   .get(getAllByRole, populateParticipations, getUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(makeDeletedUser);
+router
+  .route("/:id/:category")
+  .get(assignCategory, getUser)
+  .patch(assignCategory, updateUser);
 router.route("/:id/delete").delete(deleteUser);
 router.route("/:id/active").patch(activateUser, updateUser);
 
