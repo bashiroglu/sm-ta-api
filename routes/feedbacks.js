@@ -14,13 +14,15 @@ const router = express.Router();
 
 router.use(protect);
 
-router.use(restrictTo("roles", "owner", "admin", "teacher"));
+router.use(restrictTo("roles", "owner", "admin", "manager", "teacher"));
 router.route("/").post(createFeedback);
 
 router.route("/:id").patch(updateFeedback).delete(makeDeletedFeedback);
 router.route("/:id/delete").delete(deleteFeedback);
 
-router.use(restrictTo("roles", "owner", "admin", "teacher", "guardian"));
+router.use(
+  restrictTo("roles", "owner", "admin", "manager", "teacher", "guardian")
+);
 router.route("/").get(restrictFeedbacks, getFeedbacks);
 router.route("/:id").get(restrictFeedbacks, getFeedback);
 

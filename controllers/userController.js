@@ -153,7 +153,21 @@ exports.assignPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.assignCategory = catchAsync(async (req, res, next) => {
-  req.query.fields = req.select = req.params.category;
+  const { category } = req.params;
 
+  // Checks if user try to update not indented field
+  // TODO: Apply more automotical method
+  if (!["tags", "permissions"].includes(category))
+    return next(
+      new AppError("This field cannot be updated with this endpoint")
+    );
+
+  // Excludes not indented items in req.body
+  const obj = {};
+  obj[category] = req.body[category];
+  req.body = obj;
+
+  // Excludes fields other than category
+  req.query.fields = category;
   next();
 });

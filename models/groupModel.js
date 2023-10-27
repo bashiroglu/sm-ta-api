@@ -38,7 +38,7 @@ const groupSchema = new mongoose.Schema(
       type: String,
       validate: {
         validator: function (val) {
-          if (val.length > 7 || new Set("1123".split("")).size !== val.length)
+          if (val.length > 7 || new Set(val.split("")).size !== val.length)
             return false;
           return !/[^1-7]/.test(val);
         },
