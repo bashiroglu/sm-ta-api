@@ -14,7 +14,7 @@ const subjectSchema = new mongoose.Schema(
       default: true,
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -28,7 +28,7 @@ const subjectSchema = new mongoose.Schema(
 );
 
 subjectSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

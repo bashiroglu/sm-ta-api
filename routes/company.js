@@ -4,7 +4,7 @@ const {
   getCompany,
   getCompanies,
   updateCompany,
-  archiveCompany,
+  makeDeletedCompany,
   deleteCompany,
 } = require("../controllers/companyController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -17,7 +17,11 @@ router.use(restrictTo("roles", "owner"));
 router.route("/").get(getCompanies).post(createCompany);
 
 router.use(restrictTo("roles", "owner", "admin"));
-router.route("/:id").get(getCompany).patch(updateCompany).delete(deleteCompany);
-router.route("/:id/archive").patch(archiveCompany);
+router
+  .route("/:id")
+  .get(getCompany)
+  .patch(updateCompany)
+  .delete(makeDeletedCompany);
+router.route("/:id/delete").delete(deleteCompany);
 
 module.exports = router;

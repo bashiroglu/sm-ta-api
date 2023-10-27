@@ -176,7 +176,7 @@ const userSchema = new mongoose.Schema(
     },
 
     active: Boolean,
-    archived: Boolean,
+    deleted: Boolean,
     note: String,
     description: String,
     query: String,
@@ -219,7 +219,7 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

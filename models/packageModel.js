@@ -16,7 +16,7 @@ const packageSchema = new mongoose.Schema(
       ],
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -30,7 +30,7 @@ const packageSchema = new mongoose.Schema(
 );
 
 packageSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } }).populate("subjects");
+  this.find({ deleted: { $ne: true } }).populate("subjects");
   next();
 });
 

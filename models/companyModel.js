@@ -18,7 +18,7 @@ const companySchema = new mongoose.Schema(
     transaction: { type: Number, default: 0 },
 
     active: Boolean,
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -32,7 +32,7 @@ const companySchema = new mongoose.Schema(
 );
 
 companySchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

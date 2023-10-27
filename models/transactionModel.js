@@ -52,7 +52,7 @@ const transactionSchema = new mongoose.Schema(
     },
     executed: Boolean,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -70,7 +70,7 @@ transactionSchema.pre("save", async function (next) {
 });
 
 transactionSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } }).populate({
+  this.find({ deleted: { $ne: true } }).populate({
     path: "category",
     select: "title",
   });

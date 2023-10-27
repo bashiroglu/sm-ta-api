@@ -4,7 +4,7 @@ const {
   createExamResult,
   getExamResult,
   updateExamResult,
-  archiveExamResult,
+  makeDeletedExamResult,
   deleteExamResult,
 } = require("../controllers/examResultController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -18,7 +18,7 @@ router
   .route("/:id")
   .get(getExamResult)
   .patch(updateExamResult)
-  .delete(deleteExamResult);
-router.route("/:id/archive").patch(archiveExamResult);
+  .delete(makeDeletedExamResult);
+router.route("/:id/delete").delete(deleteExamResult);
 
 module.exports = router;

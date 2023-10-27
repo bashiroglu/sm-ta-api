@@ -53,7 +53,7 @@ const groupSchema = new mongoose.Schema(
       },
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -71,7 +71,7 @@ groupSchema.pre("save", async function (next) {
 });
 
 groupSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

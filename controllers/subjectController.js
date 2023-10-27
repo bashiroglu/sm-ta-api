@@ -5,5 +5,5 @@ exports.getSubjects = factory.getAll(SubjectModel);
 exports.getSubject = factory.getOne(SubjectModel);
 exports.createSubject = factory.createOne(SubjectModel);
 exports.updateSubject = factory.updateOne(SubjectModel);
-exports.archiveSubject = factory.archiveOne(SubjectModel);
+exports.makeDeletedSubject = factory.makeDeletedOne(SubjectModel);
 exports.deleteSubject = factory.deleteOne(SubjectModel);

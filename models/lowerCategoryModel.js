@@ -23,7 +23,7 @@ const lowerCategorySchema = new mongoose.Schema(
     },
     slug: String,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -37,7 +37,7 @@ const lowerCategorySchema = new mongoose.Schema(
 );
 
 lowerCategorySchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

@@ -4,7 +4,7 @@ const {
   createUpperCategory,
   getUpperCategory,
   updateUpperCategory,
-  archiveUpperCategory,
+  makeDeletedUpperCategory,
   deleteUpperCategory,
 } = require("../controllers/upperCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -17,7 +17,7 @@ router
   .route("/:id")
   .get(getUpperCategory)
   .patch(updateUpperCategory)
-  .delete(deleteUpperCategory);
-router.route("/:id/archive").patch(archiveUpperCategory);
+  .delete(makeDeletedUpperCategory);
+router.route("/:id/delete").delete(deleteUpperCategory);
 
 module.exports = router;

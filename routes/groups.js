@@ -4,7 +4,7 @@ const {
   createGroup,
   getGroup,
   updateGroup,
-  archiveGroup,
+  makeDeletedGroup,
   deleteGroup,
   crudGroupLessons,
   pushPullArray,
@@ -18,11 +18,11 @@ router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
 router.use(protect);
 router.route("/").get(getGroups).post(createGroup);
-router.route("/:id").get(getGroup).patch(updateGroup).delete(deleteGroup);
+router.route("/:id").get(getGroup).patch(updateGroup).delete(makeDeletedGroup);
 router
   .route("/:id/:field/:userId")
   .patch(pushPullArray, updateGroup)
   .delete(pushPullArray, updateGroup);
-router.route("/:id/archive").patch(archiveGroup);
+router.route("/:id/delete").delete(deleteGroup);
 
 module.exports = router;

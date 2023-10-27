@@ -4,7 +4,7 @@ const {
   createLesson,
   getLesson,
   updateLesson,
-  archiveLesson,
+  makeDeletedLesson,
   deleteLesson,
 } = require("../controllers/lessonController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -16,7 +16,11 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 router.route("/").get(getLessons).post(createLesson);
-router.route("/:id").get(getLesson).patch(updateLesson).delete(deleteLesson);
-router.route("/:id/archive").patch(archiveLesson);
+router
+  .route("/:id")
+  .get(getLesson)
+  .patch(updateLesson)
+  .delete(makeDeletedLesson);
+router.route("/:id/delete").delete(deleteLesson);
 
 module.exports = router;

@@ -15,7 +15,7 @@ const roomSchema = new mongoose.Schema(
     size: {
       type: Number,
     },
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -29,7 +29,7 @@ const roomSchema = new mongoose.Schema(
 );
 
 roomSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

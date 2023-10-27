@@ -17,7 +17,7 @@ const upperCategorySchema = new mongoose.Schema(
       unique: true,
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -31,7 +31,7 @@ const upperCategorySchema = new mongoose.Schema(
 );
 
 upperCategorySchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

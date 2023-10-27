@@ -24,7 +24,7 @@ const examResultSchema = new mongoose.Schema(
       ],
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -38,7 +38,7 @@ const examResultSchema = new mongoose.Schema(
 );
 
 examResultSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

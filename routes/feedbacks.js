@@ -4,8 +4,9 @@ const {
   createFeedback,
   getFeedback,
   updateFeedback,
-  archiveFeedback,
+  makeDeletedFeedback,
   deleteFeedback,
+  restrictFeedbacks,
 } = require("../controllers/feedbackController");
 const { protect, restrictTo } = require("../controllers/authController");
 
@@ -16,14 +17,11 @@ router.use(protect);
 router.use(restrictTo("roles", "owner", "admin", "teacher"));
 router.route("/").post(createFeedback);
 
-router
-  .route("/:id")
-  .get(getFeedback)
-  .patch(updateFeedback)
-  .delete(deleteFeedback);
-router.route("/:id/archive").patch(archiveFeedback);
+router.route("/:id").patch(updateFeedback).delete(makeDeletedFeedback);
+router.route("/:id/delete").delete(deleteFeedback);
 
 router.use(restrictTo("roles", "owner", "admin", "teacher", "guardian"));
-router.get(getFeedbacks);
+router.route("/").get(restrictFeedbacks, getFeedbacks);
+router.route("/:id").get(restrictFeedbacks, getFeedback);
 
 module.exports = router;

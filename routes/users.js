@@ -8,7 +8,7 @@ const {
   getAllByRole,
   updateUser,
   deleteUser,
-  archiveUser,
+  makeDeletedUser,
   activateUser,
   assignParamsId,
   updateMe,
@@ -32,7 +32,7 @@ router
   .route("/me")
   .get(assignParamsId, getUser)
   .patch(assignParamsId, updateMe, updateUser)
-  .delete(assignParamsId, archiveUser);
+  .delete(assignParamsId, makeDeletedUser);
 
 router.use(restrictTo("roles", "owner", "admin", "manager"));
 
@@ -51,12 +51,12 @@ router
 
 router.route("/").get(getUsers).post(assignPassword, createUser);
 
-router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
+router.route("/:id").get(getUser).patch(updateUser).delete(makeDeletedUser);
 router
   .route("/:id/:category")
   .get(assignCategory, getUser)
   .patch(assignCategory, updateUser);
-router.route("/:id/archive").patch(archiveUser);
+router.route("/:id/delete").delete(deleteUser);
 router.route("/:id/active").patch(activateUser, updateUser);
 
 module.exports = router;

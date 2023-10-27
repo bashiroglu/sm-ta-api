@@ -42,7 +42,7 @@ const recurrenceSchema = new mongoose.Schema(
       required: true,
     },
     active: Boolean,
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -56,12 +56,12 @@ const recurrenceSchema = new mongoose.Schema(
 );
 
 recurrenceSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 
 recurrenceSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } })
+  this.find({ deleted: { $ne: true } })
     .populate("spender")
     .populate("recipient")
     .populate("createdBy");

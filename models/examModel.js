@@ -23,7 +23,7 @@ const examSchema = new mongoose.Schema(
       ],
     },
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -41,7 +41,7 @@ examSchema.pre("save", async function (next) {
 });
 
 examSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

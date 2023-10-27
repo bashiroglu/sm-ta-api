@@ -4,7 +4,7 @@ const {
   createRoom,
   getRoom,
   updateRoom,
-  archiveRoom,
+  makeDeletedRoom,
   deleteRoom,
   populate,
 } = require("../controllers/roomController");
@@ -19,7 +19,7 @@ router
   .route("/:id")
   .get(populate, getRoom)
   .patch(updateRoom)
-  .delete(deleteRoom);
-router.route("/:id/archive").patch(archiveRoom);
+  .delete(makeDeletedRoom);
+router.route("/:id/delete").delete(deleteRoom);
 
 module.exports = router;

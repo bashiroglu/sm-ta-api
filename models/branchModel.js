@@ -31,7 +31,7 @@ const branchSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -49,7 +49,7 @@ branchSchema.pre("save", async function (next) {
 });
 
 branchSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } }).populate({
+  this.find({ deleted: { $ne: true } }).populate({
     path: "managers",
     select: "name surname fullname",
   });

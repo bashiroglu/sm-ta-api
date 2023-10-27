@@ -40,7 +40,7 @@ const lessonSchema = new mongoose.Schema(
     },
     isExtra: Boolean,
 
-    archived: Boolean,
+    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -54,7 +54,7 @@ const lessonSchema = new mongoose.Schema(
 );
 
 lessonSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } }).populate({
+  this.find({ deleted: { $ne: true } }).populate({
     path: "absent",
     select: "name surname",
   });

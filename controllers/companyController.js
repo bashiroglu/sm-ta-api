@@ -5,5 +5,5 @@ exports.getCompany = factory.getOne(CompanyModel);
 exports.getCompanies = factory.getAll(CompanyModel);
 exports.createCompany = factory.createOne(CompanyModel);
 exports.updateCompany = factory.updateOne(CompanyModel);
-exports.archiveCompany = factory.archiveOne(CompanyModel);
+exports.makeDeletedCompany = factory.makeDeletedOne(CompanyModel);
 exports.deleteCompany = factory.deleteOne(CompanyModel);

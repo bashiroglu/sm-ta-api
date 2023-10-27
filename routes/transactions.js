@@ -4,7 +4,7 @@ const {
   createTransaction,
   getTransaction,
   updateTransaction,
-  archiveTransaction,
+  makeDeletedTransaction,
   deleteTransaction,
   changeBalanceCreateTransaction,
   checkBranch,
@@ -23,7 +23,7 @@ router
   .route("/:id")
   .get(getTransaction)
   .patch(updateTransaction)
-  .delete(deleteTransaction);
-router.route("/:id/archive").patch(archiveTransaction);
+  .delete(makeDeletedTransaction);
+router.route("/:id/delete").delete(deleteTransaction);
 
 module.exports = router;
