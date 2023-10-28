@@ -83,6 +83,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("Şifrə və ya email səhvdir", 400));
   }
   const user = await UserModel.findOne({ email })
+    .select("-query -note")
     .populate({
       path: "branches",
       select: "id -managers",

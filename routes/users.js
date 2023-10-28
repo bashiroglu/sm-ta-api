@@ -23,7 +23,6 @@ const {
 
 const router = express.Router();
 
-// Protect all routes after this middleware
 router.use(protect);
 
 router.patch("/updateMyPassword", updatePassword);

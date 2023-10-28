@@ -171,3 +171,8 @@ exports.assignCategory = catchAsync(async (req, res, next) => {
   req.query.fields = category;
   next();
 });
+
+exports.excludeFields = catchAsync(async (req, res, next) => {
+  req.query.fields = "-query -note";
+  next();
+});

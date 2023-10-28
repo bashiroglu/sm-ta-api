@@ -211,6 +211,7 @@ userSchema.pre("save", async function (next) {
   const surname = this.surname ? this.surname + " " : "";
   const note = this.note ? this.note + " " : "";
   const phoneNumbers = this.phoneNumbers.join(" ");
+  // [this.name, this.surname, this.note].join(" ");
 
   this.query = `${name}${surname}${note}${phoneNumbers}`;
 
@@ -226,6 +227,7 @@ userSchema.pre("save", async function (next) {
 
 userSchema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
+
   next();
 });
 
