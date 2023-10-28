@@ -5,11 +5,7 @@ const APIFeatures = require("../../utils/apiFeatures");
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const query = Model.findByIdAndDelete(req.params.id);
-
-    const features = new APIFeatures(query, req.query).filter().limitFields();
-
-    const doc = await features.query;
+    const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
       return next(new AppError("No document found with that ID", 404));
@@ -23,13 +19,9 @@ exports.deleteOne = (Model) =>
 
 exports.makeDeletedOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const query = Model.findByIdAndUpdate(req.params.id, {
+    const doc = await Model.findByIdAndUpdate(req.params.id, {
       deleted: true,
     });
-
-    const features = new APIFeatures(query, req.query).filter().limitFields();
-
-    const doc = await features.query;
 
     if (!doc) {
       return next(new AppError("No document found with that ID", 404));
@@ -44,20 +36,10 @@ exports.makeDeletedOne = (Model) =>
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (!req.doc) {
-      const filteredBody = req.allowedFields
-        ? filterObject(req.body, ...req.allowedFields)
-        : req.body;
-
-      filteredBody.updatedBy = req.user.id;
-
-      const query = Model.findByIdAndUpdate(req.params.id, filteredBody, {
+      req.doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,
       });
-
-      const features = new APIFeatures(query, req.query).filter().limitFields();
-
-      req.doc = features.query;
 
       if (!req.doc) {
         return next(new AppError("No document found with that ID", 404));
@@ -84,11 +66,11 @@ exports.createOne = (Model) =>
 exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (!req.doc) {
-      const query = Model.findById(req.params.id);
+      let query = Model.findById(req.params.id);
       if (req.popOptions) query = query.populate(req.popOptions);
 
       const features = new APIFeatures(query, req.query).filter().limitFields();
-      req.doc = await features.query;
+      req.doc = (await features.query)?.at(0);
 
       if (!req.doc) {
         return next(new AppError("No document found with that ID", 404));
@@ -107,7 +89,6 @@ exports.getAll = (Model) =>
     if (req.ids) filter = { _id: { $in: req.ids } };
 
     let query = Model.find(filter);
-
     if (req.popOptions) query = query.populate(req.popOptions);
 
     let features = new APIFeatures(query, req.query)
