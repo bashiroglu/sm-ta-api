@@ -9,41 +9,46 @@ const { filterObject } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
 const GroupModel = require("../models/groupModel");
 
-cron.schedule("0 0 3 * *", async () => {
-  const today = new Date();
-  const overdueStudents = await UserModel.find({
-    roles: roles.STUDENT,
-    nextPaymentDate: { $lt: today },
-  })
-    .populate({ path: "guardian", select: "name phoneNumbers email" })
-    .populate({ path: "packages", select: "price" });
+exports.schedulePaymentNotifications = () => {
+  // TODO: schedule a task to run at 17:58 on the 3rd of every month change if needed
+  cron.schedule("58 17 3 * *", async () => {
+    const today = new Date();
 
-  const guardians = overdueStudents.reduce((acc, curr) => {
-    if (!acc[curr.guardian.id])
-      acc[curr.guardian.id] = {
-        phoneNumbers: curr.guardian.phoneNumbers,
-        name: curr.guardian.name,
-        email: curr.guardian.email,
-        students: [],
-        total: 0,
-      };
-    acc[curr.guardian.id].students.push(curr.name);
-    acc[curr.guardian.id].total += curr.packages.reduce((a, c) => {
-      a += c.price;
-      return a;
-    }, 0);
-    return acc;
-  }, {});
+    // TODO: Change next query to aggregation
+    const overdueStudents = await UserModel.find({
+      roles: roles.STUDENT,
+      nextPaymentDate: { $lt: today },
+    })
+      .populate({ path: "guardian", select: "name phoneNumbers email" })
+      .populate({ path: "packages", select: "price" });
 
-  guardians.forEach((guardian) => {
-    const smsText = `Dear, ${guardian.name}. Please pay the amount ${guardian.total}`;
-    if (process.env.NODE_ENV.trim() == "development") {
-      console.log(smsText);
-    } else {
-      // TODO: Send Email and SMS
-    }
+    const guardians = overdueStudents.reduce((acc, curr) => {
+      if (!acc[curr.guardian.id])
+        acc[curr.guardian.id] = {
+          phoneNumbers: curr.guardian.phoneNumbers,
+          name: curr.guardian.name,
+          email: curr.guardian.email,
+          students: [],
+          total: 0,
+        };
+      acc[curr.guardian.id].students.push(curr.name);
+      acc[curr.guardian.id].total += curr.packages.reduce((a, c) => {
+        a += c.price;
+        return a;
+      }, 0);
+      return acc;
+    }, {});
+
+    guardians.forEach((guardian) => {
+      const smsText = `Dear, ${guardian.name}. Please pay the amount ${guardian.total}`;
+      if (process.env.NODE_ENV.trim() == "development") {
+        console.log(smsText);
+      } else {
+        // TODO: Send Email and SMS
+      }
+    });
   });
-});
+};
 
 exports.assignParamsId = (req, res, next) => {
   req.params.id = req.user.id;

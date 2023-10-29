@@ -14,6 +14,7 @@ const {
   updateMe,
   populateParticipations,
   assignPassword,
+  schedulePaymentNotifications,
 } = require("./../controllers/userController");
 const {
   protect,
@@ -22,6 +23,8 @@ const {
 } = require("../controllers/authController");
 
 const router = express.Router();
+
+schedulePaymentNotifications();
 
 router.use(protect);
 
