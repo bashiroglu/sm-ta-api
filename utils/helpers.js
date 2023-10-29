@@ -1,4 +1,5 @@
 const fs = require("fs");
+const catchAsync = require("./catchAsync");
 
 const getFirstOfNextMonth = () => {
   const currentDate = new Date();
@@ -27,4 +28,15 @@ const getDirFileNames = (dirPath) =>
     return files.filter((file) => fs.statSync(dirPath + "/" + file).isFile());
   });
 
-module.exports = { getDirFileNames, getFirstOfNextMonth, filterObject };
+const populate = (popOptions) =>
+  catchAsync(async (req, res, next) => {
+    req.popOptions = popOptions;
+    next();
+  });
+
+module.exports = {
+  getDirFileNames,
+  getFirstOfNextMonth,
+  filterObject,
+  populate,
+};

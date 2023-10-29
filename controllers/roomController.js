@@ -8,8 +8,3 @@ exports.createRoom = factory.createOne(RoomModel);
 exports.updateRoom = factory.updateOne(RoomModel);
 exports.makeDeletedRoom = factory.makeDeletedOne(RoomModel);
 exports.deleteRoom = factory.deleteOne(RoomModel);
-
-exports.populate = catchAsync(async (req, res, next) => {
-  req.popOptions = { path: "branch", select: "name -managers" };
-  next();
-});
