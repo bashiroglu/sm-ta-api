@@ -1,16 +1,68 @@
+const mongoose = require("mongoose");
 const GroupModel = require("../models/groupModel");
 const UserModel = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getStudents = catchAsync(async (req, res, next) => {
-  const groups = await GroupModel.find({ teachers: req.user.id });
-  req.ids = groups.reduce((arr, group) => [...group.students], []);
-  req.query.fields = "code name surname fatherName email active";
-  req.popOptions = {
-    path: "groups",
-    select: "name teachers",
-  };
+  req.mainQuery = UserModel.aggregate([
+    {
+      $lookup: {
+        from: "groups",
+        localField: "_id",
+        foreignField: "teachers",
+        as: "groups",
+      },
+    },
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.user.id),
+      },
+    },
+    {
+      $unwind: "$groups",
+    },
+    {
+      $project: {
+        teacherId: "$_id",
+        students: "$groups.students",
+      },
+    },
+    {
+      $unwind: "$students",
+    },
+    {
+      $group: {
+        _id: "$teacherId",
+        student: { $addToSet: "$students" },
+      },
+    },
+    {
+      $unwind: "$student",
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "student",
+        foreignField: "_id",
+        as: "student",
+      },
+    },
+    {
+      $unwind: "$student",
+    },
+    {
+      $project: {
+        _id: "$student._id",
+        code: "$student.code",
+        name: "$student.name",
+        surname: "$student.surname",
+        fatherName: "$student.fatherName",
+        email: "$student.email",
+        active: "$student.active",
+      },
+    },
+  ]);
   next();
 });
 

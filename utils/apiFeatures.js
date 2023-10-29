@@ -4,7 +4,8 @@ class APIFeatures {
     this.queryString = queryString;
   }
 
-  filter() {
+  filter(isPipeline) {
+    if (isPipeline) return this;
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "sort", "limit", "fields"];
     excludedFields.forEach((el) => delete queryObj[el]);
@@ -41,7 +42,8 @@ class APIFeatures {
     return this;
   }
 
-  limitFields() {
+  limitFields(isPipeline) {
+    if (isPipeline) return this;
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
       this.query = this.query.select(fields);
@@ -52,11 +54,11 @@ class APIFeatures {
     return this;
   }
 
-  paginate() {
+  paginate(isPipeline) {
     const page = this.queryString.page * 1;
     const limit = this.queryString.limit * 1;
     const skip = (page - 1) * limit;
-
+    if (isPipeline && (!page || !limit)) return this;
     this.query = this.query.skip(skip).limit(limit);
 
     return this;

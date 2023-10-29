@@ -35,6 +35,7 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
 
     const transactionData = {
       ...req.body,
+      amount,
       branchBalanceBefore: branch.balance,
       branchBalanceAfter: branch.balance + amount,
     };

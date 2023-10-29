@@ -20,7 +20,7 @@ exports.getOnlyBlance = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getStudentCount = catchAsync(async (req, res, next) => {
+exports.getBranchStudentCount = catchAsync(async (req, res, next) => {
   req.doc = await BranchModel.aggregate([
     {
       $lookup: {
@@ -43,7 +43,7 @@ exports.getStudentCount = catchAsync(async (req, res, next) => {
     },
     {
       $group: {
-        _id: "$_id", // Group by branch ID
+        _id: "$_id",
         studentsCount: { $sum: 1 },
       },
     },
@@ -53,7 +53,114 @@ exports.getStudentCount = catchAsync(async (req, res, next) => {
     return next(new AppError("No document found with that ID", 404));
   }
 
-  req.doc = req.doc.at(0);
+  req.doc = req.doc?.at(0);
+
+  next();
+});
+
+exports.getStudentStat = catchAsync(async (req, res, next) => {
+  req.pipeline = BranchModel.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "groups",
+        localField: "_id",
+        foreignField: "branch",
+        as: "group",
+      },
+    },
+    {
+      $unwind: "$group",
+    },
+    {
+      $unwind: "$group.students",
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "group.students",
+        foreignField: "_id",
+        as: "student",
+      },
+    },
+    {
+      $unwind: "$student",
+    },
+    {
+      $project: {
+        group: "$group._id",
+        student: "$student._id",
+        createdAt: "$student.createdAt",
+      },
+    },
+    {
+      $project: {
+        student: 1,
+        year: { $year: "$createdAt" },
+        month: { $month: "$createdAt" },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          _id: "$_id",
+          year: "$year",
+          month: "$month",
+        },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id._id",
+        stats: {
+          $push: {
+            year: "$_id.year",
+            month: "$_id.month",
+            count: "$count",
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        id: "$id",
+        stats: 1,
+      },
+    },
+  ]);
+
+  next();
+});
+
+exports.getBalanceStat = catchAsync(async (req, res, next) => {
+  req.pipeline = BranchModel.aggregate([
+    {
+      $lookup: {
+        from: "transactions",
+        localField: "_id",
+        foreignField: "branch",
+        as: "transactions",
+      },
+    },
+    {
+      $unwind: "$transactions",
+    },
+    {
+      $group: {
+        _id: "$_id",
+        balance: {
+          $sum: "$transactions.amount",
+        },
+      },
+    },
+  ]);
 
   next();
 });

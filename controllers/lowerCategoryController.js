@@ -10,7 +10,7 @@ exports.makeDeletedLowerCategory = factory.makeDeletedOne(LowerCategoryModel);
 exports.deleteLowerCategory = factory.deleteOne(LowerCategoryModel);
 
 exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
-  const docs = await LowerCategoryModel.aggregate([
+  req.mainQuery = LowerCategoryModel.aggregate([
     [
       {
         $lookup: {
@@ -40,11 +40,7 @@ exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
       },
     ],
   ]);
-  res.status(200).json({
-    status: "success",
-    results: docs.length,
-    data: docs,
-  });
+  next();
 });
 
 exports.sortDescending = catchAsync(async (req, res, next) => {

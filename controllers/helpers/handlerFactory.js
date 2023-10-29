@@ -85,27 +85,35 @@ exports.getOne = (Model) =>
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    let filter;
-    if (req.ids) filter = { _id: { $in: req.ids } };
+    // 1. Extract request parameters
+    const { popOptions, query: requestQuery, pipeline } = req;
 
-    let query = Model.find(filter);
-    if (req.popOptions) query = query.populate(req.popOptions);
+    // 2. Build the initial query
+    let query = pipeline ? pipeline : Model.find();
 
-    let features = new APIFeatures(query, req.query)
-      .filter()
+    // 3. Populate specified fields if popOptions are provided
+    if (popOptions) query = query.populate(popOptions);
+
+    // 4. Create APIFeatures instance for query filtering, sorting, and field limiting
+    const features = new APIFeatures(query, requestQuery)
+      .filter(!!pipeline)
       .sort()
-      .limitFields();
+      .limitFields(!!pipeline);
+
+    // 5. Execute the initial query to get the total count
     const total = await features.query;
 
-    features = features.paginate();
-    // const doc = await features.query.explain();
-    const doc = await features.query;
+    // 6. Paginate the results
+    const paginatedFeatures = features.paginate(!!pipeline);
 
-    // SEND RESPONSE
+    // 7. Execute the final query
+    const result = await paginatedFeatures.query;
+
+    // 8. Send the response
     res.status(200).json({
       status: "success",
       total: total.length,
-      results: doc.length,
-      data: doc,
+      results: result.length,
+      data: result,
     });
   });
