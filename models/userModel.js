@@ -175,7 +175,7 @@ const userSchema = new mongoose.Schema(
       ],
       validate: {
         validator: function (val) {
-          return !this.roles.includes(roles.TEACHER) && !!val?.at(0);
+          return !this.roles.includes(roles.TEACHER) || val.length;
         },
         message: "Teacher must have at least one subject.",
       },

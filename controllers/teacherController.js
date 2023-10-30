@@ -5,7 +5,7 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getStudents = catchAsync(async (req, res, next) => {
-  req.mainQuery = UserModel.aggregate([
+  req.pipline = UserModel.aggregate([
     {
       $lookup: {
         from: "groups",
