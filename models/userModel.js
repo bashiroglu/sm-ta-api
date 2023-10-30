@@ -183,9 +183,10 @@ const userSchema = new mongoose.Schema(
 
     active: Boolean,
     deleted: Boolean,
-    note: String,
     description: String,
-    query: String,
+
+    note: { type: String, select: false },
+    query: { type: String, select: false },
 
     createdBy: {
       type: mongoose.Schema.ObjectId,
