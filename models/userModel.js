@@ -181,7 +181,10 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    active: Boolean,
+    active: {
+      type: Boolean,
+      default: true,
+    },
     deleted: Boolean,
     description: String,
 

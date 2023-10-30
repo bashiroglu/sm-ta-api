@@ -154,10 +154,17 @@ exports.getBalanceStat = catchAsync(async (req, res, next) => {
     },
     {
       $group: {
-        _id: "$_id",
+        _id: { _id: "$_id", name: "$name" },
         balance: {
           $sum: "$transactions.amount",
         },
+      },
+    },
+    {
+      $project: {
+        id: "$_id._id",
+        name: "$_id.name",
+        balance: 1,
       },
     },
   ]);
