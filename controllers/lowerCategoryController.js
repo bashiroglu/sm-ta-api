@@ -10,35 +10,41 @@ exports.makeDeletedLowerCategory = factory.makeDeletedOne(LowerCategoryModel);
 exports.deleteLowerCategory = factory.deleteOne(LowerCategoryModel);
 
 exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
-  req.mainQuery = LowerCategoryModel.aggregate([
-    [
-      {
-        $lookup: {
-          from: "uppercategories",
-          localField: "upperCategory",
-          foreignField: "_id",
-          as: "uppers",
-        },
+  req.pipeline = LowerCategoryModel.aggregate([
+    {
+      $lookup: {
+        from: "uppercategories",
+        localField: "upperCategory",
+        foreignField: "_id",
+        as: "uppers",
       },
-      {
-        $sort: {
-          priority: -1,
-        },
+    },
+    {
+      $unwind: "$uppers",
+    },
+    {
+      $sort: {
+        priority: -1,
       },
-      {
-        $match: {
-          "uppers.slug": req.params.slug,
-        },
+    },
+    {
+      $match: {
+        "uppers.slug": req.params.slug,
       },
-      {
-        $project: {
-          title: 1,
-          upperCategory: 1,
-          description: 1,
-          priority: 1,
-        },
+    },
+    {
+      $project: {
+        title: 1,
+        upperCategory: 1,
+        description: 1,
+        priority: 1,
       },
-    ],
+    },
+    {
+      $sort: {
+        priority: -1,
+      },
+    },
   ]);
   next();
 });
