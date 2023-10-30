@@ -166,11 +166,12 @@ const userSchema = new mongoose.Schema(
     },
 
     active: Boolean,
-    note: String,
-    description: String,
-    query: String,
-
     deleted: Boolean,
+    description: String,
+
+    note: { type: String, select: false },
+    query: { type: String, select: false },
+
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
