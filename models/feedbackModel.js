@@ -4,6 +4,10 @@ const collectionName = "Feedback";
 
 const subjectSchema = new mongoose.Schema(
   {
+    code: {
+      type: String,
+      unique: true,
+    },
     student: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

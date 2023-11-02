@@ -21,6 +21,7 @@ const {
   updatePassword,
   restrictTo,
 } = require("../controllers/authController");
+const getCode = require("../utils/getCode");
 
 const router = express.Router();
 
@@ -41,7 +42,7 @@ router.use(restrictTo("roles", "owner", "admin", "manager"));
 router
   .route("/role/:role")
   .get(getAllByRole, getUsers)
-  .post(createUserByRole, assignPassword, createUser);
+  .post(getCode("user"), createUserByRole, assignPassword, createUser);
 
 router
   .route("/role/student/participation")
@@ -51,7 +52,10 @@ router
   .route("/role/student/:id/participation")
   .get(populateParticipations, getUser);
 
-router.route("/").get(getUsers).post(assignPassword, createUser);
+router
+  .route("/")
+  .get(getUsers)
+  .post(getCode("user"), assignPassword, createUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(makeDeletedUser);
 router

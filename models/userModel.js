@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-const { getCode } = require("../utils/app");
 const { uniqueArrValidator } = require("../utils/validators");
 const { roles } = require("../utils/constants/enums");
 const { getFirstOfNextMonth } = require("../utils/helpers");
@@ -205,26 +204,18 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isNew)
-    this.code =
-      this.email === process.env.OWNER_EMAIL
-        ? "OWNER_CODE"
-        : await getCode(next, collectionName, "USER", 6);
-
-  const name = this.name ? this.name + " " : "";
-  const surname = this.surname ? this.surname + " " : "";
-  const note = this.note ? this.note + " " : "";
-  const phoneNumbers = this.phoneNumbers.join(" ");
-  // [this.name, this.surname, this.note].join(" ");
-
-  this.query = `${name}${surname}${note}${phoneNumbers}`;
+  this.query = [
+    this.name && "",
+    this.surname && "",
+    this.note && "",
+    this.phoneNumbers.join(" ") && "",
+  ].join(" ");
 
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
-  // if (!this.isModified("password")) return next();
+
   if (!this.isModified("password") || this.isNew) return next();
-  // this.password = await bcrypt.hash(this.password, 12);
   this.passwordChangedAt = Date.now() - 1000;
   return next();
 });

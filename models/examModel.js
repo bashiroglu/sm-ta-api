@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { getCode } = require("../utils/app");
 
 const collectionName = "Exam";
 
@@ -35,10 +34,6 @@ const examSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-examSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "EXAM", 8);
-});
 
 examSchema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });

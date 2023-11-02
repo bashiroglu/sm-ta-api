@@ -1,6 +1,8 @@
+const mongoose = require("mongoose");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+
 const UserModel = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
@@ -50,23 +52,42 @@ exports.signup = catchAsync(async (req, res, next) => {
     dateOfBirth,
     password,
     passwordConfirm,
+    code,
   } = req.body;
 
   const roles = process.env.OWNER_EMAIL === email ? ["owner"] : undefined;
   const active = process.env.OWNER_EMAIL === email || undefined;
+  let newUser;
 
-  const newUser = await UserModel.create({
-    roles,
-    surname,
-    fatherName,
-    name,
-    email,
-    phoneNumbers,
-    dateOfBirth,
-    password,
-    passwordConfirm,
-    active,
-  });
+  const { session } = req;
+
+  try {
+    newUser = await UserModel.create(
+      [
+        {
+          roles,
+          surname,
+          fatherName,
+          name,
+          email,
+          phoneNumbers,
+          dateOfBirth,
+          password,
+          passwordConfirm,
+          active,
+          code,
+        },
+      ],
+      { session }
+    );
+    await session.commitTransaction();
+  } catch (err) {
+    console.log(err);
+    await session.abortTransaction();
+    return next(new AppError(err.message));
+  } finally {
+    session.endSession();
+  }
 
   // TODO: Fix below (It will depend on desision):
   if (process.env.NODE_ENV.trim() == "production") {

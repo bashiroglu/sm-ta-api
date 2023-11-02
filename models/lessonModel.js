@@ -4,6 +4,10 @@ const collectionName = "Lesson";
 
 const lessonSchema = new mongoose.Schema(
   {
+    code: {
+      type: String,
+      unique: true,
+    },
     group: {
       type: mongoose.Schema.ObjectId,
       ref: "Group",

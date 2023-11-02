@@ -10,13 +10,14 @@ const {
 } = require("../controllers/feedbackController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { populate } = require("../utils/helpers");
+const getCode = require("../utils/getCode");
 
 const router = express.Router();
 
 router.use(protect);
 
 router.use(restrictTo("roles", "owner", "admin", "manager", "teacher"));
-router.route("/").post(createFeedback);
+router.route("/").post(getCode("feedback"), createFeedback);
 
 router.route("/:id").patch(updateFeedback).delete(makeDeletedFeedback);
 router.route("/:id/delete").delete(deleteFeedback);

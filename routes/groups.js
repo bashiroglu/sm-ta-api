@@ -12,13 +12,14 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
 const { populate } = require("../utils/helpers");
+const getCode = require("../utils/getCode");
 
 const router = express.Router();
 
 router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
 router.use(protect);
-router.route("/").get(getGroups).post(createGroup);
+router.route("/").get(getGroups).post(getCode("group"), createGroup);
 router
   .route("/:id")
   .get(

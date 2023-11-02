@@ -2,12 +2,12 @@ const cron = require("node-cron");
 const mongoose = require("mongoose");
 
 const UserModel = require("./../models/userModel");
-const catchAsync = require("./../utils/catchAsync");
+const GroupModel = require("../models/groupModel");
 const AppError = require("./../utils/appError");
 const factory = require("./helpers/handlerFactory");
+const catchAsync = require("./../utils/catchAsync");
 const { filterObject } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
-const GroupModel = require("../models/groupModel");
 
 exports.schedulePaymentNotifications = () => {
   // TODO: schedule a task to run at 17:58 on the 3rd of every month change if needed
@@ -82,38 +82,33 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 });
 
 exports.createUserByRole = catchAsync(async (req, res, next) => {
-  const role = req.params.role;
+  const {
+    session,
+    body: { group },
+    params: { role },
+  } = req;
+
   const rolesArr = [role];
   if (employeeRoles.values().includes(role)) rolesArr.push(roles.EMPLOYEE);
   req.body.roles = rolesArr;
 
-  if (req.body.group) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      const { group } = req.body;
+  const id = mongoose.Types.ObjectId();
+  req.body._id = id;
+  if (group) {
+    const groupDoc = await GroupModel.findByIdAndUpdate(
+      group,
+      {
+        $push: { students: id },
+      },
+      { new: true, session }
+    );
 
-      const user = await UserModel.create({
-        ...req.body,
-        passwordConfirm: process.env.DEFAULT_USER_PASSWORD,
-        password: process.env.DEFAULT_USER_PASSWORD,
-        createdBy: req.user.id,
-      });
-
-      await GroupModel.findByIdAndUpdate(group, {
-        $push: { students: user.id },
-      });
-
-      req.doc = user;
-      await session.commitTransaction();
-      session.endSession();
-      next();
-    } catch (error) {
+    if (!groupDoc) {
       await session.abortTransaction();
-      session.endSession();
-      next(new AppError(error.message));
+      return next(new AppError("Group not found with that ID", 404));
     }
-  } else next();
+  }
+  next();
 });
 
 exports.getAllByRole = (req, res, next) => {

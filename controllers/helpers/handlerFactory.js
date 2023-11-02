@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const catchAsync = require("../../utils/catchAsync");
 const { filterObject } = require("../../utils/helpers");
 const AppError = require("../../utils/appError");
@@ -54,12 +56,27 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    if (!req.doc)
-      req.doc = await Model.create({ ...req.body, createdBy: req.user.id });
+    let { session, doc } = req;
+    if (!session) {
+      session = await mongoose.startSession();
+      session.startTransaction();
+    }
+
+    req.body.createdBy = req.user.id;
+    try {
+      doc = await Model.create([req.body], { session });
+      await session.commitTransaction();
+    } catch (err) {
+      await session.abortTransaction();
+      console.log("😀😀😀", err, "😀😀😀");
+      return next(new AppError(err.meesage, 404));
+    } finally {
+      session.endSession();
+    }
 
     res.status(201).json({
       status: "success",
-      data: req.doc,
+      data: doc,
     });
   });
 

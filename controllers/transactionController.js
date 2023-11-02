@@ -16,39 +16,40 @@ exports.makeDeletedTransaction = factory.makeDeletedOne(TransactionModel);
 exports.deleteTransaction = factory.deleteOne(TransactionModel);
 
 exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
-  req.body.createdBy = req.user.id;
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    let { amount, isIncome, branch: branchId, category } = req.body;
-    amount = amount * (isIncome || -1);
-    const branch = await BranchModel.findByIdAndUpdate(
-      branchId,
-      { $inc: { balance: amount } },
-      { session }
-    );
-    await LowerCategory.findByIdAndUpdate(
-      category,
-      { $inc: { priority: 1 } },
-      { session }
-    );
+  const { session } = req;
 
-    const transactionData = {
-      ...req.body,
-      amount,
-      branchBalanceBefore: branch.balance,
-      branchBalanceAfter: branch.balance + amount,
-    };
+  let { amount, isIncome, branch: branchId, category } = req.body;
+  amount = amount * (isIncome || -1);
+  const branch = await BranchModel.findByIdAndUpdate(
+    branchId,
+    { $inc: { balance: amount } },
+    { session }
+  );
 
-    req.doc = await TransactionModel.create([transactionData], { session });
-    await session.commitTransaction();
-    session.endSession();
-    next();
-  } catch (error) {
+  if (!branch) {
     await session.abortTransaction();
-    session.endSession();
-    next(new AppError(error.message));
+    return next(new AppError("Branch not found with that ID", 404));
   }
+
+  const lower = await LowerCategory.findByIdAndUpdate(
+    category,
+    { $inc: { priority: 1 } },
+    { session }
+  );
+
+  if (!lower) {
+    await session.abortTransaction();
+    return next(new AppError("Category not found with that ID", 404));
+  }
+
+  req.body = {
+    ...req.body,
+    amount,
+    branchBalanceBefore: branch.balance,
+    branchBalanceAfter: branch.balance + amount,
+  };
+
+  next();
 });
 
 exports.checkBranch = catchAsync(async (req, res, next) => {

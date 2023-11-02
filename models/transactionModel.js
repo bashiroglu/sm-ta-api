@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { getCode } = require("../utils/app");
 
 const collectionName = "Transaction";
 
@@ -64,10 +63,6 @@ const transactionSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-transactionSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "TRNS");
-});
 
 transactionSchema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate({

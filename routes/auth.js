@@ -1,4 +1,5 @@
 const express = require("express");
+const getCode = require("../utils/getCode");
 
 const {
   protect,
@@ -12,7 +13,7 @@ const {
 
 const router = express.Router();
 
-router.post("/signup", signup);
+router.post("/signup", getCode("user"), signup);
 router.post("/login", login);
 router.get("/logout", logout);
 
