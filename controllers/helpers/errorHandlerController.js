@@ -51,8 +51,8 @@ const sendErrorDev = (err, req, res) => {
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
-  console.log(err);
   if (
+    // TODO: REMOVE development
     process.env.NODE_ENV.trim() === "production" ||
     process.env.NODE_ENV.trim() === "development"
   ) {

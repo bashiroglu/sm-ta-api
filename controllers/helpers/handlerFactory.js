@@ -57,27 +57,27 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     let { session, doc } = req;
-    if (!session) {
-      session = await mongoose.startSession();
-      session.startTransaction();
-    }
-
-    req.body.createdBy = req.user.id;
     try {
+      if (!session) {
+        session = await mongoose.startSession();
+        session.startTransaction();
+      }
+
+      req.body.createdBy = req.user.id;
       doc = await Model.create([req.body], { session });
       await session.commitTransaction();
+
+      res.status(201).json({
+        status: "success",
+        data: doc,
+      });
     } catch (err) {
       await session.abortTransaction();
       console.log("😀😀😀", err, "😀😀😀");
-      return next(new AppError(err.meesage, 404));
+      return next(err);
     } finally {
       session.endSession();
     }
-
-    res.status(201).json({
-      status: "success",
-      data: doc,
-    });
   });
 
 exports.getOne = (Model) =>
