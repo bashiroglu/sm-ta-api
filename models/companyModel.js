@@ -4,20 +4,22 @@ const collectionName = "Company";
 
 const companySchema = new mongoose.Schema(
   {
+    code: {
+      type: String,
+      unique: true,
+    },
     name: {
       type: String,
       required: [true, "A company must have a name."],
     },
-    code: String,
     balance: { type: Number, default: 0 },
 
     book: { type: Number, default: 0 },
-    branch: { type: Number, default: 0 },
-    exam: { type: Number, default: 0 },
     group: { type: Number, default: 0 },
-    program: { type: Number, default: 0 },
-    user: { type: Number, default: 0 },
+    inventory: { type: Number, default: 0 },
+    lesson: { type: Number, default: 0 },
     transaction: { type: Number, default: 0 },
+    user: { type: Number, default: 0 },
 
     active: Boolean,
     deleted: Boolean,

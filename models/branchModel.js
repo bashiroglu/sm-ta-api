@@ -1,15 +1,9 @@
 const mongoose = require("mongoose");
-const { getCode } = require("../utils/app");
 
 const collectionName = "Branch";
 
 const branchSchema = new mongoose.Schema(
   {
-    code: {
-      type: String,
-      unique: true,
-    },
-
     company: {
       type: mongoose.Schema.ObjectId,
       ref: "Company",
@@ -44,10 +38,6 @@ const branchSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-branchSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "BRNC");
-});
 
 branchSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });

@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-const { getCode } = require("../utils/app");
 const { uniqueArrValidator } = require("../utils/validators");
 
 const collectionName = "User";
@@ -165,7 +164,10 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    active: Boolean,
+    active: {
+      type: Boolean,
+      default: true,
+    },
     deleted: Boolean,
     description: String,
 
@@ -186,12 +188,6 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isNew)
-    this.code =
-      this.email === process.env.OWNER_EMAIL
-        ? "OWNER_CODE"
-        : await getCode(next, collectionName, "USER", 6);
-
   const name = this.name ? this.name + " " : "";
   const surname = this.surname ? this.surname + " " : "";
   const note = this.note ? this.note + " " : "";

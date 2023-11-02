@@ -8,12 +8,13 @@ const {
   deleteLesson,
 } = require("../controllers/lessonController");
 const { protect, restrictTo } = require("../controllers/authController");
+const getCode = require("../utils/getCode");
 
 const router = express.Router();
 
 router.use(protect);
 
-router.route("/").get(getLessons).post(createLesson);
+router.route("/").get(getLessons).post(getCode("lesson"), createLesson);
 router
   .route("/:id")
   .get(getLesson)

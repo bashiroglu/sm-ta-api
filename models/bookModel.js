@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { getCode } = require("../utils/app");
 
 const collectionName = "Book";
 
@@ -49,10 +48,6 @@ const bookSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-bookSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "BOOK", 8);
-});
 
 bookSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });

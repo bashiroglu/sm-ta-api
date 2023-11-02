@@ -1,15 +1,9 @@
 const mongoose = require("mongoose");
-const { getCode } = require("../utils/app");
 
 const collectionName = "Program";
 
 const programSchema = new mongoose.Schema(
   {
-    code: {
-      type: String,
-      unique: true,
-    },
-
     title: { type: String },
     description: { type: String },
     predictedPayment: {
@@ -49,10 +43,6 @@ const programSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-programSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "PRGRM");
-});
 
 programSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });

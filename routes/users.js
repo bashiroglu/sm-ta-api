@@ -18,6 +18,7 @@ const {
   populateParticipations,
   assignPassword,
 } = require("../controllers/userController");
+const getCode = require("../utils/getCode");
 
 const {
   protect,
@@ -38,7 +39,10 @@ router
 
 router.use(restrictTo("roles", "owner", "admin", "manager"));
 
-router.route("/").get(getUsers).post(assignPassword, createUser);
+router
+  .route("/")
+  .get(getUsers)
+  .post(getCode("user"), assignPassword, createUser);
 router
   .route("/role/:role")
   .get(getAllByRole, getUsers)

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { getCode } = require("../utils/app");
 
 const collectionName = "Group";
 
@@ -71,10 +70,6 @@ const groupSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-groupSchema.pre("save", async function (next) {
-  if (this.isNew) this.code = await getCode(next, collectionName, "GRP");
-});
 
 groupSchema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });

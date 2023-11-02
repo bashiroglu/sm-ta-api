@@ -10,6 +10,7 @@ const {
   checkBranch,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
+const getCode = require("../utils/getCode");
 
 const router = express.Router();
 
@@ -17,8 +18,13 @@ router.use(protect, restrictTo("roles", "owner", "admin"));
 
 router
   .route("/")
-  .get(getTransactions)
-  .post(checkBranch, changeBalanceCreateTransaction, createTransaction);
+  .get(populate({ path: "createdBy", select: "name surname" }), getTransactions)
+  .post(
+    checkBranch,
+    getCode("transaction"),
+    changeBalanceCreateTransaction,
+    createTransaction
+  );
 router
   .route("/:id")
   .get(getTransaction)
