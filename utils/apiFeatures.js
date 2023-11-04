@@ -58,7 +58,9 @@ class APIFeatures {
         this.query = this.query.project(project);
       } else this.query.select(fields);
     } else {
-      this.query = this.query.select("-__v");
+      this.query = isAggregate(this)
+        ? this.query.project({ __v: 0 })
+        : this.query.select("-__v");
     }
 
     return this;
