@@ -11,10 +11,6 @@ const RateLimit = require("express-rate-limit");
 const errorHandler = require("./controllers/helpers/errorHandlerController");
 const routes = require("./routes");
 
-const cron = require("node-cron");
-
-// Diksiya app Routes
-
 const AppError = require("./utils/appError");
 
 const app = express();

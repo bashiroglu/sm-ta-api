@@ -15,7 +15,7 @@ exports.updateTransaction = factory.updateOne(TransactionModel);
 exports.makeDeletedTransaction = factory.makeDeletedOne(TransactionModel);
 exports.deleteTransaction = factory.deleteOne(TransactionModel);
 
-exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
+exports.updateBalance = catchAsync(async (req, res, next) => {
   const { session } = req;
 
   let { amount, isIncome, branch: branchId, category } = req.body;
@@ -45,22 +45,25 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
   req.body = {
     ...req.body,
     amount,
-    branchBalanceBefore: branch.balance,
-    branchBalanceAfter: branch.balance + amount,
+    balanceBefore: branch.balance,
+    balanceAfter: branch.balance + amount,
   };
 
   next();
 });
 
 exports.checkBranch = catchAsync(async (req, res, next) => {
+  const { session } = req;
   if (!req.user.roles.includes("owner"))
     if (
       req.user.roles.includes("manager") &&
       !req.user.branches?.map((b) => b.id).includes(req.body.branch)
-    )
+    ) {
+      if (session) await session.abortTransaction();
       return next(
         new AppError("You are not authorized to finish this action.", 401)
       );
+    }
 
   next();
 });

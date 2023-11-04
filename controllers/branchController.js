@@ -22,6 +22,12 @@ exports.getOnlyBlance = catchAsync(async (req, res, next) => {
 
 exports.getBranchStudentCount = catchAsync(async (req, res, next) => {
   req.doc = await BranchModel.aggregate([
+    // TODO: Apply following match (deleted: { $ne: true }) for all required places
+    {
+      $match: {
+        deleted: { $ne: true },
+      },
+    },
     {
       $lookup: {
         from: "groups",
@@ -62,9 +68,7 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
   req.pipeline = BranchModel.aggregate([
     {
       $match: {
-        createdAt: {
-          $gte: new Date(new Date().setMonth(new Date().getMonth() - 6)),
-        },
+        deleted: { $ne: true },
       },
     },
     {
@@ -102,8 +106,16 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
     {
       $project: {
         student: 1,
+        createdAt: 1,
         year: { $year: "$createdAt" },
         month: { $month: "$createdAt" },
+      },
+    },
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+        },
       },
     },
     {
@@ -142,6 +154,11 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
 exports.getBalanceStat = catchAsync(async (req, res, next) => {
   req.pipeline = BranchModel.aggregate([
     {
+      $match: {
+        deleted: { $ne: true },
+      },
+    },
+    {
       $lookup: {
         from: "transactions",
         localField: "_id",
@@ -150,7 +167,10 @@ exports.getBalanceStat = catchAsync(async (req, res, next) => {
       },
     },
     {
-      $unwind: "$transactions",
+      $unwind: {
+        path: "$transactions",
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $group: {
@@ -162,9 +182,15 @@ exports.getBalanceStat = catchAsync(async (req, res, next) => {
     },
     {
       $project: {
+        _id: 0,
         id: "$_id._id",
         name: "$_id.name",
         balance: 1,
+      },
+    },
+    {
+      $sort: {
+        balance: -1,
       },
     },
   ]);

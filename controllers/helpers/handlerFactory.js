@@ -57,27 +57,25 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     let { session, doc } = req;
-    try {
-      if (!session) {
-        session = await mongoose.startSession();
-        session.startTransaction();
+    req.body.createdBy = req.user.id;
+
+    if (session) {
+      try {
+        doc = await Model.create([req.body], { session });
+        await session.commitTransaction();
+      } catch (err) {
+        await session.abortTransaction();
+        console.log("😀😀😀", err, "😀😀😀");
+        return next(err);
+      } finally {
+        session.endSession();
       }
+    } else doc = await Model.create(req.body);
 
-      req.body.createdBy = req.user.id;
-      doc = await Model.create([req.body], { session });
-      await session.commitTransaction();
-
-      res.status(201).json({
-        status: "success",
-        data: doc,
-      });
-    } catch (err) {
-      await session.abortTransaction();
-      console.log("😀😀😀", err, "😀😀😀");
-      return next(err);
-    } finally {
-      session.endSession();
-    }
+    res.status(201).json({
+      status: "success",
+      data: doc,
+    });
   });
 
 exports.getOne = (Model) =>
@@ -113,15 +111,15 @@ exports.getAll = (Model) =>
 
     // 4. Create APIFeatures instance for query filtering, sorting, and field limiting
     const features = new APIFeatures(query, requestQuery)
-      .filter(!!pipeline)
+      .filter()
       .sort()
-      .limitFields(!!pipeline);
+      .limitFields();
 
     // 5. Execute the initial query to get the total count
     const total = await features.query;
 
     // 6. Paginate the results
-    const paginatedFeatures = features.paginate(!!pipeline);
+    const paginatedFeatures = features.paginate();
 
     // 7. Execute the final query
     const result = await paginatedFeatures.query;
