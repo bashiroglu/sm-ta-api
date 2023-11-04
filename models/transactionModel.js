@@ -28,8 +28,8 @@ const transactionSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    branchBalanceAfter: Number,
-    branchBalanceBefore: Number,
+    balanceAfter: Number,
+    balanceBefore: Number,
     realDate: Date,
     paymentMethod: {
       type: String,

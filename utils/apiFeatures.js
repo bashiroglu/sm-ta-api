@@ -1,3 +1,5 @@
+const { isAggregate } = require("./helpers");
+
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -25,7 +27,9 @@ class APIFeatures {
     if (parsed.query) parsed.query = new RegExp(parsed.query, "i");
     if (parsed.code) parsed.code = new RegExp(parsed.code, "i");
 
-    this.query = this.query.find(parsed);
+    this.query = isAggregate(this)
+      ? this.query.match(parsed)
+      : this.query.find(parsed);
 
     return this;
   }
@@ -44,7 +48,15 @@ class APIFeatures {
   limitFields() {
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
-      this.query = this.query.select(fields);
+
+      if (isAggregate(this)) {
+        const project = fields.reduce((acc, cur) => {
+          acc[cur.startsWith("-") ? cur.slice(1) : cur] = +!cur.startsWith("-");
+          return acc;
+        }, {});
+
+        this.query = this.query.project(project);
+      } else this.query.select(fields);
     } else {
       this.query = this.query.select("-__v");
     }
@@ -56,7 +68,7 @@ class APIFeatures {
     const page = this.queryString.page * 1;
     const limit = this.queryString.limit * 1;
     const skip = (page - 1) * limit;
-
+    if (isAggregate(this) && (!page || !limit)) return this;
     this.query = this.query.skip(skip).limit(limit);
 
     return this;

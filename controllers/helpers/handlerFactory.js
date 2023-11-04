@@ -76,22 +76,20 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     let { session, doc } = req;
-    if (!session) {
-      session = await mongoose.startSession();
-      session.startTransaction();
-    }
-
     req.body.createdBy = req.user.id;
-    try {
-      doc = await Model.create([req.body], { session });
-      await session.commitTransaction();
-    } catch (err) {
-      await session.abortTransaction();
-      console.log("😀😀😀", err, "😀😀😀");
-      return next(new AppError(err.meesage, 404));
-    } finally {
-      session.endSession();
-    }
+
+    if (session) {
+      try {
+        doc = await Model.create([req.body], { session });
+        await session.commitTransaction();
+      } catch (err) {
+        await session.abortTransaction();
+        console.log("😀😀😀", err, "😀😀😀");
+        return next(err);
+      } finally {
+        session.endSession();
+      }
+    } else doc = await Model.create(req.body);
 
     res.status(201).json({
       status: "success",
@@ -119,27 +117,37 @@ exports.getOne = (Model) =>
     });
   });
 
-exports.getAll = (Model, { isFiltered = false } = {}) =>
+exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    let filter = isFiltered ? createFilter(req) : {};
-    let query = Model.find(filter);
-    if (req.popOptions) query = query.populate(req.popOptions);
+    // 1. Extract request parameters
+    const { popOptions, query: requestQuery, pipeline } = req;
 
-    let features = new APIFeatures(query, req.query)
+    // 2. Build the initial query
+    let query = pipeline ? pipeline : Model.find();
+
+    // 3. Populate specified fields if popOptions are provided
+    if (popOptions) query = query.populate(popOptions);
+
+    // 4. Create APIFeatures instance for query filtering, sorting, and field limiting
+    const features = new APIFeatures(query, requestQuery)
       .filter()
       .sort()
       .limitFields();
+
+    // 5. Execute the initial query to get the total count
     const total = await features.query;
 
-    features = features.paginate();
-    // const doc = await features.query.explain();
-    const doc = await features.query;
+    // 6. Paginate the results
+    const paginatedFeatures = features.paginate();
 
-    // SEND RESPONSE
+    // 7. Execute the final query
+    const result = await paginatedFeatures.query;
+
+    // 8. Send the response
     res.status(200).json({
       status: "success",
       total: total.length,
-      results: doc.length,
-      data: doc,
+      results: result.length,
+      data: result,
     });
   });

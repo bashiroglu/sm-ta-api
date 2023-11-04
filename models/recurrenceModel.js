@@ -1,17 +1,11 @@
 const mongoose = require("mongoose");
+const TransactionModel = require("./transactionModel");
+const { sendNotification, scheduleTask } = require("../utils/helpers");
 
 const collectionName = "Recurrence";
 
 const recurrenceSchema = new mongoose.Schema(
   {
-    payer: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
-    payee: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
     title: {
       type: String,
       required: true,
@@ -23,25 +17,58 @@ const recurrenceSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    type: {
-      type: String,
-      enum: ["income", "expense"],
-      required: true,
-    },
     category: {
       type: mongoose.Schema.ObjectId,
       ref: "LowerCategory",
     },
+    isIncome: {
+      type: Boolean,
+      required: true,
+    },
     paymentMethod: {
       type: String,
-      enum: ["online", "cash"],
+      enum: ["cash", "online"],
     },
-    period: {
+    branch: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Branch",
+    },
+    relatedTo: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+
+    priority: {
+      type: Number,
+      default: 0,
+    },
+
+    periodicity: {
       type: String,
       required: true,
     },
-    active: Boolean,
+    remindDuration: {
+      type: Number,
+    },
+    dueDate: {
+      type: Date,
+    },
+    recipients: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        notifications: {
+          type: [String],
+          enum: ["sms", "email", "push"],
+        },
+      },
+    ],
 
+    hidden: Boolean,
+
+    active: Boolean,
     deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
@@ -56,18 +83,23 @@ const recurrenceSchema = new mongoose.Schema(
 );
 
 recurrenceSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 
-recurrenceSchema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } })
-    .populate("spender")
-    .populate("recipient")
-    .populate("createdBy");
+const jobs = {};
+
+recurrenceSchema.post("save", function (doc, next) {
+  jobs[doc._id] = scheduleTask(doc, sendNotification);
+
+  console.log("Recurrence created");
   next();
+});
+
+recurrenceSchema.post("findOneAndUpdate", function (doc) {
+  jobs[doc._id] = scheduleTask(doc, sendNotification);
 });
 
 const RecurrenceModel = mongoose.model(collectionName, recurrenceSchema);
 
-module.exports = RecurrenceModel;
+module.exports = { RecurrenceModel, jobs };

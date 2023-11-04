@@ -11,7 +11,7 @@ exports.updateTransaction = factory.updateOne(TransactionModel);
 exports.makeDeletedTransaction = factory.makeDeletedOne(TransactionModel);
 exports.deleteTransaction = factory.deleteOne(TransactionModel);
 
-exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
+exports.updateBalance = catchAsync(async (req, res, next) => {
   req.body.createdBy = req.user.id;
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -31,8 +31,9 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
 
     const transactionData = {
       ...req.body,
-      branchBalanceBefore: branch.balance,
-      branchBalanceAfter: branch.balance + amount,
+      amount,
+      balanceBefore: branch.balance,
+      balanceAfter: branch.balance + amount,
     };
 
     req.doc = await TransactionModel.create([transactionData], { session });
@@ -47,14 +48,16 @@ exports.changeBalanceCreateTransaction = catchAsync(async (req, res, next) => {
 });
 
 exports.checkBranch = catchAsync(async (req, res, next) => {
+  const { session } = req;
   if (!req.user.roles.includes("owner"))
     if (
       req.user.roles.includes("manager") &&
       !req.user.branches?.map((b) => b.id).includes(req.body.branch)
-    )
+    ) {
+      if (session) await session.abortTransaction();
       return next(
         new AppError("You are not authorized to finish this action.", 401)
       );
-
+    }
   next();
 });
