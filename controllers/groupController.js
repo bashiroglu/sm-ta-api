@@ -17,16 +17,25 @@ exports.crudGroupLessons = catchAsync(async (req, res, next) => {
 });
 
 exports.pushPullArray = catchAsync(async (req, res, next) => {
-  const { id, field, userId } = req.params;
+  const {
+    params: { id, field },
+    body: { ids },
+    method,
+  } = req;
+
   const obj = {};
-  obj[field] = userId;
-  const queryObj =
-    req.method === "DELETE"
-      ? { $pull: obj }
-      : req.method === "PATCH"
-      ? { $push: obj }
-      : {};
-  req.doc = await GroupModel.findByIdAndUpdate(id, queryObj);
+  let queryObj;
+  if (method === "DELETE") {
+    obj[field] = { $in: ids };
+    queryObj = { $pull: obj };
+  } else if (method === "PATCH") {
+    obj[field] = { $each: ids };
+    queryObj = { $push: obj };
+  } else {
+    queryObj = {};
+  }
+
+  req.doc = await GroupModel.findByIdAndUpdate(id, queryObj, { new: true });
   if (!req.doc) {
     return next(new AppError("No document found with that ID", 404));
   }
