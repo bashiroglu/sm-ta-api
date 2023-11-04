@@ -71,62 +71,57 @@ exports.executeRecurrence = catchAsync(async (req, res, next) => {
 
 exports.prepareRecurrences = catchAsync(async (req, res, next) => {
   const currentMonth = getCurrentMonth();
-
-  req.pipeline = RecurrenceModel.aggregate([
-    {
-      $lookup: {
-        from: "transactions",
-        localField: "_id",
-        foreignField: "recurrence",
-        as: "transactions",
-      },
-    },
-    {
-      $match: {
-        "transactions.createdAt": {
-          $gte: currentMonth.start,
-          $lte: currentMonth.end,
+  try {
+    req.pipeline = RecurrenceModel.aggregate([
+      {
+        $lookup: {
+          from: "transactions",
+          as: "transactions",
+          let: { recurrenceId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$recurrence", "$$recurrenceId"] },
+                    {
+                      $gte: [
+                        "$createdAt",
+                        // mongoose.Types.ISODate(
+                        currentMonth.start,
+                        // ),
+                      ],
+                    },
+                    {
+                      $lte: [
+                        "$createdAt",
+                        // mongoose.Types.ISODate(
+                        currentMonth.end,
+                        // ),
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
         },
       },
-    },
-
-    {
-      $unwind: {
-        path: "$transactions",
-        preserveNullAndEmptyArrays: true,
+      {
+        $addFields: {
+          executionCount: { $size: "$transactions" },
+          id: "$_id",
+        },
       },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        executionCount: { $sum: 1 },
-        doc: { $first: "$$ROOT" },
+      {
+        $project: {
+          transactions: 0,
+        },
       },
-    },
-    {
-      $project: {
-        priority: "$doc.priority",
-        title: "$doc.title",
-        amount: "$doc.amount",
-        description: "$doc.description",
-        category: "$doc.category",
-        isIncome: "$doc.isIncome",
-        paymentMethod: "$doc.paymentMethod",
-        branch: "$doc.branch",
-        relatedTo: "$doc.relatedTo",
-        periodicity: "$doc.periodicity",
-        remindDuration: "$doc.remindDuration",
-        dueDate: "$doc.dueDate",
-        hidden: "$doc.hidden",
-        recipients: "$doc.recipients",
-        createdBy: "$doc.createdBy",
-        createdAt: "$doc.createdAt",
-        updatedAt: "$doc.updatedAt",
-        executionCount: 1,
-      },
-    },
-  ]);
-
+    ]);
+  } catch (err) {
+    console.log(err);
+  }
   next();
 });
 
