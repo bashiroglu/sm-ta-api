@@ -4,6 +4,7 @@ const collectionName = "Room";
 
 const roomSchema = new mongoose.Schema(
   {
+    name: String,
     branch: {
       type: mongoose.Schema.ObjectId,
       ref: "Branch",
