@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
-router.use(protect);
+router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
 router.route("/").get(getGroups).post(getCode("group"), createGroup);
 router
   .route("/:id")
