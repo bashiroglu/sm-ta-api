@@ -57,7 +57,7 @@ exports.getStudents = catchAsync(async (req, res, next) => {
         code: "$student.code",
         name: "$student.name",
         surname: "$student.surname",
-        fatherName: "$student.fatherName",
+        patronymic: "$student.patronymic",
         email: "$student.email",
         active: "$student.active",
       },
@@ -67,7 +67,7 @@ exports.getStudents = catchAsync(async (req, res, next) => {
 });
 
 exports.getStudent = catchAsync(async (req, res, next) => {
-  req.query.fields = "code name surname fatherName gender phoneNumbers email";
+  req.query.fields = "code name surname patronymic gender phoneNumbers email";
   req.popOptions = {
     path: "groups",
     select: "name teachers",

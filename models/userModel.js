@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "surname is required"],
     },
-    fatherName: {
+    patronymic: {
       type: String,
     },
     email: {

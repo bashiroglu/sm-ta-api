@@ -128,7 +128,7 @@ exports.prepareRecurrences = catchAsync(async (req, res, next) => {
 exports.scheduleRecurrenceNotifications = catchAsync(async (req, res, next) => {
   const recurrences = await RecurrenceModel.find().populate({
     path: "recipients.user",
-    select: "code name surname fatherName email active",
+    select: "code name surname patronymic email active",
   });
   recurrences.forEach((recurrence) => {
     jobs[recurrence.id] = scheduleTask(recurrence, sendNotification);
@@ -137,6 +137,7 @@ exports.scheduleRecurrenceNotifications = catchAsync(async (req, res, next) => {
 
 exports.stopScheduleNotificationsOnDelete = catchAsync(
   async (req, res, next) => {
+    console.log(jobs, req.params.id, jobs[req.params.id]);
     jobs[req.params.id].stop();
     next();
   }
