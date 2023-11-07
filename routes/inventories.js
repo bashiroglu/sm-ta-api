@@ -22,7 +22,7 @@ router
   .route("/:id")
   .get(getInventory)
   .patch(updateInventory)
-  .delete(deleteInventory);
+  .delete(makeDeletedInventory);
 router.route("/:id/delete").delete(deleteInventory);
 
 module.exports = router;

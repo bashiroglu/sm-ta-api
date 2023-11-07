@@ -18,7 +18,7 @@ router
   .route("/:id")
   .get(getHomework)
   .patch(updateHomework)
-  .delete(deleteHomework);
+  .delete(makeDeletedHomework);
 router.route("/:id/delete").delete(deleteHomework);
 
 module.exports = router;

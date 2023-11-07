@@ -22,14 +22,14 @@ const programSchema = new mongoose.Schema(
 
     name: String,
     price: Number,
-    subjects: {
-      type: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "Subject",
-        },
-      ],
-    },
+    // subjects: {
+    //   type: [
+    //     {
+    //       type: mongoose.Schema.ObjectId,
+    //       ref: "Subject",
+    //     },
+    //   ],
+    // },
 
     deleted: Boolean,
     createdBy: {

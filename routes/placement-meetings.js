@@ -18,7 +18,7 @@ router
   .route("/:id")
   .get(getPlacementMeeting)
   .patch(updatePlacementMeeting)
-  .delete(deletePlacementMeeting);
+  .delete(makeDeletedPlacementMeeting);
 router.route("/:id/delete").delete(deletePlacementMeeting);
 
 module.exports = router;

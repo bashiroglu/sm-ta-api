@@ -40,6 +40,12 @@ upperCategorySchema.pre("save", function (next) {
   next();
 });
 
+upperCategorySchema.virtual("lowers", {
+  ref: "LowerCategory",
+  foreignField: "upperCategory",
+  localField: "_id",
+});
+
 const RoomModel = mongoose.model(collectionName, upperCategorySchema);
 
 module.exports = RoomModel;

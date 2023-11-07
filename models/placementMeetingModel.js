@@ -8,9 +8,14 @@ const placementMeetingSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Room",
     },
-    student: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
+    candidate: {
+      type: {
+        firstName: { type: String, required: true },
+        lastName: { type: String, required: true },
+        patronymic: { type: String },
+        phoneNumber: { type: String, required: true },
+      },
+      required: true,
     },
     teacher: {
       type: mongoose.Schema.ObjectId,

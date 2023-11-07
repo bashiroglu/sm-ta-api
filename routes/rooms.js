@@ -19,7 +19,7 @@ router
   .route("/:id")
   .get(populate, getRoom)
   .patch(updateRoom)
-  .delete(deleteRoom);
+  .delete(makeDeletedRoom);
 router.route("/:id/delete").delete(deleteRoom);
 
 module.exports = router;

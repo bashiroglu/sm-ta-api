@@ -9,7 +9,6 @@ const {
   executeRecurrence,
   prepareRecurrences,
   scheduleRecurrenceNotifications,
-  scheduleNotificationsOnCreate,
   stopScheduleNotificationsOnDelete,
 } = require("../controllers/recurrenceController");
 const {

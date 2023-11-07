@@ -22,7 +22,7 @@ router
   .route("/:id")
   .get(getLowerCategory)
   .patch(updateLowerCategory)
-  .delete(deleteLowerCategory);
+  .delete(makeDeletedLowerCategory);
 router.route("/:id/delete").delete(deleteLowerCategory);
 router
   .route("/upper/:upperId")

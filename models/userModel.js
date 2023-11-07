@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const roles = require("../utils/constants/enums");
 
 const { uniqueArrValidator } = require("../utils/validators");
 
@@ -149,20 +150,20 @@ const userSchema = new mongoose.Schema(
       ],
     },
 
-    subjects: {
-      type: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "Subjects",
-        },
-      ],
-      validate: {
-        validator: function (val) {
-          return !this.roles.includes(roles.TEACHER) && !!val?.at(0);
-        },
-        message: "Teacher must have at least one subject.",
-      },
-    },
+    // subjects: {
+    //   type: [
+    //     {
+    //       type: mongoose.Schema.ObjectId,
+    //       ref: "Subjects",
+    //     },
+    //   ],
+    //   validate: {
+    //     validator: function (val) {
+    //       return !this.roles.includes(roles.TEACHER) && !!val?.at(0);
+    //     },
+    //     message: "Teacher must have at least one subject.",
+    //   },
+    // },
 
     active: {
       type: Boolean,
