@@ -72,7 +72,10 @@ placementMeetingResultSchema.pre(/^find/, function (next) {
 });
 
 placementMeetingResultSchema.pre("save", function (next) {
-  if (mongoose.isValidObjectId(this.referal)) this.referalUser = this.referal;
+  if (mongoose.isValidObjectId(this.referal)) {
+    this.referalUser = this.referal;
+    this.referal = undefined;
+  }
 
   next();
 });
