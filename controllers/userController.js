@@ -25,7 +25,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     req.body,
     "name",
     "surname",
-    "fatherName",
+    "patronymic",
     "phoneNumbers",
     "email",
     "dateOfBirth",

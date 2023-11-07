@@ -44,7 +44,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const {
     name,
     surname,
-    fatherName,
+    patronymic,
     phoneNumbers,
     email,
     dateOfBirth,
@@ -58,7 +58,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await UserModel.create({
     roles,
     surname,
-    fatherName,
+    patronymic,
     name,
     email,
     phoneNumbers,
