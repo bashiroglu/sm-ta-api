@@ -12,7 +12,6 @@ const {
   activateUser,
   assignParamsId,
   updateMe,
-  populateParticipations,
   assignPassword,
   schedulePaymentNotifications,
 } = require("./../controllers/userController");
@@ -22,6 +21,7 @@ const {
   restrictTo,
 } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
+const { populate } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -44,13 +44,46 @@ router
   .get(getAllByRole, getUsers)
   .post(getCode("user"), createUserByRole, assignPassword, createUser);
 
-router
-  .route("/role/student/participation")
-  .get(getAllByRole, populateParticipations, getUsers);
+router.route("/role/student/participation").get(
+  getAllByRole,
+  populate([
+    {
+      path: "packages",
+      select: "name",
+    },
+    {
+      path: "absents",
+      select: "group",
+    },
+    {
+      path: "presents",
+      select: "_id group",
+    },
+  ]),
+  getUsers
+);
 
-router
-  .route("/role/student/:id/participation")
-  .get(populateParticipations, getUser);
+router.route("/role/student/:id/participation").get(
+  populate([
+    {
+      path: "subject",
+      select: "name",
+    },
+    {
+      path: "packages",
+      select: "name",
+    },
+    {
+      path: "absents",
+      select: "group",
+    },
+    {
+      path: "presents",
+      select: "_id group",
+    },
+  ]),
+  getUser
+);
 
 router
   .route("/")

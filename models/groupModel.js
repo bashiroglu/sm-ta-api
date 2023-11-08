@@ -66,7 +66,16 @@ const groupSchema = new mongoose.Schema(
 );
 
 groupSchema.pre(/^find/, function (next) {
-  this.find({ deleted: { $ne: true } });
+  this.find({ deleted: { $ne: true } }).populate([
+    {
+      path: "room",
+      select: "name",
+    },
+    {
+      path: "branch",
+      select: "name",
+    },
+  ]);
   next();
 });
 

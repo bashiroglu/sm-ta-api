@@ -30,7 +30,10 @@ const roomSchema = new mongoose.Schema(
 );
 
 roomSchema.pre(/^find/, function (next) {
-  this.find({ deleted: { $ne: true } });
+  this.find({ deleted: { $ne: true } }).populate({
+    path: "branch",
+    select: "name -managers",
+  });
   next();
 });
 

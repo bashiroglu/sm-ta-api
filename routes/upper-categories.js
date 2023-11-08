@@ -7,15 +7,17 @@ const {
   updateUpperCategory,
   makeDeletedUpperCategory,
   deleteUpperCategory,
-  createUpperAndLowers,
-  populate,
 } = require("../controllers/upperCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
+const { populate } = require("../utils/helpers");
 
 const router = express.Router({ mergeParams: true });
 
 router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
-router.route("/").get(populate, getUpperCategories).post(createUpperCategory);
+router
+  .route("/")
+  .get(populate({ path: "lowers" }), getUpperCategories)
+  .post(createUpperCategory);
 router.route("/lowers").post(createUpperAndLowers, createUpperCategory);
 
 router

@@ -9,11 +9,6 @@ exports.updateUpperCategory = factory.updateOne(UpperCategoryModel);
 exports.makeDeletedUpperCategory = factory.makeDeletedOne(UpperCategoryModel);
 exports.deleteUpperCategory = factory.deleteOne(UpperCategoryModel);
 
-exports.injectPopOptions = catchAsync(async (req, res, next) => {
-  req.popOptions = { path: "lowers" };
-  next();
-});
-
 exports.createUpperAndLowers = catchAsync(async (req, res, next) => {
   const { upper, lowers } = req.body;
   const session = await mongoose.startSession();

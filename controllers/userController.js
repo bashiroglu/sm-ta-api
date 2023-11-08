@@ -129,23 +129,6 @@ exports.activateUser = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.populateParticipations = catchAsync(async (req, res, next) => {
-  req.popOptions = [
-    {
-      path: "packages",
-    },
-    {
-      path: "absents",
-      select: "group",
-    },
-    {
-      path: "presents",
-      select: "_id group",
-    },
-  ];
-  next();
-});
-
 exports.assignPassword = catchAsync(async (req, res, next) => {
   req.body.password = req.body.passwordConfirm =
     process.env.DEFAULT_USER_PASSWORD;
