@@ -10,7 +10,7 @@ const Email = require("../utils/email");
 
 const signToken = (id) => {
   let JWT_SECRET;
-  if (process.env.NODE_ENV.trim() == "development") {
+  if (process.env.NODE_ENV.trim() === "development") {
     JWT_SECRET = process.env.JWT_SECRET_DEV;
   } else {
     JWT_SECRET = process.env.JWT_SECRET;
@@ -90,7 +90,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   }
 
   // TODO: Fix below (It will depend on desision):
-  if (process.env.NODE_ENV.trim() == "production") {
+  if (process.env.NODE_ENV.trim() === "production") {
     const url = `${req.protocol}://${req.get("host")}/me`;
     await new Email(newUser, url).sendWelcome();
   }
@@ -154,7 +154,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   let JWT_SECRET;
-  if (process.env.NODE_ENV.trim() == "development") {
+  if (process.env.NODE_ENV.trim() === "development") {
     JWT_SECRET = process.env.JWT_SECRET_DEV;
   } else {
     JWT_SECRET = process.env.JWT_SECRET;

@@ -6,16 +6,13 @@ const app = require("./app");
 dotenv.config({ path: "./config.env" });
 
 let DB;
-if (process.env.NODE_ENV.trim() == "development") {
+if (process.env.NODE_ENV.trim() === "development") {
   DB = process.env.DB_CONNECTION_DEV.replace(
     "<password>",
-    process.env.DB_PASSWORD_DEV,
+    process.env.DB_PASSWORD_DEV
   );
-} else if (process.env.NODE_ENV.trim() == "production") {
-  DB = process.env.DB_CONNECTION.replace(
-    "<password>",
-    process.env.DB_PASSWORD,
-  );
+} else if (process.env.NODE_ENV.trim() === "production") {
+  DB = process.env.DB_CONNECTION.replace("<password>", process.env.DB_PASSWORD);
 }
 
 mongoose

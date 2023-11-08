@@ -137,7 +137,7 @@ exports.scheduleRecurrenceNotifications = catchAsync(async (req, res, next) => {
 
 exports.stopScheduleNotificationsOnDelete = catchAsync(
   async (req, res, next) => {
-    console.log(jobs, req.params.id, jobs[req.params.id]);
+    // TODO: make send email, SMS and notificaiton
     jobs[req.params.id].stop();
     next();
   }

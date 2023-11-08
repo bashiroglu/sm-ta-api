@@ -61,7 +61,13 @@ const sendNotification = (doc) => {
 };
 
 const scheduleTask = (document, task) => {
-  const job = cron.schedule(document.periodicity, task.bind(null, document));
+  let job;
+  try {
+    job = cron.schedule(document.periodicity, task.bind(null, document));
+  } catch (err) {
+    console.log(err);
+  }
+
   return job;
 };
 

@@ -41,7 +41,7 @@ exports.schedulePaymentNotifications = () => {
 
     guardians.forEach((guardian) => {
       const smsText = `Dear, ${guardian.name}. Please pay the amount ${guardian.total}`;
-      if (process.env.NODE_ENV.trim() == "development") {
+      if (process.env.NODE_ENV.trim() === "development") {
         console.log(smsText);
       } else {
         // TODO: Send Email and SMS

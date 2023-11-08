@@ -9,8 +9,6 @@ const {
   executeRecurrence,
   prepareRecurrences,
   scheduleRecurrenceNotifications,
-  scheduleNotificationsOnCreate,
-  stopScheduleNotificationsOnDelete,
 } = require("../controllers/recurrenceController");
 const {
   updateBalance,
@@ -36,7 +34,7 @@ router
   .route("/:id")
   .get(getRecurrence)
   .patch(updateRecurrence)
-  .delete(stopScheduleNotificationsOnDelete, makeDeletedRecurrence);
+  .delete(makeDeletedRecurrence);
 router
   .route("/:id/execute")
   .post(
@@ -46,8 +44,6 @@ router
     updateBalance,
     createTransaction
   );
-router
-  .route("/:id/delete")
-  .delete(stopScheduleNotificationsOnDelete, deleteRecurrence);
+router.route("/:id/delete").delete(deleteRecurrence);
 
 module.exports = router;
