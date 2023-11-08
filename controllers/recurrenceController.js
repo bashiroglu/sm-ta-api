@@ -74,6 +74,11 @@ exports.prepareRecurrences = catchAsync(async (req, res, next) => {
   try {
     req.pipeline = RecurrenceModel.aggregate([
       {
+        $match: {
+          deleted: { $ne: true },
+        },
+      },
+      {
         $lookup: {
           from: "transactions",
           as: "transactions",
@@ -100,6 +105,7 @@ exports.prepareRecurrences = catchAsync(async (req, res, next) => {
                         // ),
                       ],
                     },
+                    { $ne: ["$deleted", true] },
                   ],
                 },
               },

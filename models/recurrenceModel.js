@@ -103,7 +103,6 @@ recurrenceSchema.post("save", function (doc, next) {
 });
 
 recurrenceSchema.post("findOneAndUpdate", function (doc) {
-  console.log(doc, doc.deleted);
   if (doc.deleted) jobs[doc._id].stop();
   else jobs[doc._id] = scheduleTask(doc, sendNotification);
 });

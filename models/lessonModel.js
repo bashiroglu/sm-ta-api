@@ -62,6 +62,7 @@ lessonSchema.pre(/^find/, function (next) {
     path: "absent",
     select: "name surname",
   });
+
   next();
 });
 

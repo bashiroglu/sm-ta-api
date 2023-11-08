@@ -40,6 +40,11 @@ exports.getBranchStudentCount = catchAsync(async (req, res, next) => {
       $unwind: "$groups",
     },
     {
+      $match: {
+        "groups.deleted": { $ne: true },
+      },
+    },
+    {
       $unwind: "$groups.students",
     },
     {

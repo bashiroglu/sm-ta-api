@@ -7,6 +7,11 @@ const catchAsync = require("../utils/catchAsync");
 exports.getStudents = catchAsync(async (req, res, next) => {
   req.pipline = UserModel.aggregate([
     {
+      $match: {
+        deleted: { $ne: true },
+      },
+    },
+    {
       $lookup: {
         from: "groups",
         localField: "_id",
@@ -21,6 +26,11 @@ exports.getStudents = catchAsync(async (req, res, next) => {
     },
     {
       $unwind: "$groups",
+    },
+    {
+      $match: {
+        "groups.deleted": { $ne: true },
+      },
     },
     {
       $project: {
