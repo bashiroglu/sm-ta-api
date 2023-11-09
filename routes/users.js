@@ -87,7 +87,13 @@ router.route("/role/student/:id/participation").get(
 
 router
   .route("/")
-  .get(getUsers)
+  .get(
+    populate([
+      { path: "subjects", select: "name" },
+      { path: "packages", select: "name" },
+    ]),
+    getUsers
+  )
   .post(getCode("user"), assignPassword, createUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(makeDeletedUser);
