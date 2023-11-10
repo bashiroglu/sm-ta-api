@@ -9,6 +9,7 @@ const {
 } = require("../controllers/examController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
+const { populate } = require("../utils/helpers");
 
 const router = express.Router();
 
