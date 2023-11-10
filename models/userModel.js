@@ -169,7 +169,7 @@ const userSchema = new mongoose.Schema(
       type: [
         {
           type: mongoose.Schema.ObjectId,
-          ref: "Subjects",
+          ref: "Subject",
         },
       ],
       validate: {
