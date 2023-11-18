@@ -81,6 +81,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       ],
       { session }
     );
+
     await session.commitTransaction();
   } catch (err) {
     console.log(err);
@@ -102,7 +103,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new AppError("Şifrə və ya email səhvdir", 400));
+    return next(new AppError("invalid_credentials", 400));
   }
   const user = await UserModel.findOne({ email })
     .select("-query -note")
@@ -113,16 +114,11 @@ exports.login = catchAsync(async (req, res, next) => {
     .select("+password");
 
   if (!user || !(await user.checkPassword(password, user.password))) {
-    return next(new AppError("Şifrə və ya email səhvdir", 401));
+    return next(new AppError("invalid_credentials", 401));
   }
 
   if (!user.active) {
-    return next(
-      new AppError(
-        "Zəhmət olmasa, profilinin aktivləşməsini gözləyin, ehtiyac bilirsinizsə, proqramçı ilə əlaqə saxlayın",
-        400
-      )
-    );
+    return next(new AppError("wait_activation", 400));
   }
 
   createTokenAndSignIn(user, 200, req, res);
@@ -141,18 +137,14 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    req.headers.authorization?.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies.jwt) {
+  } else if (req.cookies?.jwt) {
     token = req.cookies.jwt;
   }
 
-  if (!token) {
-    return next(
-      new AppError("You are not logged in! Please log in to get access.", 401)
-    );
-  }
+  if (!token) return next(new AppError("not_logged_in", 401));
 
   let JWT_SECRET;
   if (process.env.NODE_ENV.trim() === "development") {
@@ -167,20 +159,10 @@ exports.protect = catchAsync(async (req, res, next) => {
     path: "branches",
     select: "id -managers",
   });
-  if (!currentUser) {
-    return next(
-      new AppError(
-        "The user belonging to this token does no longer exist.",
-        401
-      )
-    );
-  }
+  if (!currentUser) return next(new AppError("token_user_not_exist", 401));
 
-  if (currentUser.changedPasswordAfter(decoded.iat)) {
-    return next(
-      new AppError("User recently changed password! Please log in again.", 401)
-    );
-  }
+  if (currentUser.changedPasswordAfter(decoded.iat))
+    return next(new AppError("password_changed_recent", 401));
 
   req.user = currentUser;
   res.locals.user = currentUser;
@@ -199,9 +181,7 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
     token = req.cookies.jwt;
   }
 
-  if (!token) {
-    next(new AppError("You can not access with logged in", 401));
-  }
+  if (!token) return next(new AppError("not_logged_in", 401));
 
   let JWT_SECRET;
   if (process.env.NODE_ENV.trim() === "development") {
@@ -215,12 +195,10 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
     path: "branches",
     select: "id -managers",
   });
-  if (!user) {
-    return next(new AppError("this user is no longer exist", 401));
-  }
-  if (user.changedPasswordAfter(decoded.iat)) {
-    return next(new AppError("please log in again", 401));
-  }
+  if (!user) return next(new AppError("token_user_not_exist", 401));
+
+  if (user.changedPasswordAfter(decoded.iat))
+    return next(new AppError("password_changed_recent", 401));
 
   res.status(200).json({
     status: "success",
@@ -268,16 +246,14 @@ exports.restrictTo = (field, ...items) => {
   return (req, res, next) =>
     // checks if there is intersection
     !items.filter((v) => req.user[field].includes(v)).length
-      ? next(new AppError("You are not authorized to finish this action", 403))
+      ? next(new AppError("not_authorized", 403))
       : next();
 };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await UserModel.findOne({ email: req.body.email });
 
-  if (!user) {
-    return next(new AppError("There is no user with this email", 404));
-  }
+  if (!user) return next(new AppError("token_user_not_exist", 404));
 
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
@@ -299,12 +275,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.paswordResetToken = undefined;
     user.paswordResetTokenExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(
-      new AppError(
-        "There was an error sending the email. Try again later!",
-        500
-      )
-    );
+    return next(new AppError("email_sending_error", 500));
   }
 });
 
@@ -319,9 +290,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     paswordResetTokenExpires: { $gt: Date.now() },
   });
 
-  if (!user) {
-    return next(new AppError("Token is invalid or has expired", 400));
-  }
+  if (!user) return next(new AppError("invalid_token", 400));
 
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
@@ -334,9 +303,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await UserModel.findById(req.user._id).select("+password");
 
-  if (!(await user.checkPassword(req.body.currentPassword, user.password))) {
-    return next(new AppError("your current password is not right", 500));
-  }
+  if (!(await user.checkPassword(req.body.currentPassword, user.password)))
+    return next(new AppError("invalid_credentials", 500));
+
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
 

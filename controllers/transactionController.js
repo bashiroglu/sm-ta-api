@@ -28,7 +28,7 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
 
   if (!branch) {
     await session.abortTransaction();
-    return next(new AppError("Branch not found with that ID", 404));
+    return next(new AppError("branch_not_found", 404));
   }
 
   const lower = await LowerCategory.findByIdAndUpdate(
@@ -60,9 +60,7 @@ exports.checkBranch = catchAsync(async (req, res, next) => {
       !req.user.branches?.map((b) => b.id).includes(req.body.branch)
     ) {
       if (session) await session.abortTransaction();
-      return next(
-        new AppError("You are not authorized to finish this action.", 401)
-      );
+      return next(new AppError("not_authorized.", 401));
     }
 
   next();

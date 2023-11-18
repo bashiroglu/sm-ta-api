@@ -1,40 +1,42 @@
 const AppError = require("../../utils/appError");
 
 const handleCastError = (err) => {
-  const message = `Invalid ${err.path}: ${err.value}`;
-  return new AppError(message, 400);
+  const { path, value } = err;
+  const errorMessage = req.t("invalid_path_value", { path, value });
+  return new AppError(errorMessage, 400);
 };
 const handleDublicatedFieldErrors = (err) => {
-  const value = err.message.match(/dup key:.*:/)[0];
-  const message = `Daxil etmək istədiyiniz "${value
-    .split("{")
+  const value = err.message
+    .match(/dup key:.*:/)[0]
+    .value.split("{")
     .at(1)
     .split(":")
     .at(0)
-    .trim()}" sistemdə var.`;
+    .trim();
 
-  return new AppError(message, 400);
+  const errorMessage = req.t("value_exists", { value });
+  return new AppError(errorMessage, 400);
 };
-const handleValidationErrorDB = (err) => {
+const handleValidationErrorDB = (err, req) => {
   const errors = Object.values(err.errors).map((error) => error.message);
-  const message = errors.join(". ");
-
-  return new AppError(message, 400);
+  const errorMessage = errors.map((error) => req.t(error)).join(". ");
+  return new AppError(errorMessage, 400);
 };
 const handleJsonWebTokenError = (err) =>
-  new AppError("invalid credentials, please log in again", 401);
-const handleTokenExpiredError = (err) =>
-  new AppError("expired token credentials, please log in again", 401);
+  new AppError("invalid_credentials", 401);
+const handleTokenExpiredError = (err) => new AppError("expired_token", 401);
+
 const sendErrorProd = (err, req, res) => {
+  err.message = err.message.replaceAll("&#x2F;", "/");
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
-      message: err.message,
+      message: req.t(err.message),
     });
   } else {
     res.status(500).json({
       status: "error",
-      message: "something went wrong",
+      message: "something_went_wrong",
     });
   }
 };
@@ -60,7 +62,8 @@ module.exports = (err, req, res, next) => {
     error.message = err.message;
 
     if (err.name === "CastError") error = handleCastError(error);
-    if (err.name === "ValidationError") error = handleValidationErrorDB(error);
+    if (err.name === "ValidationError")
+      error = handleValidationErrorDB(error, req);
     if (err.name === "JsonWebTokenError")
       error = handleJsonWebTokenError(error);
     if (err.name === "TokenExpiredError")

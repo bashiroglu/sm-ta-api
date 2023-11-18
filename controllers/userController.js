@@ -105,7 +105,7 @@ exports.createUserByRole = catchAsync(async (req, res, next) => {
 
     if (!groupDoc) {
       await session.abortTransaction();
-      return next(new AppError("Group not found with that ID", 404));
+      return next(new AppError("group_not_found", 404));
     }
   }
   next();
@@ -141,9 +141,7 @@ exports.assignCategory = catchAsync(async (req, res, next) => {
   // Checks if user try to update not indented field
   // TODO: Apply more automotical method
   if (!["tags", "permissions"].includes(category))
-    return next(
-      new AppError("This field cannot be updated with this endpoint")
-    );
+    return next(new AppError("dont_use_this_endpoint"));
 
   // Excludes not indented items in req.body
   const obj = {};

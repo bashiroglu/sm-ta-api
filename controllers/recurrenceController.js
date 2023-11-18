@@ -29,7 +29,7 @@ exports.executeRecurrence = catchAsync(async (req, res, next) => {
 
     if (!recurrence) {
       await session.abortTransaction();
-      return next(new AppError("No document found with that ID", 404));
+      return next(new AppError("doc_not_found", 404));
     }
     let {
       title,

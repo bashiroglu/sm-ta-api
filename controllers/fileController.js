@@ -26,10 +26,8 @@ exports.upload = catchAsync(async (req, res, next) => {
       public_id: publicId,
       resource_type: "auto", // jpeg, png
     });
-    if (!result) return next(new AppError("add file please", 400));
-  } else {
-    next(new AppError("add file please", 400));
-  }
+    if (!result) return next(new AppError("add_file", 400));
+  } else return next(new AppError("add_file", 400));
 
   const { public_id, url } = result;
 
@@ -42,8 +40,7 @@ exports.upload = catchAsync(async (req, res, next) => {
 exports.remove = catchAsync(async (req, res, next) => {
   const data = await cloudinary.uploader.destroy(req.body.fileId);
 
-  if (!(data.result === "ok"))
-    return next(new AppError("something happened", 400));
+  if (data.result !== "ok") return next(new AppError("try_again", 400));
 
   res.status(204).json({
     status: "success",

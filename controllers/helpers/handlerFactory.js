@@ -10,7 +10,7 @@ exports.deleteOne = (Model) =>
     const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      return next(new AppError("doc_not_found", 404));
     }
 
     res.status(204).json({
@@ -30,7 +30,7 @@ exports.makeDeletedOne = (Model) =>
     );
 
     if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      return next(new AppError("doc_not_found", 404));
     }
 
     res.status(204).json({
@@ -48,7 +48,7 @@ exports.updateOne = (Model) =>
       });
 
       if (!req.doc) {
-        return next(new AppError("No document found with that ID", 404));
+        return next(new AppError("doc_not_found", 404));
       }
     }
 
@@ -92,7 +92,7 @@ exports.getOne = (Model) =>
       req.doc = (await features.query)?.at(0);
 
       if (!req.doc) {
-        return next(new AppError("No document found with that ID", 404));
+        return next(new AppError("doc_not_found", 404));
       }
     }
 

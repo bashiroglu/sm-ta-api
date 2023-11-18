@@ -61,7 +61,7 @@ exports.getBranchStudentCount = catchAsync(async (req, res, next) => {
   ]);
 
   if (!req.doc.length) {
-    return next(new AppError("No document found with that ID", 404));
+    return next(new AppError("doc_not_found", 404));
   }
 
   req.doc = req.doc?.at(0);

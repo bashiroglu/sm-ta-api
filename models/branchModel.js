@@ -12,7 +12,7 @@ const branchSchema = new mongoose.Schema(
     balance: {
       type: Number,
       default: 0,
-      required: [true, "balance is required"],
+      required: [true, "Balance is required"],
     },
     address: {
       type: String,

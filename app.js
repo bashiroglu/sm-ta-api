@@ -10,11 +10,24 @@ const xss = require("xss-clean");
 const RateLimit = require("express-rate-limit");
 const errorHandler = require("./controllers/helpers/errorHandlerController");
 const routes = require("./routes");
+const i18next = require("i18next");
+const Backend = require("i18next-fs-backend");
+const middleware = require("i18next-http-middleware");
+
+i18next
+  .use(Backend)
+  .use(middleware.LanguageDetector)
+  .init({
+    fallbackLng: "en",
+    backend: {
+      loadPath: "./locales/{{lng}}/translation.json",
+    },
+  });
 
 const AppError = require("./utils/appError");
 
 const app = express();
-
+app.use(middleware.handle(i18next));
 app.use(morgan("dev"));
 
 const limiter = RateLimit({
@@ -49,7 +62,11 @@ app.use(bodyParser.json({ limit: "5mb" }));
 app.use("/api/v1", routes);
 
 app.all("*", (req, res, next) => {
-  next(new AppError(`can not find ${req.originalUrl} route`, 404));
+  const errorMessage = req.t("route_not_found", {
+    url: req.originalUrl,
+  });
+
+  next(new AppError(errorMessage, 404));
 });
 
 app.use(errorHandler);

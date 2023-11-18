@@ -6,8 +6,7 @@ const catchAsync = require("./catchAsync");
 module.exports = (field, options) =>
   catchAsync(async (req, res, next) => {
     const COMPANY_ID = process.env.COMPANY_ID;
-    if (!COMPANY_ID)
-      return next(new AppError("Company ID has not been assigned", 404));
+    if (!COMPANY_ID) return next(new AppError("company_id_not_assigned", 404));
 
     if (req.body.email === process.env.OWNER_EMAIL && field === "user") {
       req.body.code = "OWNER_CODE";
@@ -32,7 +31,7 @@ module.exports = (field, options) =>
 
     if (!company) {
       await session.abortTransaction();
-      return next(new AppError("Company not found with that ID", 404));
+      return next(new AppError("company_not_found", 404));
     }
 
     const codeCount = company[field];
