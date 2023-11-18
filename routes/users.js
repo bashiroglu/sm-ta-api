@@ -15,11 +15,7 @@ const {
   assignPassword,
   schedulePaymentNotifications,
 } = require("./../controllers/userController");
-const {
-  protect,
-  updatePassword,
-  restrictTo,
-} = require("../controllers/authController");
+const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const { populate } = require("../utils/helpers");
 
@@ -28,9 +24,6 @@ const router = express.Router();
 schedulePaymentNotifications();
 
 router.use(protect);
-
-router.patch("/updateMyPassword", updatePassword);
-
 router
   .route("/me")
   .get(assignParamsId, getUser)

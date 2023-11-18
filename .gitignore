@@ -3,3 +3,4 @@
 config.env
 test.js
 *.code-search
+*.xlsx

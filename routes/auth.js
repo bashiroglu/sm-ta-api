@@ -9,16 +9,20 @@ const {
   forgotPassword,
   resetPassword,
   getCurrentUser,
+  updatePassword,
 } = require("../controllers/authController");
 
 const router = express.Router();
 
 router.post("/signup", getCode("user"), signup);
 router.post("/login", login);
-router.get("/logout", logout);
 
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
-router.route("/get-user").get(protect, getCurrentUser);
+
+router.use(protect);
+router.get("/logout", logout);
+router.get("/get-user", getCurrentUser);
+router.patch("/update-password", updatePassword);
 
 module.exports = router;

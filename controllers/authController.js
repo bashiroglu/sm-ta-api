@@ -44,22 +44,23 @@ const createTokenAndSignIn = (user, statusCode, req, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   const {
-    name,
-    surname,
-    patronymic,
-    phoneNumbers,
-    email,
-    dateOfBirth,
-    password,
-    passwordConfirm,
-    code,
-  } = req.body;
+    body: {
+      name,
+      surname,
+      patronymic,
+      phoneNumbers,
+      email,
+      dateOfBirth,
+      password,
+      passwordConfirm,
+      code,
+    },
+    session,
+  } = req;
 
   const roles = process.env.OWNER_EMAIL === email ? ["owner"] : undefined;
   const active = process.env.OWNER_EMAIL === email || undefined;
   let newUser;
-
-  const { session } = req;
 
   try {
     newUser = await UserModel.create(

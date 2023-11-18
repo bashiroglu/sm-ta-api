@@ -5,13 +5,18 @@ const catchAsync = require("./catchAsync");
 
 module.exports = (field, options) =>
   catchAsync(async (req, res, next) => {
-    if (req.body.email === process.env.OWNER_EMAIL && field === "user")
-      return "OWNER_CODE";
+    const COMPANY_ID = process.env.COMPANY_ID;
+    if (!COMPANY_ID)
+      return next(new AppError("Company ID has not been assigned", 404));
+
+    if (req.body.email === process.env.OWNER_EMAIL && field === "user") {
+      req.body.code = "OWNER_CODE";
+      return next();
+    }
     const { modifier, digitCount } = options || {
       modifier: field.toUpperCase(),
       digitCount: 4,
     };
-    const COMPANY_ID = process.env.COMPANY_ID;
 
     const obj = {};
     obj[field] = 1;
