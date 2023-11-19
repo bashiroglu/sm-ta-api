@@ -6,17 +6,17 @@ const branchSchema = new mongoose.Schema(
     company: {
       type: mongoose.Schema.ObjectId,
       ref: "Company",
-      required: [true, "Branch must belong to a company"],
+      required: [true, "required_company"],
     },
     name: String,
     balance: {
       type: Number,
       default: 0,
-      required: [true, "Balance is required"],
+      required: [true, "required_balance"],
     },
     address: {
       type: String,
-      required: [true, "Address is required"],
+      required: [true, "required_address"],
     },
     managers: [
       {

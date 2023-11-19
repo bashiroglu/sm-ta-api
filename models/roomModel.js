@@ -8,7 +8,7 @@ const roomSchema = new mongoose.Schema(
     branch: {
       type: mongoose.Schema.ObjectId,
       ref: "Branch",
-      required: [true, "Room must belong to a branch"],
+      required: [true, "required_branch"],
     },
     number: {
       type: Number,

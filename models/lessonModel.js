@@ -11,12 +11,12 @@ const lessonSchema = new mongoose.Schema(
     group: {
       type: mongoose.Schema.ObjectId,
       ref: "Group",
-      required: [true, "Lesson must belong to a group"],
+      required: [true, "required_group"],
     },
     teacher: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: [true, "Lesson must have a teacher"],
+      required: [true, "required_teacher"],
     },
     present: [
       {

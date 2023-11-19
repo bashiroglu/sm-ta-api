@@ -51,7 +51,7 @@ const recurrenceSchema = new mongoose.Schema(
           isValidCron(val, {
             seconds: process.env.NODE_ENV.trim() === "development",
           }),
-        message: "Enter a valid periodicity.",
+        message: "invalid_period",
       },
       required: true,
     },

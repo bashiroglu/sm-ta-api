@@ -5,10 +5,10 @@ const handleCastError = (err) => {
   const errorMessage = req.t("invalid_path_value", { path, value });
   return new AppError(errorMessage, 400);
 };
-const handleDublicatedFieldErrors = (err) => {
+const handleDublicatedFieldErrors = (err, req) => {
   const value = err.message
     .match(/dup key:.*:/)[0]
-    .value.split("{")
+    .split("{")
     .at(1)
     .split(":")
     .at(0)
@@ -18,9 +18,10 @@ const handleDublicatedFieldErrors = (err) => {
   return new AppError(errorMessage, 400);
 };
 const handleValidationErrorDB = (err, req) => {
-  const errors = Object.values(err.errors).map((error) => error.message);
-  const errorMessage = errors.map((error) => req.t(error)).join(". ");
-  return new AppError(errorMessage, 400);
+  const errorMessages = Object.values(err.errors)
+    .map((e) => req.t(e.message, e))
+    .join(". ");
+  return new AppError(errorMessages, 400);
 };
 const handleJsonWebTokenError = (err) =>
   new AppError("invalid_credentials", 401);
@@ -50,7 +51,12 @@ const sendErrorDev = (err, req, res) => {
   });
 };
 
-module.exports = (err, req, res, next) => {
+module.exports = async (err, req, res, next) => {
+  const { session } = req;
+  if (session) {
+    await session.abortTransaction();
+    session.endSession();
+  }
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
   if (
@@ -68,7 +74,7 @@ module.exports = (err, req, res, next) => {
       error = handleJsonWebTokenError(error);
     if (err.name === "TokenExpiredError")
       error = handleTokenExpiredError(error);
-    if (err.code === 11000) error = handleDublicatedFieldErrors(error);
+    if (err.code === 11000) error = handleDublicatedFieldErrors(error, req);
 
     sendErrorProd(error, req, res);
   } else {

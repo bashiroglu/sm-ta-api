@@ -24,110 +24,103 @@ exports.executeRecurrence = catchAsync(async (req, res, next) => {
     session,
   } = req;
 
-  try {
-    const recurrence = await RecurrenceModel.findById(id).session(session);
+  const recurrence = await RecurrenceModel.findById(id).session(session);
 
-    if (!recurrence) {
-      await session.abortTransaction();
-      return next(new AppError("doc_not_found", 404));
-    }
-    let {
-      title,
-      amount,
-      description,
-      category,
-      isIncome,
-      hidden,
-      paymentMethod,
-      branch,
-      relatedTo,
-      realDate,
-    } = recurrence;
-
-    if (newAmount) amount = newAmount;
-    if (newRealDate) realDate = newRealDate;
-    if (newPaymentMethod) paymentMethod = newPaymentMethod;
-
-    req.body = {
-      title,
-      description,
-      category,
-      isIncome,
-      hidden,
-      relatedTo,
-      branch,
-      amount,
-      paymentMethod,
-      realDate,
-      recurrence: id,
-      ...req.body,
-    };
-    next();
-  } catch (err) {
+  if (!recurrence) {
     await session.abortTransaction();
-    return next(new AppError(err.message, 404));
+    return next(new AppError("doc_not_found", 404));
   }
+  let {
+    title,
+    amount,
+    description,
+    category,
+    isIncome,
+    hidden,
+    paymentMethod,
+    branch,
+    relatedTo,
+    realDate,
+  } = recurrence;
+
+  if (newAmount) amount = newAmount;
+  if (newRealDate) realDate = newRealDate;
+  if (newPaymentMethod) paymentMethod = newPaymentMethod;
+
+  req.body = {
+    title,
+    description,
+    category,
+    isIncome,
+    hidden,
+    relatedTo,
+    branch,
+    amount,
+    paymentMethod,
+    realDate,
+    recurrence: id,
+    ...req.body,
+  };
+  next();
 });
 
 exports.prepareRecurrences = catchAsync(async (req, res, next) => {
   const currentMonth = getCurrentMonth();
-  try {
-    req.pipeline = RecurrenceModel.aggregate([
-      {
-        $match: {
-          deleted: { $ne: true },
-        },
+
+  req.pipeline = RecurrenceModel.aggregate([
+    {
+      $match: {
+        deleted: { $ne: true },
       },
-      {
-        $lookup: {
-          from: "transactions",
-          as: "transactions",
-          let: { recurrenceId: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$recurrence", "$$recurrenceId"] },
-                    {
-                      $gte: [
-                        "$createdAt",
-                        // mongoose.Types.ISODate(
-                        currentMonth.start,
-                        // ),
-                      ],
-                    },
-                    {
-                      $lte: [
-                        "$createdAt",
-                        // mongoose.Types.ISODate(
-                        currentMonth.end,
-                        // ),
-                      ],
-                    },
-                    { $ne: ["$deleted", true] },
-                  ],
-                },
+    },
+    {
+      $lookup: {
+        from: "transactions",
+        as: "transactions",
+        let: { recurrenceId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$recurrence", "$$recurrenceId"] },
+                  {
+                    $gte: [
+                      "$createdAt",
+                      // mongoose.Types.ISODate(
+                      currentMonth.start,
+                      // ),
+                    ],
+                  },
+                  {
+                    $lte: [
+                      "$createdAt",
+                      // mongoose.Types.ISODate(
+                      currentMonth.end,
+                      // ),
+                    ],
+                  },
+                  { $ne: ["$deleted", true] },
+                ],
               },
             },
-          ],
-        },
+          },
+        ],
       },
-      {
-        $addFields: {
-          executionCount: { $size: "$transactions" },
-          id: "$_id",
-        },
+    },
+    {
+      $addFields: {
+        executionCount: { $size: "$transactions" },
+        id: "$_id",
       },
-      {
-        $project: {
-          transactions: 0,
-        },
+    },
+    {
+      $project: {
+        transactions: 0,
       },
-    ]);
-  } catch (err) {
-    console.log(err);
-  }
+    },
+  ]);
+
   next();
 });
 

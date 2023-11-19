@@ -10,7 +10,15 @@ const examSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: [true, "Name of exam is required."],
+      required: [true, "required_name"],
+    },
+    type: {
+      type: String,
+      enum: {
+        values: ["b9", "b11", "q"],
+        message: "enum_exam_type",
+      },
+      required: true,
     },
     date: Date,
     subjects: {
@@ -18,6 +26,14 @@ const examSchema = new mongoose.Schema(
         {
           type: mongoose.Schema.ObjectId,
           ref: "Subject",
+        },
+      ],
+    },
+    participants: {
+      type: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: "User",
         },
       ],
     },

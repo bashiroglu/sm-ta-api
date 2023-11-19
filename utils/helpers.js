@@ -60,16 +60,8 @@ const sendNotification = (doc) => {
   );
 };
 
-const scheduleTask = (document, task) => {
-  let job;
-  try {
-    job = cron.schedule(document.periodicity, task.bind(null, document));
-  } catch (err) {
-    console.log(err);
-  }
-
-  return job;
-};
+const scheduleTask = (document, task) =>
+  cron.schedule(document.periodicity, task.bind(null, document));
 
 module.exports = {
   getDirFileNames,

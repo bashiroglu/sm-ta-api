@@ -16,11 +16,11 @@ const userSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: [true, "name is required"],
+      required: [true, "required_name"],
     },
     surname: {
       type: String,
-      required: [true, "surname is required"],
+      required: [true, "required_surname"],
     },
     patronymic: {
       type: String,
@@ -29,14 +29,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       // required: [true, "email is required"],
       unique: true,
-      lowercase: [true, "email should be lovercased"],
+      lowercase: [true, "lovercased_email"],
     },
     phoneNumbers: {
-      // required: [true, "At least one phone number required."],
       type: [
         {
           type: String,
           unique: true,
+          required: [true, "required_phone_number"],
         },
       ],
       validate: uniqueArrValidator,
@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema(
       default: "unknown",
       enum: {
         values: ["male", "female", "unknown"],
-        message: "male, female",
+        message: "enum_user_gender",
       },
     },
     profileImage: {
@@ -60,18 +60,18 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: [true, "password is required"],
+      required: [true, "required_password"],
       minlength: 6,
       select: false,
     },
     passwordConfirm: {
       type: String,
-      required: [true, "password confirm your password"],
+      required: [true, "required_password_confirm"],
       validate: {
         validator: function (el) {
           return el === this.password;
         },
-        message: "password should be the same with passwordConfirm",
+        message: "confirm_password",
       },
     },
     passwordChangedAt: {

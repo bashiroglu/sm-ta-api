@@ -20,7 +20,7 @@ module.exports = (field, options) =>
     const obj = {};
     obj[field] = 1;
 
-    const session = await mongoose.startSession();
+    const session = req.session || (await mongoose.startSession());
     session.startTransaction();
 
     const company = await CompanyModel.findByIdAndUpdate(
@@ -40,5 +40,6 @@ module.exports = (field, options) =>
       digitCount - `${codeCount}`.length
     )}${codeCount + 1}`;
     req.session = session;
+
     next();
   });

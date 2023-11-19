@@ -12,7 +12,7 @@ const groupSchema = new mongoose.Schema(
     branch: {
       type: mongoose.Schema.ObjectId,
       ref: "Branch",
-      required: [true, "Group must belong to a branch"],
+      required: [true, "required_branch"],
     },
     name: {
       type: String,
@@ -41,14 +41,14 @@ const groupSchema = new mongoose.Schema(
             return false;
           return !/[^1-7]/.test(val);
         },
-        message: "Weekdays validation failed.",
+        message: "invalid_weekdays",
       },
     },
     status: {
       type: String,
       enum: {
         values: ["active", "deactive"],
-        message: "Status must be active, deactive",
+        message: "enum_group_status",
       },
     },
 

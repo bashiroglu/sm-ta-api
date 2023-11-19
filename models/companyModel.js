@@ -10,7 +10,7 @@ const companySchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: [true, "A company must have a name."],
+      required: [true, "required_name."],
     },
     balance: { type: Number, default: 0 },
 
