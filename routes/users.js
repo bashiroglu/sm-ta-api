@@ -34,7 +34,14 @@ router.use(restrictTo("roles", "owner", "admin", "manager"));
 
 router
   .route("/role/:role")
-  .get(getAllByRole, getUsers)
+  .get(
+    getAllByRole,
+    populate([
+      { path: "subjects", select: "name" },
+      { path: "packages", select: "name" },
+    ]),
+    getUsers
+  )
   .post(getCode("user"), createUserByRole, assignPassword, createUser);
 
 router.route("/role/student/participation").get(
@@ -80,19 +87,20 @@ router.route("/role/student/:id/participation").get(
 
 router
   .route("/")
-  .get(
-    populate([
-      { path: "subjects", select: "name" },
-      { path: "packages", select: "name" },
-    ]),
-    getUsers
-  )
+  .get(getUsers)
   .post(getCode("user"), assignPassword, createUser);
 
 router.route("/:id").get(getUser).patch(updateUser).delete(makeDeletedUser);
 router
   .route("/:id/:category")
-  .get(assignCategory, getUser)
+  .get(
+    assignCategory,
+    populate([
+      { path: "subjects", select: "name" },
+      { path: "packages", select: "name" },
+    ]),
+    getUser
+  )
   .patch(assignCategory, updateUser);
 router.route("/:id/delete").delete(deleteUser);
 router.route("/:id/active").patch(activateUser, updateUser);

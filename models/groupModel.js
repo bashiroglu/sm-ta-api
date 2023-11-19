@@ -69,7 +69,7 @@ groupSchema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate([
     {
       path: "room",
-      select: "name",
+      select: "name number",
     },
     {
       path: "branch",

@@ -27,7 +27,7 @@ router
       { path: "createdBy", select: "name surname" },
       { path: "students", select: "name surname code email" },
       { path: "teachers", select: "name surname code email" },
-      { path: "room", select: "name" },
+      { path: "room", select: "name number" },
     ]),
     getGroup
   )
