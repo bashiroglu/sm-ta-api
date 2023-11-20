@@ -3,6 +3,7 @@ const cron = require("node-cron");
 
 const catchAsync = require("./catchAsync");
 const mongoose = require("mongoose");
+const AppError = require("./appError");
 
 const getFirstOfNextMonth = () => {
   const currentDate = new Date();
@@ -63,6 +64,12 @@ const sendNotification = (doc) => {
 const scheduleTask = (document, task) =>
   cron.schedule(document.periodicity, task.bind(null, document));
 
+const restrictPerSubdomain = (user, req) =>
+  user.roles.includes("student")
+    ? req.get("origin") !== "aspirans.students.bashiroglu.dev"
+    : user.roles.includes("teacher") &&
+      !req.get("origin") !== "aspirans.teachers.bashiroglu.dev";
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
@@ -72,4 +79,5 @@ module.exports = {
   getCurrentMonth,
   sendNotification,
   scheduleTask,
+  restrictPerSubdomain,
 };

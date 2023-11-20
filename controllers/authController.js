@@ -7,6 +7,7 @@ const UserModel = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Email = require("../utils/email");
+const { restrictPerSubdomain } = require("../utils/helpers");
 
 const signToken = (id) => {
   let JWT_SECRET;
@@ -133,18 +134,12 @@ exports.login = catchAsync(async (req, res, next) => {
     })
     .select("+password");
 
-  console.log(
-    req.get("origin"),
-    "owner",
-    user.roles.includes("owner"),
-    "admin",
-    user.roles.includes("admin"),
-    "teacher",
-    user.roles.includes("teacher")
-  );
-
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new AppError("invalid_credentials", 401));
+  }
+
+  if (restrictPerSubdomain(user, req)) {
+    return next(new AppError("not_authorized", 403));
   }
 
   if (!user.active) {
