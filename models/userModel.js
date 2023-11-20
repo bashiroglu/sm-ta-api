@@ -88,7 +88,7 @@ const userSchema = new mongoose.Schema(
       type: [String],
       enum: {
         values: roles.values(),
-        message: `Roles have to be some of them: ${roles.values().join(", ")}`,
+        message: `enum_user_roles`,
       },
     },
     tags: {
@@ -137,7 +137,7 @@ const userSchema = new mongoose.Schema(
         function () {
           return !!this.guardian;
         },
-        'Guardian"s repationship field is reuqired.',
+        "required_repationship",
       ],
     },
 
@@ -153,7 +153,7 @@ const userSchema = new mongoose.Schema(
         function () {
           return this.roles?.includes(roles.STUDENT);
         },
-        "Student's school admittion year is requi`${roles.musts to the next payment date.d.",
+        "required_admittion_year",
       ],
     },
     packages: {
@@ -174,9 +174,9 @@ const userSchema = new mongoose.Schema(
       ],
       validate: {
         validator: function (val) {
-          return !this.roles.includes(roles.TEACHER) || val.length;
+          return !this.roles?.includes(roles.TEACHER) || val.length;
         },
-        message: "Teacher must have at least one subject.",
+        message: "required_teacher_subject",
       },
     },
 
