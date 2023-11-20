@@ -131,6 +131,9 @@ exports.getAll = (Model) =>
     // 7. Execute the final query
     const result = await paginatedFeatures.query;
 
+    // 8. Sort result by name in acs order
+    result.sort((a, b) => a.name.localeCompare(b.name));
+
     // 8. Send the response
     res.status(200).json({
       status: "success",
