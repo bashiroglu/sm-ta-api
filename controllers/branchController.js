@@ -195,19 +195,10 @@ exports.getBalanceStat = catchAsync(async (req, res, next) => {
     },
     {
       $sort: {
-        balance: -1,
+        name: -1,
       },
     },
   ]);
 
   next();
 });
-
-// exports.localRestrictTo = catchAsync(async (req, res, next) => {
-//   // const id = req.url.replace("/", "");
-//   req.isAllowed = true;
-//   //   req.user.roles.includes("manager") &&
-//   //   req.method === "GET" &&
-//   //   req.user.branches.map((b) => "" + b.id).includes(id);
-//   next();
-// });
