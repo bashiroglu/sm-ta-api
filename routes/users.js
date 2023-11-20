@@ -90,17 +90,20 @@ router
   .get(getUsers)
   .post(getCode("user"), assignPassword, createUser);
 
-router.route("/:id").get(getUser).patch(updateUser).delete(makeDeletedUser);
 router
-  .route("/:id/:category")
+  .route("/:id")
   .get(
-    assignCategory,
     populate([
       { path: "subjects", select: "name" },
       { path: "packages", select: "name" },
     ]),
     getUser
   )
+  .patch(updateUser)
+  .delete(makeDeletedUser);
+router
+  .route("/:id/:category")
+  .get(assignCategory, getUser)
   .patch(assignCategory, updateUser);
 router.route("/:id/delete").delete(deleteUser);
 router.route("/:id/active").patch(activateUser, updateUser);

@@ -139,7 +139,7 @@ exports.assignCategory = catchAsync(async (req, res, next) => {
   const { category } = req.params;
 
   // Checks if user try to update not indented field
-  // TODO: Apply more automotical method
+  // TODO: Make this more automotically
   if (!["tags", "permissions"].includes(category))
     return next(new AppError("dont_use_this_endpoint"));
 
