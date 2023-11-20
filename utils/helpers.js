@@ -66,10 +66,15 @@ const scheduleTask = (document, task) =>
 
 const restrictPerSubdomain = (user, req) =>
   user.roles.includes("student")
-    ? req.get("origin") !== "aspirans.students.bashiroglu.dev"
+    ? ![
+        "aspirans.students.bashiroglu.dev",
+        process.env.NODE_ENV === "development" && "127.0.0.1:3001",
+      ].includes(req.get("origin"))
     : user.roles.includes("teacher") &&
-      !req.get("origin") !== "aspirans.teachers.bashiroglu.dev";
-
+      [
+        "aspirans.teachers.bashiroglu.dev",
+        process.env.NODE_ENV === "development" && "127.0.0.1:3001",
+      ].includes(req.get("origin"));
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
