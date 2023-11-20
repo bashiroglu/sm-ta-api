@@ -133,6 +133,16 @@ exports.login = catchAsync(async (req, res, next) => {
     })
     .select("+password");
 
+  console.log(
+    req.host,
+    "owner",
+    user.roles.includes("owner"),
+    "admin",
+    user.roles.includes("admin"),
+    "teacher",
+    user.roles.includes("teacher")
+  );
+
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new AppError("invalid_credentials", 401));
   }
