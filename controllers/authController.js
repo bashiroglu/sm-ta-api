@@ -134,7 +134,7 @@ exports.login = catchAsync(async (req, res, next) => {
     .select("+password");
 
   console.log(
-    req.host,
+    req.get("host"),
     "owner",
     user.roles.includes("owner"),
     "admin",
