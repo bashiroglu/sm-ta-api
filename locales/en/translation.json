@@ -43,7 +43,7 @@
   "required_password": "Password is required",
   "required_password_confirm": "Password must confirm your password",
   "confirm_password": "Password should be the same with passwordConfirm",
-  "enum_user_roles": "Roles have to be some of them: {{roles}}",
+  "enum_user_roles": "Roles have to be some of these: {{roles}}. But you entered \"{{value}}\"",
   "required_repationship": "Guardian's repationship field is reuqired",
   "required_admittion_year": "Student's school admittion year is requied",
   "required_teacher_subject": "Teacher must have at least one subject",

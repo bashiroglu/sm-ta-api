@@ -8,45 +8,62 @@ const factory = require("./helpers/handlerFactory");
 const catchAsync = require("./../utils/catchAsync");
 const { filterObject } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
+const { sendSmsRequest } = require("../utils/sms");
 
 exports.schedulePaymentNotifications = () => {
   // TODO: schedule a task to run at 17:58 on the 3rd of every month change if needed
   cron.schedule("58 17 3 * *", async () => {
-    const today = new Date();
+    const guardians = await UserModel.aggregate([
+      [
+        {
+          $match: {
+            roles: "student",
+            deleted: { $ne: true },
+            nextPaymentDate: { $lt: new Date() },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "guardian",
+            foreignField: "_id",
+            as: "guardian",
+          },
+        },
+        {
+          $unwind: "$guardian",
+        },
+        {
+          $project: {
+            studentName: "$name",
+            studentSurname: "$surname",
+            guardianName: "$guardian.name",
+            guardianSurname: "$guardian.surname",
+            phoneNumber: { $arrayElemAt: ["$guardian.phoneNumbers", 0] },
+            email: "$guardian.email",
+          },
+        },
+      ],
+    ]);
 
-    // TODO: Change next query to aggregation
-    const overdueStudents = await UserModel.find({
-      roles: roles.STUDENT,
-      nextPaymentDate: { $lt: today },
-    })
-      .populate({ path: "guardian", select: "name phoneNumbers email" })
-      .populate({ path: "packages", select: "price" });
-
-    const guardians = overdueStudents.reduce((acc, curr) => {
-      if (!acc[curr.guardian.id])
-        acc[curr.guardian.id] = {
-          phoneNumbers: curr.guardian.phoneNumbers,
-          name: curr.guardian.name,
-          email: curr.guardian.email,
-          students: [],
-          total: 0,
-        };
-      acc[curr.guardian.id].students.push(curr.name);
-      acc[curr.guardian.id].total += curr.packages.reduce((a, c) => {
-        a += c.price;
-        return a;
-      }, 0);
-      return acc;
-    }, {});
-
-    guardians.forEach((guardian) => {
-      const smsText = `Dear, ${guardian.name}. Please pay the amount ${guardian.total}`;
-      if (process.env.NODE_ENV.trim() === "development") {
-        console.log(smsText);
-      } else {
-        // TODO: Send Email and SMS
+    guardians.forEach(
+      async ({
+        studentName,
+        studentSurname,
+        guardianName,
+        guardianSurname,
+        phoneNumber,
+        email,
+      }) => {
+        const smsText = `Dear, ${guardianName} ${guardianSurname}. Please pay the monthly fee for your child ${studentName} ${studentSurname}`;
+        if (process.env.NODE_ENV.trim() === "development") {
+          console.log(smsText);
+        } else {
+          // const result = await sendSmsRequest(phoneNumber, smsText);
+          // TODO: Send Email and SMS
+        }
       }
-    });
+    );
   });
 };
 

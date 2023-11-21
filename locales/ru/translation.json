@@ -43,7 +43,7 @@
   "required_password": "Необходим пароль",
   "required_password_confirm": "Пароль должен подтверждать ваш пароль",
   "confirm_password": "пароль должен совпадать с паролем подтвердить",
-  "enum_user_roles": "Ролей должно быть несколько: {{roles}}",
+  "enum_user_roles": "Роли должны быть следующими: {{roles}}. Но вы ввели \"{{value}}\"",
   "required_repationship": "Поле репутации опекуна обязательно",
   "required_admittion_year": "Укажите год поступления учащегося в школу",
   "required_teacher_subject": "Учитель должен знать хотя бы один предмет",

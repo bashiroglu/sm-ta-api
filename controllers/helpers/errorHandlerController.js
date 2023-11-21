@@ -19,7 +19,19 @@ const handleDublicatedFieldErrors = (err, req) => {
 };
 const handleValidationErrorDB = (err, req) => {
   const errorMessages = Object.values(err.errors)
-    .map((e) => req.t(e.message, e))
+    .map((e) => {
+      const {
+        properties: { type, path, value, enumValues },
+      } = e;
+
+      const obj = { value };
+
+      if (type === "enum") {
+        obj[path.split(".")?.at(0)] = enumValues.join(", ");
+      }
+      console.log(e.properties.type === "enum", e.properties.enumValues);
+      return req.t(e.message, obj);
+    })
     .join(". ");
   return new AppError(errorMessages, 400);
 };
