@@ -106,6 +106,7 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
         group: "$group._id",
         student: "$student._id",
         createdAt: "$student.createdAt",
+        name: 1,
       },
     },
     {
@@ -114,6 +115,7 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
         createdAt: 1,
         year: { $year: "$createdAt" },
         month: { $month: "$createdAt" },
+        name: 1,
       },
     },
     {
@@ -129,13 +131,17 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
           _id: "$_id",
           year: "$year",
           month: "$month",
+          name: "$name",
         },
         count: { $sum: 1 },
       },
     },
     {
       $group: {
-        _id: "$_id._id",
+        _id: {
+          id: "$_id._id",
+          name: "$_id.name",
+        },
         stats: {
           $push: {
             year: "$_id.year",
@@ -147,11 +153,13 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
     },
     {
       $project: {
-        id: "$id",
         stats: 1,
+        name: "$_id.name",
+        id: "$_id.id",
       },
     },
   ]);
+  req.sortBy = "name";
 
   next();
 });
