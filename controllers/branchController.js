@@ -195,5 +195,7 @@ exports.getBalanceStat = catchAsync(async (req, res, next) => {
     },
   ]);
 
+  req.sortBy = "name";
+
   next();
 });

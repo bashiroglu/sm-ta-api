@@ -108,7 +108,7 @@ exports.getOne = (Model) =>
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     // 1. Extract request parameters
-    const { popOptions, query: requestQuery, pipeline } = req;
+    const { popOptions, query: requestQuery, pipeline, sortBy } = req;
 
     // 2. Build the initial query
     let query = pipeline ? pipeline : Model.find();
@@ -132,9 +132,9 @@ exports.getAll = (Model) =>
     const result = await paginatedFeatures.query;
 
     // 8. Sort result by name in acs order
-    result.sort((a, b) => a.name.localeCompare(b.name));
+    if (sortBy) result.sort((a, b) => a[sortBy].localeCompare(b[sortBy]));
 
-    // 8. Send the response
+    // 9. Send the response
     res.status(200).json({
       status: "success",
       total: total.length,
