@@ -1,6 +1,6 @@
 const AppError = require("../../utils/appError");
 
-const handleCastError = (err) => {
+const handleCastError = (err, req) => {
   const { path, value } = err;
   const errorMessage = req.t("invalid_path_value", { path, value });
   return new AppError(errorMessage, 400);
@@ -67,7 +67,7 @@ module.exports = async (err, req, res, next) => {
     let error = { ...err };
     error.message = err.message;
 
-    if (err.name === "CastError") error = handleCastError(error);
+    if (err.name === "CastError") error = handleCastError(error, req);
     if (err.name === "ValidationError")
       error = handleValidationErrorDB(error, req);
     if (err.name === "JsonWebTokenError")
