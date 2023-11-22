@@ -84,34 +84,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   await session.commitTransaction();
   session.endSession();
 
-  // try {
-  //   newUser = await UserModel.create(
-  //     [
-  //       {
-  //         roles,
-  //         surname,
-  //         patronymic,
-  //         name,
-  //         email,
-  //         phoneNumbers,
-  //         dateOfBirth,
-  //         password,
-  //         passwordConfirm,
-  //         active,
-  //         code,
-  //       },
-  //     ],
-  //     { session }
-  //   );
-  //   await session.commitTransaction();
-  // } catch (err) {
-  //   console.log(err);
-  //   await session.abortTransaction();
-  //   return next(new AppError(err.message));
-  // } finally {
-  //   session.endSession();
-  // }
-
   // TODO: Fix below (It will depend on desision):
   if (process.env.NODE_ENV.trim() === "production") {
     const url = `${req.protocol}://${req.get("host")}/me`;
@@ -180,10 +152,16 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
 
-  const currentUser = await UserModel.findById(decoded.id).populate({
-    path: "branches",
-    select: "id -managers",
-  });
+  const currentUser = await UserModel.findById(decoded.id).populate([
+    {
+      path: "branches",
+      select: "id -managers",
+    },
+    {
+      path: "permissions",
+      select: "slug",
+    },
+  ]);
   if (!currentUser) return next(new AppError("token_user_not_exist", 401));
 
   if (currentUser.changedPasswordAfter(decoded.iat))

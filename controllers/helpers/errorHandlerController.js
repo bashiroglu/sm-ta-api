@@ -26,10 +26,8 @@ const handleValidationErrorDB = (err, req) => {
 
       const obj = { value };
 
-      if (type === "enum") {
-        obj[path.split(".")?.at(0)] = enumValues.join(", ");
-      }
-      console.log(e.properties.type === "enum", e.properties.enumValues);
+      if (type === "enum") obj[path.split(".")?.at(0)] = enumValues.join(", ");
+
       return req.t(e.message, obj);
     })
     .join(". ");

@@ -8,6 +8,7 @@ const {
   deleteTransaction,
   updateBalance,
   checkBranch,
+  restrictHiddenTransactions,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { populate } = require("../utils/helpers");
@@ -15,7 +16,11 @@ const getCode = require("../utils/getCode");
 
 const router = express.Router();
 
-router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
+router.use(
+  protect,
+  restrictTo("roles", "owner", "admin", "manager"),
+  restrictHiddenTransactions
+);
 
 router
   .route("/")

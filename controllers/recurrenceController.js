@@ -27,7 +27,6 @@ exports.executeRecurrence = catchAsync(async (req, res, next) => {
   const recurrence = await RecurrenceModel.findById(id).session(session);
 
   if (!recurrence) {
-    await session.abortTransaction();
     return next(new AppError("doc_not_found", 404));
   }
   let {

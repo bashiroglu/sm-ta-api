@@ -121,7 +121,6 @@ exports.createUserByRole = catchAsync(async (req, res, next) => {
     );
 
     if (!groupDoc) {
-      await session.abortTransaction();
       return next(new AppError("group_not_found", 404));
     }
   }

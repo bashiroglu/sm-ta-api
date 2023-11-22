@@ -38,9 +38,9 @@ router
 router
   .route("/:id/execute")
   .post(
+    checkBranch,
     getCode("transaction"),
     executeRecurrence,
-    checkBranch,
     updateBalance,
     createTransaction
   );

@@ -7,6 +7,7 @@ const AppError = require("../utils/appError");
 const TransactionModel = require("../models/transactionModel");
 const BranchModel = require("../models/branchModel");
 const LowerCategory = require("../models/lowerCategoryModel");
+const { roles } = require("../utils/constants/enums");
 
 exports.getTransactions = factory.getAll(TransactionModel);
 exports.getTransaction = factory.getOne(TransactionModel);
@@ -27,7 +28,6 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
   );
 
   if (!branch) {
-    await session.abortTransaction();
     return next(new AppError("branch_not_found", 404));
   }
 
@@ -38,7 +38,6 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
   );
 
   if (!lower) {
-    await session.abortTransaction();
     return next(new AppError("Category not found with that ID", 404));
   }
 
@@ -53,15 +52,30 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
 });
 
 exports.checkBranch = catchAsync(async (req, res, next) => {
-  const { session } = req;
-  if (!req.user.roles.includes("owner"))
-    if (
-      req.user.roles.includes("manager") &&
-      !req.user.branches?.map((b) => b.id).includes(req.body.branch)
-    ) {
-      if (session) await session.abortTransaction();
-      return next(new AppError("not_authorized.", 401));
-    }
+  let {
+    session,
+    user: { roles: userRoles, branches },
+    body: { branch },
+  } = req;
+  if (!session) {
+    session = await mongoose.startSession();
+    session.startTransaction();
+  }
 
+  const isOwner = userRoles.includes(roles.OWNER);
+
+  if (isOwner) {
+    const isManager = userRoles.includes(roles.MANAGER);
+    const notOwnBranch = !branches?.map((b) => b.id).includes(branch);
+
+    if (isManager && notOwnBranch)
+      return next(new AppError("not_authorized.", 401));
+  }
+  next();
+});
+
+exports.restrictHiddenTransactions = catchAsync(async (req, res, next) => {
+  const permissions = req.user.permissions.map((p) => p.slug);
+  if (!permissions.includes("see-hidden-transaction")) req.query.hidden = false;
   next();
 });

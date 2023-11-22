@@ -20,8 +20,13 @@ module.exports = (field, options) =>
     const obj = {};
     obj[field] = 1;
 
-    const session = req.session || (await mongoose.startSession());
-    session.startTransaction();
+    let session;
+    if (req.session) {
+      session = req.session;
+    } else {
+      session = await mongoose.startSession();
+      session.startTransaction();
+    }
 
     const company = await CompanyModel.findByIdAndUpdate(
       COMPANY_ID,
@@ -30,7 +35,6 @@ module.exports = (field, options) =>
     );
 
     if (!company) {
-      await session.abortTransaction();
       return next(new AppError("company_not_found", 404));
     }
 
@@ -40,6 +44,5 @@ module.exports = (field, options) =>
       digitCount - `${codeCount}`.length
     )}${codeCount + 1}`;
     req.session = session;
-
     next();
   });
