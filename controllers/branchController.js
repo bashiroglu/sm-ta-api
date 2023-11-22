@@ -153,13 +153,15 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
     },
     {
       $project: {
-        stats: 1,
+        stats: {
+          $sortArray: { input: "$stats", sortBy: { month: 1 } },
+        },
         name: "$_id.name",
         id: "$_id.id",
       },
     },
   ]);
-  req.sortBy = "name";
+  req.query.sort = "name";
 
   next();
 });
@@ -203,7 +205,7 @@ exports.getBalanceStat = catchAsync(async (req, res, next) => {
     },
   ]);
 
-  req.sortBy = "name";
+  req.query.sort = "name";
 
   next();
 });

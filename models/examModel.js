@@ -18,7 +18,7 @@ const examSchema = new mongoose.Schema(
         values: ["b9", "b11", "q"],
         message: "enum_exam_type",
       },
-      required: true,
+      required: [true, "required_exam_type"],
     },
     date: Date,
     subjects: {
