@@ -42,14 +42,12 @@ exports.makeDeletedOne = (Model) =>
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (!req.doc) {
-      req.doc = Model.findByIdAndUpdate(req.params.id, req.body, {
+      req.doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,
       });
 
-      if (!req.doc) {
-        return next(new AppError("doc_not_found", 404));
-      }
+      if (!req.doc) return next(new AppError("doc_not_found", 404));
     }
 
     res.status(200).json({
