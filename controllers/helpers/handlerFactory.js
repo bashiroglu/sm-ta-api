@@ -42,13 +42,10 @@ exports.makeDeletedOne = (Model) =>
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (!req.doc) {
-      let query = Model.findByIdAndUpdate(req.params.id, req.body, {
+      req.doc = Model.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,
       });
-
-      const features = new APIFeatures(query, req.query).filter().limitFields();
-      req.doc = (await features.query)?.at(0);
 
       if (!req.doc) {
         return next(new AppError("doc_not_found", 404));
