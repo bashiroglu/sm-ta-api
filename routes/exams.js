@@ -18,7 +18,7 @@ router.use(protect);
 router.route("/").get(getExams).post(getCode("exam"), createExam);
 router
   .route("/:id")
-  .get(populate([{ path: "subject", select: "name" }]), getExam)
+  .get(populate([{ path: "subjects", select: "name" }]), getExam)
   .patch(updateExam)
   .delete(makeDeletedExam);
 router.route("/:id/delete").delete(deleteExam);
