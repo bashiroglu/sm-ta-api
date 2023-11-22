@@ -67,16 +67,6 @@ exports.createOne = (Model) =>
         doc = await Model.create([req.body], { session });
         await session.commitTransaction();
         session.endSession();
-
-        // try {
-        //   doc = await Model.create([req.body], { session });
-        //   await session.commitTransaction();
-        // } catch (err) {
-        //   await session.abortTransaction();
-        //   return next(new AppError(err.message));
-        // } finally {
-        //   session.endSession();
-        // }
       } else doc = await Model.create(req.body);
 
     res.status(201).json({

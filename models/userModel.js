@@ -221,7 +221,10 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.pre(/^find/, function (next) {
-  this.find({ deleted: { $ne: true } });
+  this.find({ deleted: { $ne: true } }).populate({
+    path: "permissions",
+    select: "title slug description",
+  });
 
   next();
 });
