@@ -1,16 +1,18 @@
 const express = require("express");
 const {
-  getBranches,
   createBranch,
   getBranch,
+  getBranches,
   updateBranch,
   makeDeletedBranch,
   deleteBranch,
   assignCompany,
   getOnlyBlance,
-  getBranchStudentCount,
-  getStudentStat,
-  getBalanceStat,
+  getAllStudentCountStat,
+  getOneStudentCountStat,
+  getAllStudentCountStatByMonths,
+  getAllBalanceStat,
+  getAllBalanceStatByMonth,
 } = require("./../controllers/branchController");
 const { protect, restrictTo } = require("../controllers/authController");
 
@@ -20,15 +22,23 @@ router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
 router.route("/").get(getBranches).post(assignCompany, createBranch);
 
 router.use(restrictTo("roles", "owner", "admin"));
-router.route("/stats/student").get(getStudentStat, getBranches);
-router.route("/stats/balance").get(getBalanceStat, getBranches);
+
+router.route("/stats/student-count").get(getAllStudentCountStat, getBranches);
+router.route("/stats/student-count/:id").get(getOneStudentCountStat, getBranch);
+router
+  .route("/stats/student-count-by-months")
+  .get(getAllStudentCountStatByMonths, getBranches);
+router.route("/stats/balance").get(getAllBalanceStat, getBranches);
+router
+  .route("/stats/balance-by-months")
+  .get(getAllBalanceStatByMonth, getBranches);
+
 router
   .route("/:id")
   .get(getBranch)
   .patch(updateBranch)
   .delete(makeDeletedBranch);
 router.route("/:id/balance").get(getOnlyBlance, getBranch);
-router.route("/:id/student-count").get(getBranchStudentCount, getBranch);
 router.route("/:id/delete").delete(deleteBranch);
 
 module.exports = router;

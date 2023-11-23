@@ -1,5 +1,7 @@
 const factory = require("./helpers/handlerFactory");
 const BranchModel = require("../models/branchModel");
+const GroupModel = require("../models/groupModel");
+const TransactionModel = require("../models/transactionModel");
 const catchAsync = require("../utils/catchAsync");
 const mongoose = require("mongoose");
 
@@ -20,7 +22,46 @@ exports.getOnlyBlance = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getBranchStudentCount = catchAsync(async (req, res, next) => {
+exports.getAllStudentCountStat = catchAsync(async (req, res, next) => {
+  req.pipeline = GroupModel.aggregate([
+    {
+      $match: {
+        deleted: { $ne: true },
+      },
+    },
+    {
+      $group: {
+        _id: "$branch",
+        studentCount: {
+          $sum: { $size: "$students" },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "branches",
+        localField: "_id",
+        foreignField: "_id",
+        as: "branch",
+      },
+    },
+    {
+      $unwind: "$branch",
+    },
+    {
+      $project: {
+        studentCount: 1,
+        name: "$branch.name",
+      },
+    },
+  ]);
+
+  req.query.sort = "name";
+
+  next();
+});
+
+exports.getOneStudentCountStat = catchAsync(async (req, res, next) => {
   req.doc = await BranchModel.aggregate([
     // TODO: Apply following match (deleted: { $ne: true }) for all required places
     {
@@ -69,7 +110,7 @@ exports.getBranchStudentCount = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getStudentStat = catchAsync(async (req, res, next) => {
+exports.getAllStudentCountStatByMonths = catchAsync(async (req, res, next) => {
   req.pipeline = BranchModel.aggregate([
     {
       $match: {
@@ -158,6 +199,7 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
         },
         name: "$_id.name",
         id: "$_id.id",
+        _id: "$_id.id",
       },
     },
   ]);
@@ -166,7 +208,7 @@ exports.getStudentStat = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getBalanceStat = catchAsync(async (req, res, next) => {
+exports.getAllBalanceStat = catchAsync(async (req, res, next) => {
   req.pipeline = BranchModel.aggregate([
     {
       $match: {
@@ -207,5 +249,86 @@ exports.getBalanceStat = catchAsync(async (req, res, next) => {
 
   req.query.sort = "name";
 
+  next();
+});
+
+exports.getAllBalanceStatByMonth = catchAsync(async (req, res, next) => {
+  const [sixMonths, now] = [
+    new Date(new Date().setMonth(new Date().getMonth() - 6)),
+    new Date(Date.now()),
+  ];
+  const { from = sixMonths, to = now } = req.query;
+  delete req.query.from;
+  delete req.query.to;
+
+  req.pipeline = TransactionModel.aggregate([
+    {
+      $match: {
+        deleted: { $ne: true },
+        createdAt: {
+          $gte: from,
+          $lte: to,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "branches",
+        localField: "branch",
+        foreignField: "_id",
+        as: "branch",
+      },
+    },
+    {
+      $unwind: "$branch",
+    },
+    {
+      $project: {
+        id: "$branch._id",
+        name: "$branch.name",
+        createdAt: 1,
+        amount: 1,
+        year: { $year: "$createdAt" },
+        month: { $month: "$createdAt" },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          _id: "$id",
+          year: "$year",
+          month: "$month",
+          name: "$name",
+        },
+        balance: { $sum: "$amount" },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          id: "$_id._id",
+          name: "$_id.name",
+        },
+        stats: {
+          $push: {
+            year: "$_id.year",
+            month: "$_id.month",
+            balance: "$balance",
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: "$_id.id",
+        id: "$_id.id",
+        name: "$_id.name",
+        stats: {
+          $sortArray: { input: "$stats", sortBy: { month: 1 } },
+        },
+      },
+    },
+  ]);
+  req.query.sort = "name";
   next();
 });
