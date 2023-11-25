@@ -224,10 +224,7 @@ schema.pre("save", async function (next) {
 });
 
 schema.pre(/^find/, function (next) {
-  this.find({ deleted: { $ne: true } }).populate({
-    path: "permissions",
-    select: "title slug description",
-  });
+  this.find({ deleted: { $ne: true } });
 
   next();
 });
