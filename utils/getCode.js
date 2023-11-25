@@ -20,13 +20,8 @@ module.exports = (field, options) =>
     const obj = {};
     obj[field] = 1;
 
-    let session;
-    if (req.session) {
-      session = req.session;
-    } else {
-      session = await mongoose.startSession();
-      session.startTransaction();
-    }
+    const session = req.session || (await mongoose.startSession());
+    if (!req.session) session.startTransaction();
 
     const company = await CompanyModel.findByIdAndUpdate(
       COMPANY_ID,
@@ -34,15 +29,12 @@ module.exports = (field, options) =>
       { session }
     );
 
-    if (!company) {
-      return next(new AppError("company_not_found", 404));
-    }
+    if (!company) return next(new AppError("company_not_found", 404));
 
     const codeCount = company[field];
 
     req.body.code = `${company.code}${modifier}${"0".repeat(
       digitCount - `${codeCount}`.length
     )}${codeCount + 1}`;
-    req.session = session;
     next();
   });

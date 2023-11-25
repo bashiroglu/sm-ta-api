@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Exam";
 
-const examSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -38,6 +38,7 @@ const examSchema = new mongoose.Schema(
       ],
     },
 
+    query: { type: String, select: false },
     deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
@@ -51,11 +52,16 @@ const examSchema = new mongoose.Schema(
   }
 );
 
-examSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
-const ExamModel = mongoose.model(collectionName, examSchema);
+schema.pre("save", async function (next) {
+  this.query = this.code || "";
+  next();
+});
 
-module.exports = ExamModel;
+const Model = mongoose.model(collectionName, schema);
+
+module.exports = Model;

@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const RoomModel = require("./roomModel");
 
 const collectionName = "Group";
 
-const groupSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -52,6 +53,7 @@ const groupSchema = new mongoose.Schema(
       },
     },
 
+    query: { type: String, select: false },
     deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
@@ -65,7 +67,7 @@ const groupSchema = new mongoose.Schema(
   }
 );
 
-groupSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate([
     {
       path: "room",
@@ -79,6 +81,14 @@ groupSchema.pre(/^find/, function (next) {
   next();
 });
 
-const GroupModel = mongoose.model(collectionName, groupSchema);
+schema.pre("save", async function (next) {
+  const room = await RoomModel.findById(this.room);
+  if (!room) return next(new AppError("room_not_found", 404));
 
-module.exports = GroupModel;
+  this.query = [room?.name || "", this.code || ""].join(" ");
+  next();
+});
+
+const Model = mongoose.model(collectionName, schema);
+
+module.exports = Model;

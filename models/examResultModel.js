@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "ExamResult";
 
-const examResultSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     exam: {
       type: mongoose.Schema.ObjectId,
@@ -38,15 +38,15 @@ const examResultSchema = new mongoose.Schema(
   }
 );
 
-examResultSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
-examResultSchema.virtual("overall").get(function () {
+schema.virtual("overall").get(function () {
   return this.scores.reduce((acc, cur) => acc + cur.score, 0);
 });
 
-const ExamResultModel = mongoose.model(collectionName, examResultSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = ExamResultModel;
+module.exports = Model;

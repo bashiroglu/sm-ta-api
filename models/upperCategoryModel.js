@@ -3,7 +3,7 @@ const slugify = require("slugify");
 
 const collectionName = "UpperCategory";
 
-const upperCategorySchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -30,16 +30,16 @@ const upperCategorySchema = new mongoose.Schema(
   }
 );
 
-upperCategorySchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
-upperCategorySchema.pre("save", function (next) {
+schema.pre("save", function (next) {
   this.slug = slugify(this.title, { lower: true });
   next();
 });
 
-const RoomModel = mongoose.model(collectionName, upperCategorySchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = RoomModel;
+module.exports = Model;

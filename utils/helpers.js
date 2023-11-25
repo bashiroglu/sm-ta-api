@@ -75,6 +75,7 @@ const restrictPerSubdomain = (user, req) =>
         "aspirans.teachers.bashiroglu.dev",
         process.env.NODE_ENV === "development" && "127.0.0.1:3001",
       ].includes(req.get("origin"));
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,

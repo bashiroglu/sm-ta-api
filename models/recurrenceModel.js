@@ -4,7 +4,7 @@ const { sendNotification, scheduleTask } = require("../utils/helpers");
 
 const collectionName = "Recurrence";
 
-const recurrenceSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -64,7 +64,7 @@ const recurrenceSchema = new mongoose.Schema(
     recipients: [
       {
         user: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Schema.ObjectId,
           ref: "User",
         },
         notifications: {
@@ -75,8 +75,9 @@ const recurrenceSchema = new mongoose.Schema(
     ],
 
     hidden: Boolean,
-
     active: Boolean,
+
+    query: { type: String, select: false },
     deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
@@ -90,27 +91,28 @@ const recurrenceSchema = new mongoose.Schema(
   }
 );
 
-recurrenceSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
 const jobs = {};
 
-recurrenceSchema.post("save", function (doc, next) {
+schema.post("save", function (doc, next) {
+  this.query = this.title || "";
   jobs[doc._id] = scheduleTask(doc, sendNotification);
   next();
 });
 
-recurrenceSchema.post("findOneAndUpdate", function (doc) {
+schema.post("findOneAndUpdate", function (doc) {
   if (doc.deleted) jobs[doc._id].stop();
   else jobs[doc._id] = scheduleTask(doc, sendNotification);
 });
 
-recurrenceSchema.post("deleteOne", function (doc) {
+schema.post("deleteOne", function (doc) {
   jobs[doc._id].stop();
 });
 
-const RecurrenceModel = mongoose.model(collectionName, recurrenceSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = { RecurrenceModel, jobs };
+module.exports = { Model, jobs };

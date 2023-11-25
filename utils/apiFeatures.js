@@ -19,14 +19,13 @@ class APIFeatures {
     );
 
     const parsed = JSON.parse(queryStr);
-    if (queryStr.includes("$in"))
-      Object.keys(parsed).forEach(
-        (k) => (parsed[k]["$in"] = parsed[k]["$in"].split(","))
-      );
+    // if (queryStr.includes("$in"))
+    //   Object.keys(parsed).forEach(
+    //     (k) => (parsed[k]["$in"] = parsed[k]["$in"].split(","))
+    //   );
 
     if (parsed.query) parsed.query = new RegExp(parsed.query, "i");
     if (parsed.code) parsed.code = new RegExp(parsed.code, "i");
-
     this.query = isAggregate(this)
       ? this.query.match(parsed)
       : this.query.find(parsed);

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Lesson";
 
-const lessonSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -44,6 +44,7 @@ const lessonSchema = new mongoose.Schema(
     },
     isExtra: Boolean,
 
+    query: { type: String, select: false },
     deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
@@ -57,7 +58,7 @@ const lessonSchema = new mongoose.Schema(
   }
 );
 
-lessonSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate({
     path: "absent",
     select: "name surname",
@@ -66,6 +67,10 @@ lessonSchema.pre(/^find/, function (next) {
   next();
 });
 
-const LessonModel = mongoose.model(collectionName, lessonSchema);
+schema.pre("save", async function (next) {
+  this.query = [this.topic || "", this.code || ""].join(" ");
+  next();
+});
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = LessonModel;
+module.exports = Model;

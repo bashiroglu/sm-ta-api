@@ -3,7 +3,7 @@ const slugify = require("slugify");
 
 const collectionName = "LowerCategory";
 
-const lowerCategorySchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -36,16 +36,16 @@ const lowerCategorySchema = new mongoose.Schema(
   }
 );
 
-lowerCategorySchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
-lowerCategorySchema.pre("save", function (next) {
+schema.pre("save", function (next) {
   this.slug = slugify(this.title, { lower: true });
   next();
 });
 
-const LowerCategoryModel = mongoose.model(collectionName, lowerCategorySchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = LowerCategoryModel;
+module.exports = Model;

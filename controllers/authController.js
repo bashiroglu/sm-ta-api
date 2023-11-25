@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
@@ -36,6 +35,7 @@ const createTokenAndSignIn = (user, statusCode, req, res) => {
 
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined;
+
   res.status(statusCode).json({
     status: "success",
     token,

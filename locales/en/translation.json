@@ -7,6 +7,7 @@
 
   "route_not_found": "Can not find {{url}} route",
   "doc_not_found": "No document found with that ID",
+  "room_not_found": "No room found with that ID",
   "company_not_found": "Company not found with that ID",
   "branch_not_found": "Branch not found with that ID",
   "category_not_found": "Category not found with that ID",

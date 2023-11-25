@@ -12,9 +12,8 @@ exports.deleteUpperCategory = factory.deleteOne(UpperCategoryModel);
 
 exports.createUpperAndLowers = catchAsync(async (req, res, next) => {
   const { upper, lowers } = req.body;
-  req.session = await mongoose.startSession();
-  const session = req.session;
-  session.startTransaction();
+  const session = req.session || (await mongoose.startSession());
+  if (!req.session) session.startTransaction();
   let upperDoc;
   if (typeof upper === "string") {
     upperDoc = await UpperCategoryModel.findById(upper).session(session);

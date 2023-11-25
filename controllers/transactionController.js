@@ -53,14 +53,12 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
 
 exports.checkBranch = catchAsync(async (req, res, next) => {
   let {
-    session,
     user: { roles: userRoles, branches },
     body: { branch },
   } = req;
-  if (!session) {
-    session = await mongoose.startSession();
-    session.startTransaction();
-  }
+
+  const session = req.session || (await mongoose.startSession());
+  if (!req.session) session.startTransaction();
 
   const isOwner = userRoles.includes(roles.OWNER);
 

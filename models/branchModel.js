@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const collectionName = "Branch";
 
-const branchSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     company: {
       type: mongoose.Schema.ObjectId,
@@ -37,7 +37,7 @@ const branchSchema = new mongoose.Schema(
   }
 );
 
-branchSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate({
     path: "managers",
     select: "name surname fullname",
@@ -45,6 +45,6 @@ branchSchema.pre(/^find/, function (next) {
   next();
 });
 
-const BranchModel = mongoose.model(collectionName, branchSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = BranchModel;
+module.exports = Model;

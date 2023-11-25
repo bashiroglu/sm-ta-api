@@ -8,7 +8,7 @@ const { getFirstOfNextMonth } = require("../utils/helpers");
 
 const collectionName = "User";
 
-const userSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -203,12 +203,15 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre("save", async function (next) {
+schema.pre("save", async function (next) {
   this.query = [
-    this.name && "",
-    this.surname && "",
-    this.note && "",
-    this.phoneNumbers.join(" ") && "",
+    this.name || "",
+    this.surname || "",
+    this.patronymic || "",
+    this.note || "",
+    this.email || "",
+    this.code || "",
+    this.phoneNumbers.join(" ") || "",
   ].join(" ");
 
   if (!this.isModified("password")) return next();
@@ -217,10 +220,10 @@ userSchema.pre("save", async function (next) {
 
   if (!this.isModified("password") || this.isNew) return next();
   this.passwordChangedAt = Date.now() - 1000;
-  return next();
+  next();
 });
 
-userSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate({
     path: "permissions",
     select: "title slug description",
@@ -229,14 +232,11 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 
-userSchema.methods.checkPassword = async function (
-  cadidatePassword,
-  userPassword
-) {
+schema.methods.checkPassword = async function (cadidatePassword, userPassword) {
   return await bcrypt.compare(cadidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
+schema.methods.changedPasswordAfter = function (JWTTimeStamp) {
   if (this.passwordChangedAt) {
     const passwordChangedTime = this.passwordChangedAt.getTime() / 1000;
     return passwordChangedTime >= JWTTimeStamp;
@@ -244,7 +244,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = function () {
+schema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
   this.paswordResetToken = crypto
@@ -256,28 +256,28 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-userSchema.virtual("fullName").get(function () {
+schema.virtual("fullName").get(function () {
   return this.name + " " + this.surname;
 });
 
-userSchema.virtual("groups", {
+schema.virtual("groups", {
   ref: "Group",
   foreignField: "students",
   localField: "_id",
 });
 
-userSchema.virtual("absents", {
+schema.virtual("absents", {
   ref: "Lesson",
   foreignField: "absent",
   localField: "_id",
 });
 
-userSchema.virtual("branches", {
+schema.virtual("branches", {
   ref: "Branch",
   foreignField: "managers",
   localField: "_id",
 });
 
-const UserModel = mongoose.model(collectionName, userSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = UserModel;
+module.exports = Model;

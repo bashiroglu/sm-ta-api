@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Feedback";
 
-const subjectSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -20,6 +20,7 @@ const subjectSchema = new mongoose.Schema(
     content: String,
     isRead: Boolean,
 
+    query: { type: String, select: false },
     deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
@@ -33,11 +34,16 @@ const subjectSchema = new mongoose.Schema(
   }
 );
 
-subjectSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
-const SubjectModel = mongoose.model(collectionName, subjectSchema);
+schema.pre("save", async function (next) {
+  this.query = [this.topic || "", this.code || ""].join(" ");
+  next();
+});
 
-module.exports = SubjectModel;
+const Model = mongoose.model(collectionName, schema);
+
+module.exports = Model;

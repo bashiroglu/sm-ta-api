@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Company";
 
-const companySchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -35,11 +35,11 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-companySchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
-const AppModel = mongoose.model(collectionName, companySchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = AppModel;
+module.exports = Model;

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Transaction";
 
-const transactionSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -51,6 +51,7 @@ const transactionSchema = new mongoose.Schema(
     },
     executed: Boolean,
 
+    query: { type: String, select: false },
     deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
@@ -64,7 +65,7 @@ const transactionSchema = new mongoose.Schema(
   }
 );
 
-transactionSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate({
     path: "category",
     select: "title",
@@ -72,6 +73,17 @@ transactionSchema.pre(/^find/, function (next) {
   next();
 });
 
-const TransactionModel = mongoose.model(collectionName, transactionSchema);
+schema.pre("save", async function (next) {
+  this.query = [
+    this.title || "",
+    this.category || "",
+    this.amount || "",
+    this.code || "",
+  ].join(" ");
 
-module.exports = TransactionModel;
+  next();
+});
+
+const Model = mongoose.model(collectionName, schema);
+
+module.exports = Model;

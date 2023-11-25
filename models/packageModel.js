@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Package";
 
-const packageSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     name: String,
     price: Number,
@@ -29,11 +29,11 @@ const packageSchema = new mongoose.Schema(
   }
 );
 
-packageSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate("subjects");
   next();
 });
 
-const PackageModel = mongoose.model(collectionName, packageSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = PackageModel;
+module.exports = Model;

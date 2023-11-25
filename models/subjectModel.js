@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Subject";
 
-const subjectSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -27,11 +27,11 @@ const subjectSchema = new mongoose.Schema(
   }
 );
 
-subjectSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
 
-const SubjectModel = mongoose.model(collectionName, subjectSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = SubjectModel;
+module.exports = Model;

@@ -6,7 +6,7 @@ const {
   scheduleTask,
 } = require("./../utils/helpers");
 const factory = require("./helpers/handlerFactory");
-const { RecurrenceModel, jobs } = require("../models/recurrenceModel");
+const { Model: RecurrenceModel, jobs } = require("../models/recurrenceModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 

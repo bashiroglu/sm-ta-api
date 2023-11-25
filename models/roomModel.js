@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Room";
 
-const roomSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     name: String,
     branch: {
@@ -29,7 +29,7 @@ const roomSchema = new mongoose.Schema(
   }
 );
 
-roomSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate({
     path: "branch",
     select: "name -managers",
@@ -37,6 +37,6 @@ roomSchema.pre(/^find/, function (next) {
   next();
 });
 
-const RoomModel = mongoose.model(collectionName, roomSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = RoomModel;
+module.exports = Model;
