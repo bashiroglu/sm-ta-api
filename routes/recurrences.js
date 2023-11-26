@@ -18,6 +18,7 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const cron = require("node-cron");
+const { populate } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -32,7 +33,7 @@ router
 
 router
   .route("/:id")
-  .get(getRecurrence)
+  .get(populate({ path: "category", select: "title" }), getRecurrence)
   .patch(updateRecurrence)
   .delete(makeDeletedRecurrence);
 router
