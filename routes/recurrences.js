@@ -33,7 +33,14 @@ router
 
 router
   .route("/:id")
-  .get(populate({ path: "category", select: "title" }), getRecurrence)
+  .get(
+    populate([
+      { path: "category", select: "title" },
+      { path: "branch", select: "name" },
+      { path: "releatedTo", select: "name surname patronymic code" },
+    ]),
+    getRecurrence
+  )
   .patch(updateRecurrence)
   .delete(makeDeletedRecurrence);
 router
