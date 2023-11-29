@@ -102,7 +102,7 @@ exports.login = catchAsync(async (req, res, next) => {
     .select("-query -note")
     .populate({
       path: "branches",
-      select: "id -managers",
+      select: "id -managers name code",
     })
     .select("+password");
 
@@ -155,7 +155,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const currentUser = await UserModel.findById(decoded.id).populate([
     {
       path: "branches",
-      select: "id -managers",
+      select: "id name -manager",
     },
     {
       path: "permissions",
@@ -196,7 +196,7 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
 
   const user = await UserModel.findById(decoded.id).populate({
     path: "branches",
-    select: "id -managers",
+    select: "id -managers name code",
   });
   if (!user) return next(new AppError("token_user_not_exist", 401));
 
