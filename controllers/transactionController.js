@@ -38,7 +38,7 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
   );
 
   if (!lower) {
-    return next(new AppError("Category not found with that ID", 404));
+    return next(new AppError("category_not_found", 404));
   }
 
   req.body = {

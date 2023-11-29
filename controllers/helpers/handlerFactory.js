@@ -58,14 +58,18 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    let { session, doc } = req;
+    let { session, doc, body } = req;
     req.body.createdBy = req.user.id;
     if (!doc)
-      if (session) {
-        doc = await Model.create([req.body], { session });
-        await session.commitTransaction();
-        session.endSession();
-      } else doc = await Model.create(req.body);
+      doc = await Model.create(
+        session ? [body] : body,
+        session ? { session } : null
+      );
+
+    if (session) {
+      await session.commitTransaction();
+      session.endSession();
+    }
 
     res.status(201).json({
       status: "success",

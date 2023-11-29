@@ -3,25 +3,29 @@ const CompanyModel = require("../models/companyModel");
 const AppError = require("./appError");
 const catchAsync = require("./catchAsync");
 
-module.exports = (field, options) =>
+module.exports = (field, options = {}) =>
   catchAsync(async (req, res, next) => {
-    const COMPANY_ID = process.env.COMPANY_ID;
-    if (!COMPANY_ID) return next(new AppError("company_id_not_assigned", 404));
+    let session = req.session;
+    if (!session) {
+      session = await mongoose.startSession();
+      session.startTransaction();
+      req.session = session;
+    }
 
     if (req.body.email === process.env.OWNER_EMAIL && field === "user") {
       req.body.code = "OWNER_CODE";
       return next();
     }
-    const { modifier, digitCount } = options || {
-      modifier: field.toUpperCase(),
-      digitCount: 4,
-    };
+
+    const COMPANY_ID = process.env.COMPANY_ID;
+    if (!COMPANY_ID) {
+      return next(new AppError("company_id_not_assigned", 400));
+    }
+
+    const { modifier = field.toUpperCase(), digitCount = 4 } = options;
 
     const obj = {};
-    obj[field] = 1;
-
-    const session = req.session || (await mongoose.startSession());
-    if (!req.session) session.startTransaction();
+    obj[field] = req.count || 1;
 
     const company = await CompanyModel.findByIdAndUpdate(
       COMPANY_ID,
@@ -33,8 +37,15 @@ module.exports = (field, options) =>
 
     const codeCount = company[field];
 
-    req.body.code = `${company.code}${modifier}${"0".repeat(
-      digitCount - `${codeCount}`.length
-    )}${codeCount + 1}`;
+    const codes = Array.from(
+      { length: req.count || 1 },
+      (_, i) =>
+        `${company.code}${modifier}${"0".repeat(
+          digitCount - `${codeCount + i}`.length
+        )}${codeCount + 1 + i}`
+    );
+
+    req.body.code = !req.count ? codes.at(0) : codes;
+
     next();
   });
