@@ -102,7 +102,7 @@ exports.login = catchAsync(async (req, res, next) => {
     .select("-query -note")
     .populate({
       path: "branches",
-      select: "id -managers",
+      select: "-managers name code",
     })
     .select("+password");
 
@@ -151,17 +151,17 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
-
   const currentUser = await UserModel.findById(decoded.id).populate([
     {
       path: "branches",
-      select: "id -managers",
+      select: "-managers code name",
     },
     {
       path: "permissions",
       select: "slug",
     },
   ]);
+
   if (!currentUser) return next(new AppError("token_user_not_exist", 401));
 
   if (currentUser.changedPasswordAfter(decoded.iat))
@@ -196,7 +196,7 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
 
   const user = await UserModel.findById(decoded.id).populate({
     path: "branches",
-    select: "id -managers",
+    select: "-managers name code",
   });
   if (!user) return next(new AppError("token_user_not_exist", 401));
 
