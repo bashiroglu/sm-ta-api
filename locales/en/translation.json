@@ -29,6 +29,8 @@
   "something_went_wrong": "Something went wrong",
   "many_requests": "Too many requests, please try later",
   "value_exists": "{{value}} that you want to enter already exists in the system",
+  "is_not_object_id": "{{path}} requires object id. '{{value}}' is not an object id",
+  "db_validation_error": "Database validation error",
 
   "lovercased_email": "Email should be lovercased",
   "confirm_password": "Password should be the same with passwordConfirm",

@@ -18,20 +18,25 @@ const handleDublicatedFieldErrors = (err, req) => {
   return new AppError(errorMessage, 400);
 };
 const handleValidationErrorDB = (err, req) => {
-  const errorMessages = Object.values(err.errors)
-    .map((e) => {
-      const {
-        properties: { type, path, value, enumValues },
-      } = e;
+  // const errorMessages = Object.values(err.errors)
+  //   .map((e) => {
+  //     const { properties, kind } = e;
+  //     if (properties) {
+  //       const { type, kind: propKind, path, value, enumValues } = properties;
+  //       const obj = { value };
+  //       if ([type, propKind].includes("enum"))
+  //         obj[path.split(".")?.at(0)] = enumValues.join(", ");
+  //       return req.t(e.message, obj);
+  //     } else {
+  //       if (e.kind.includes("ObjectId")) return req.t('is_not_object_id');
+  //       return "no properties";
+  //     }
+  //   })
+  //   .join(". ");
 
-      const obj = { value };
-
-      if (type === "enum") obj[path.split(".")?.at(0)] = enumValues.join(", ");
-
-      return req.t(e.message, obj);
-    })
-    .join(". ");
-  return new AppError(errorMessages, 400);
+  console.error(err);
+  const errorMessage = req.t("db_validation_error");
+  return new AppError(errorMessage, 400);
 };
 const handleJsonWebTokenError = (err) =>
   new AppError("invalid_credentials", 401);

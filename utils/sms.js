@@ -19,6 +19,6 @@ exports.sendSmsRequest = async (number, text) => {
     );
     return result;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

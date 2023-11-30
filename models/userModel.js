@@ -132,7 +132,10 @@ const schema = new mongoose.Schema(
 
     relationship: {
       type: String,
-      enum: ["father", "mother", "other"],
+      enum: {
+        values: ["father", "mother", "other"],
+        message: "enum_user_relationship",
+      },
       required: [
         function () {
           return !!this.guardian;
