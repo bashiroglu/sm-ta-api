@@ -19,7 +19,7 @@ const schema = new mongoose.Schema(
     },
     priority: {
       type: Number,
-      defaul: 0,
+      default: 0,
     },
     slug: {
       type: String,
