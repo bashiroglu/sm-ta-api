@@ -61,9 +61,12 @@ exports.checkBranch = catchAsync(async (req, res, next) => {
   if (!req.session) session.startTransaction();
 
   const isOwner = userRoles.includes(roles.OWNER);
+  const isAdmin = userRoles.includes(roles.ADMIN);
 
-  if (isOwner) {
+  if (!isOwner || !isAdmin) {
     const isManager = userRoles.includes(roles.MANAGER);
+    if (!isManager) return next(new AppError("not_authorized.", 401));
+
     const notOwnBranch = !branches?.map((b) => b.id).includes(branch);
 
     if (isManager && notOwnBranch)

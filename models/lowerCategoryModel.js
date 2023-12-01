@@ -21,7 +21,16 @@ const schema = new mongoose.Schema(
       type: Number,
       defaul: 0,
     },
-    slug: String,
+    slug: {
+      type: String,
+      unique: true,
+      immutable: true,
+    },
+
+    notDeletable: {
+      type: Boolean,
+      immutable: true,
+    },
 
     deleted: Boolean,
     createdBy: {
@@ -36,6 +45,9 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.index({ slug: 1 }, { unique: true });
+// schema.path("slug").index({ unique: true });
+
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
@@ -43,6 +55,13 @@ schema.pre(/^find/, function (next) {
 
 schema.pre("save", function (next) {
   this.slug = slugify(this.title, { lower: true });
+
+  next();
+});
+
+schema.pre("findOneAndUpdate", function (next) {
+  const { slug } = this.getUpdate();
+  if (slug) return next(new AppError("immutable_field_update", 400, "slug"));
   next();
 });
 

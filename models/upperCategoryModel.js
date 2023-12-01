@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
+const AppError = require("../utils/appError");
 
 const collectionName = "UpperCategory";
 
@@ -15,9 +16,9 @@ const schema = new mongoose.Schema(
     slug: {
       type: String,
       unique: true,
+      immutable: true,
     },
 
-    deleted: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -40,6 +41,12 @@ schema.pre("save", function (next) {
   next();
 });
 
-const Model = mongoose.model(collectionName, schema);
+schema.pre("findOneAndUpdate", function (next) {
+  const { slug } = this.getUpdate();
+  if (slug)
+    return next(new AppError("immutable_field_update", 400, { field: "slug" }));
+  next();
+});
 
+const Model = mongoose.model(collectionName, schema);
 module.exports = Model;

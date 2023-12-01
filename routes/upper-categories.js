@@ -20,11 +20,6 @@ router
   .post(createUpperCategory);
 router.route("/lowers").post(createUpperAndLowers, createUpperCategory);
 
-router
-  .route("/:id")
-  .get(getUpperCategory)
-  .patch(updateUpperCategory)
-  .delete(makeDeletedUpperCategory);
-router.route("/:id/delete").delete(deleteUpperCategory);
+router.route("/:id").get(getUpperCategory).patch(updateUpperCategory);
 
 module.exports = router;

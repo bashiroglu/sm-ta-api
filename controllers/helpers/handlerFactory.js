@@ -23,9 +23,7 @@ exports.makeDeletedOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndUpdate(
       req.params.id,
-      {
-        deleted: true,
-      },
+      { deleted: true },
       { new: true }
     );
 

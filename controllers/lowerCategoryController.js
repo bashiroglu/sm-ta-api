@@ -1,6 +1,8 @@
 const factory = require("./helpers/handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const LowerCategoryModel = require("../models/lowerCategoryModel");
+const { roles } = require("../utils/constants/enums");
+const AppError = require("../utils/appError");
 
 exports.getLowerCategories = factory.getAll(LowerCategoryModel);
 exports.getLowerCategory = factory.getOne(LowerCategoryModel);
@@ -50,7 +52,37 @@ exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.queryByUpperSlug2 = catchAsync(async (req, res, next) => {
+  req.doc = await LowerCategoryModel.find({ deleted: { $ne: true } })
+    .populate({
+      path: "upperCategory",
+      match: {
+        deleted: { $ne: true },
+        slug: req.params.slug,
+      },
+      select: "title slug",
+    })
+    .select("title description priority upperCategory")
+    .sort({ priority: -1 });
+
+  next();
+});
+
 exports.sortDescending = catchAsync(async (req, res, next) => {
   req.query.sort = "-priority";
+  next();
+});
+
+exports.checkDeletability = catchAsync(async (req, res, next) => {
+  const lower = await LowerCategoryModel.findById(req.params.id);
+  if (!lower) return next(new AppError("doc_not_found", 404));
+
+  const notOwnerOrAdmin = !req.user.roles.some((role) =>
+    [roles.OWNER, roles.ADMIN].includes(role)
+  );
+
+  if (lower.notDeletable || notOwnerOrAdmin)
+    return next(new AppError("immutable_field_delete", 400));
+
   next();
 });

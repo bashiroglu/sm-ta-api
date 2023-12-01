@@ -47,12 +47,12 @@ const sendErrorProd = (err, req, res) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
-      message: req.t(err.message),
+      message: req.t(err.message, err.options),
     });
   } else {
     res.status(500).json({
       status: "error",
-      message: "something_went_wrong",
+      message: req.t("something_went_wrong"),
     });
   }
 };

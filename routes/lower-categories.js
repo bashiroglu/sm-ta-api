@@ -8,6 +8,7 @@ const {
   deleteLowerCategory,
   queryByUpperSlug,
   sortDescending,
+  checkDeletability,
 } = require("../controllers/lowerCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 
@@ -24,7 +25,7 @@ router
   .route("/:id")
   .get(getLowerCategory)
   .patch(updateLowerCategory)
-  .delete(makeDeletedLowerCategory);
-router.route("/:id/delete").delete(deleteLowerCategory);
+  .delete(checkDeletability, makeDeletedLowerCategory);
+router.route("/:id/delete").delete(checkDeletability, deleteLowerCategory);
 
 module.exports = router;
