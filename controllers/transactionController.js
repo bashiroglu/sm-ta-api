@@ -63,14 +63,16 @@ exports.checkBranch = catchAsync(async (req, res, next) => {
   const isOwner = userRoles.includes(roles.OWNER);
   const isAdmin = userRoles.includes(roles.ADMIN);
 
-  if (!isOwner || !isAdmin) {
+  console.log(isOwner);
+
+  if (!(isOwner || isAdmin)) {
     const isManager = userRoles.includes(roles.MANAGER);
-    if (!isManager) return next(new AppError("not_authorized.", 401));
+    if (!isManager) return next(new AppError("not_authorized", 401));
 
     const notOwnBranch = !branches?.map((b) => b.id).includes(branch);
 
     if (isManager && notOwnBranch)
-      return next(new AppError("not_authorized.", 401));
+      return next(new AppError("not_authorized", 401));
   }
   next();
 });
@@ -78,5 +80,6 @@ exports.checkBranch = catchAsync(async (req, res, next) => {
 exports.restrictHiddenTransactions = catchAsync(async (req, res, next) => {
   const permissions = req.user.permissions.map((p) => p.slug);
   if (!permissions.includes("see-hidden-transaction")) req.query.hidden = false;
+
   next();
 });
