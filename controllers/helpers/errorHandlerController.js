@@ -34,7 +34,6 @@ const handleValidationErrorDB = (err, req) => {
   //   })
   //   .join(". ");
 
-  console.error(err);
   const errorMessage = req.t("db_validation_error");
   return new AppError(errorMessage, 400);
 };
@@ -81,6 +80,8 @@ module.exports = async (err, req, res, next) => {
   ) {
     let error = { ...err };
     error.message = err.message;
+
+    console.error(error.message);
 
     if (err.name === "CastError") error = handleCastError(error, req);
     if (err.name === "ValidationError")
