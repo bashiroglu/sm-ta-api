@@ -28,7 +28,14 @@ router
   .post(checkBranch, getCode("transaction"), updateBalance, createTransaction);
 router
   .route("/:id")
-  .get(getTransaction)
+  .get(
+    populate([
+      { path: "branch", select: "name -managers" },
+      { path: "relatedTo", select: "name surname" },
+      { path: "createdBy", select: "name surname" },
+    ]),
+    getTransaction
+  )
   .patch(updateTransaction)
   .delete(makeDeletedTransaction);
 router.route("/:id/delete").delete(deleteTransaction);

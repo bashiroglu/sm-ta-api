@@ -31,14 +31,22 @@ const schema = new mongoose.Schema(
       unique: true,
       lowercase: [true, "lovercased_email"],
     },
+    // phoneNumbers: {
+    //   type: [
+    //     {
+    //       type: String,
+    //       unique: true,
+    //       required: [true, "required_phone_number"],
+    //     },
+    //   ],
+    //   default: [],
+    //   validate: uniqueArrValidator,
+    // },
     phoneNumbers: {
-      type: [
-        {
-          type: String,
-          unique: true,
-          required: [true, "required_phone_number"],
-        },
-      ],
+      type: [String],
+      unique: true,
+      sparse: true,
+      default: undefined,
       validate: uniqueArrValidator,
     },
     dateOfBirth: {
