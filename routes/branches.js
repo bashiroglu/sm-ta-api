@@ -6,32 +6,41 @@ const {
   updateBranch,
   makeDeletedBranch,
   deleteBranch,
-  assignCompany,
+  setCompany,
   getOnlyBlance,
-  getAllStudentCountStat,
-  getOneStudentCountStat,
-  getAllStudentCountStatByMonths,
-  getAllBalanceStat,
-  getAllBalanceStatByMonth,
+
+  getStatBranchesStudentCount,
+  getStatBranchStudentCount,
+  getStatBranchesGroupStudentCount,
+  getStatBranchesStudentCountByMonths,
+  getStatBranchesBalance,
+  getStatBranchesIncomeByMonth,
 } = require("./../controllers/branchController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
 router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
-router.route("/").get(getBranches).post(assignCompany, createBranch);
+router.route("/").get(getBranches).post(setCompany, createBranch);
 
 router.use(restrictTo("roles", "owner", "admin"));
 
-router.route("/stats/student-count").get(getAllStudentCountStat, getBranches);
-router.route("/stats/student-count/:id").get(getOneStudentCountStat, getBranch);
+router
+  .route("/stats/student-count")
+  .get(getStatBranchesStudentCount, getBranches);
+router
+  .route("/stats/student-count/:id")
+  .get(getStatBranchStudentCount, getBranch);
+router
+  .route("/stats/group-student-count")
+  .get(getStatBranchesGroupStudentCount, getBranches);
 router
   .route("/stats/student-count-by-months")
-  .get(getAllStudentCountStatByMonths, getBranches);
-router.route("/stats/balance").get(getAllBalanceStat, getBranches);
+  .get(getStatBranchesStudentCountByMonths, getBranches);
+router.route("/stats/balance").get(getStatBranchesBalance, getBranches);
 router
-  .route("/stats/balance-by-months")
-  .get(getAllBalanceStatByMonth, getBranches);
+  .route("/stats/income-by-months")
+  .get(getStatBranchesIncomeByMonth, getBranches);
 
 router
   .route("/:id")
