@@ -74,6 +74,7 @@ schema.pre(/^find/, function (next) {
 });
 
 schema.pre("save", async function (next) {
+  if (!this.realDate) this.realDate = new Date();
   this.query = [
     this.title || "",
     this.category || "",

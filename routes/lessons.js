@@ -29,7 +29,7 @@ router
   .post(getCode("lesson"), createLesson);
 router
   .route("/:id")
-  .get(getLesson)
+  .get(populate({ path: "group", select: "name" }), getLesson)
   .patch(updateLesson)
   .delete(makeDeletedLesson);
 router.route("/:id/delete").delete(deleteLesson);

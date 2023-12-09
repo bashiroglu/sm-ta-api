@@ -46,12 +46,10 @@ const schema = new mongoose.Schema(
       type: [String],
       unique: true,
       sparse: true,
-      default: undefined,
+      default: [],
       validate: uniqueArrValidator,
     },
-    dateOfBirth: {
-      type: Date,
-    },
+    dateOfBirth: { type: Date },
     gender: {
       type: String,
       default: "unknown",
@@ -222,7 +220,7 @@ schema.pre("save", async function (next) {
     this.note || "",
     this.email || "",
     this.code || "",
-    this.phoneNumbers.join(" ") || "",
+    this.phoneNumbers?.join(" ") || "",
   ].join(" ");
 
   if (!this.isModified("password")) return next();
