@@ -87,6 +87,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   req.body = filterObject(
     req.body,
     "name",
+    "email",
     "surname",
     "patronymic",
     "phoneNumbers",
