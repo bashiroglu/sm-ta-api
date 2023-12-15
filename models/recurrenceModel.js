@@ -99,6 +99,8 @@ schema.pre(/^find/, function (next) {
 const jobs = {};
 
 schema.post("save", function (doc, next) {
+  if (!this.priority) this.priority = 0;
+
   this.query = this.title || "";
   jobs[doc._id] = scheduleTask(doc, sendNotification);
   next();

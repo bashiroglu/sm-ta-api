@@ -54,6 +54,7 @@ schema.pre(/^find/, function (next) {
 });
 
 schema.pre("save", function (next) {
+  if (!this.priority) this.priority = 0;
   this.slug = slugify(this.title, { lower: true });
 
   next();
