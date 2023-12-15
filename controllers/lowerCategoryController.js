@@ -8,7 +8,8 @@ exports.getLowerCategories = factory.getAll(LowerCategoryModel);
 exports.getLowerCategory = factory.getOne(LowerCategoryModel);
 exports.createLowerCategory = factory.createOne(LowerCategoryModel);
 exports.updateLowerCategory = factory.updateOne(LowerCategoryModel);
-exports.makeDeletedLowerCategory = factory.makeDeletedOne(LowerCategoryModel);
+exports.makeDeletedLowerCategory =
+  factory.makeDeletedOne(LowerCategoryModel);
 exports.deleteLowerCategory = factory.deleteOne(LowerCategoryModel);
 
 exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
@@ -41,6 +42,7 @@ exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
         upperCategory: 1,
         description: 1,
         priority: 1,
+        slug: 1,
       },
     },
     {
@@ -78,7 +80,7 @@ exports.checkDeletability = catchAsync(async (req, res, next) => {
   if (!lower) return next(new AppError("doc_not_found", 404));
 
   const notOwnerOrAdmin = !req.user.roles.some((role) =>
-    [roles.OWNER, roles.ADMIN].includes(role)
+    [roles.OWNER, roles.ADMIN].includes(role),
   );
 
   if (lower.notDeletable || notOwnerOrAdmin)
