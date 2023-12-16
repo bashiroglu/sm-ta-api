@@ -94,7 +94,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     "dateOfBirth",
     "profileImage"
   );
-  if (req.file) filteredBody.photo = req.file.filename;
 
   next();
 });

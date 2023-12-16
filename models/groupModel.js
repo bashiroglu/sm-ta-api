@@ -72,11 +72,12 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
+schema.statics.queryFields = ["name"];
+
 schema.pre("save", async function (next) {
   const room = await RoomModel.findById(this.room);
   if (!room) return next(new AppError("room_not_found", 404));
 
-  this.query = [room?.name || "", this.code || ""].join(" ");
   next();
 });
 

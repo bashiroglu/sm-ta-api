@@ -73,14 +73,10 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
+schema.statics.queryFields = ["title", "category", "amount", "code"];
+
 schema.pre("save", async function (next) {
   if (!this.realDate) this.realDate = new Date();
-  this.query = [
-    this.title || "",
-    this.category || "",
-    this.amount || "",
-    this.code || "",
-  ].join(" ");
 
   next();
 });

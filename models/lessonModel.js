@@ -67,8 +67,9 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
+schema.statics.queryFields = ["topic", "code"];
+
 schema.pre("save", async function (next) {
-  this.query = [this.topic || "", this.code || ""].join(" ");
   next();
 });
 const Model = mongoose.model(collectionName, schema);

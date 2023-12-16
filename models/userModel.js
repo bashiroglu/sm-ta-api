@@ -212,17 +212,17 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.pre("save", async function (next) {
-  this.query = [
-    this.name || "",
-    this.surname || "",
-    this.patronymic || "",
-    this.note || "",
-    this.email || "",
-    this.code || "",
-    this.phoneNumbers?.join(" ") || "",
-  ].join(" ");
+schema.statics.queryFields = [
+  "name",
+  "surname",
+  "patronymic",
+  "note",
+  "email",
+  "code",
+  "phoneNumbers",
+];
 
+schema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
@@ -234,7 +234,6 @@ schema.pre("save", async function (next) {
 
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
-
   next();
 });
 

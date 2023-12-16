@@ -13,19 +13,18 @@ class APIFeatures {
 
     // 1B) Advanced filtering
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(
-      /\b(gte|gt|lte|lt|in)\b/g,
-      (match) => `$${match}`
-    );
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
     const parsed = JSON.parse(queryStr);
-    // if (queryStr.includes("$in"))
-    //   Object.keys(parsed).forEach(
-    //     (k) => (parsed[k]["$in"] = parsed[k]["$in"].split(","))
-    //   );
 
-    if (parsed.query) parsed.query = new RegExp(parsed.query, "i");
+    if (parsed.query) {
+      parsed.$or = this.query.schema.statics.queryFields.map((f) => ({
+        [f]: new RegExp(parsed.query, "i"),
+      }));
+      delete parsed.query;
+    }
     if (parsed.code) parsed.code = new RegExp(parsed.code, "i");
+
     this.query = isAggregate(this)
       ? this.query.match(parsed)
       : this.query.find(parsed);
