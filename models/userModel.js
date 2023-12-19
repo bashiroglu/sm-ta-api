@@ -29,6 +29,7 @@ const schema = new mongoose.Schema(
       type: String,
       // required: [true, "email is required"],
       unique: true,
+      sparse: true,
       lowercase: [true, "lovercased_email"],
     },
     // phoneNumbers: {
