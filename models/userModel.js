@@ -47,8 +47,7 @@ const schema = new mongoose.Schema(
       type: [String],
       unique: true,
       sparse: true,
-      default: [],
-      validate: uniqueArrValidator,
+      // validate: uniqueArrValidator,
     },
     dateOfBirth: { type: Date },
     gender: {

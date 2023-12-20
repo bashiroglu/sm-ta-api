@@ -96,7 +96,7 @@ router.route("/role/student/:id/participation").get(
 router
   .route("/")
   .get(getUsers)
-  .post(getCode("user"), assignPassword, createUser);
+  .post(getCode("user", { modifier: "" }), assignPassword, createUser);
 
 router
   .route("/:id")
