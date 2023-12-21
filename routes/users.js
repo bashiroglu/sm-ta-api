@@ -46,7 +46,12 @@ router
     ]),
     getUsers
   )
-  .post(getCode("user"), createUserByRole, assignPassword, createUser);
+  .post(
+    getCode("user", { modifier: "" }),
+    createUserByRole,
+    assignPassword,
+    createUser
+  );
 
 router.route("/role/student/participation").get(
   getAllByRole,

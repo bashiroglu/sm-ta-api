@@ -15,7 +15,7 @@ const AppError = require("../utils/appError");
 
 const router = express.Router();
 
-router.post("/signup", getCode("user"), signup);
+router.post("/signup", getCode("user", { modifier: "" }), signup);
 router.post("/login", login);
 
 router.post("/forgotPassword", forgotPassword);
