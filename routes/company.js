@@ -6,13 +6,15 @@ const {
   updateCompany,
   makeDeletedCompany,
   deleteCompany,
+  checkConstruction,
 } = require("../controllers/companyController");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect);
+router.route("/is-under-construction").get(checkConstruction);
 
+router.use(protect);
 router.use(restrictTo("roles", "owner"));
 router.route("/").get(getCompanies).post(createCompany);
 
