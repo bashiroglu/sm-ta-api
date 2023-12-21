@@ -59,5 +59,7 @@
   "enum_group_status": "Status have to be some of these: {{roles}}. But you entered \"{{value}}\"",
   "enum_user_gender": "Gender have to be some of these: {{roles}}. But you entered \"{{value}}\"",
   "enum_user_roles": "Roles have to be some of these: {{roles}}. But you entered \"{{value}}\"",
-  "enum_exam_type": "Type have to be some of these: {{type}}. But you entered \"{{value}}\""
+  "enum_exam_type": "Type have to be some of these: {{type}}. But you entered \"{{value}}\"",
+
+  "under_construction": "Application is under construction. Please try several minutes later or contact your system administrator"
 }

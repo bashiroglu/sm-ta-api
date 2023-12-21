@@ -20,6 +20,10 @@ const schema = new mongoose.Schema(
     lesson: { type: Number, default: 0 },
     transaction: { type: Number, default: 0 },
     user: { type: Number, default: 0 },
+    isUnderConstruction: {
+      type: Boolean,
+      default: false,
+    },
 
     active: Boolean,
     deleted: Boolean,
