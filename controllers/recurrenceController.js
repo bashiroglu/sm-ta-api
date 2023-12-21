@@ -18,29 +18,22 @@ exports.makeDeletedRecurrence = factory.makeDeletedOne(RecurrenceModel);
 exports.deleteRecurrence = factory.deleteOne(RecurrenceModel);
 
 exports.executeRecurrence = catchAsync(async (req, res, next) => {
-  const {
-    body: { newAmount, newRealDate, newPaymentMethod },
-    params: { id },
-    session,
-  } = req;
-
-  const recurrence = await RecurrenceModel.findById(id).session(session);
-
-  if (!recurrence) {
-    return next(new AppError("doc_not_found", 404));
-  }
   let {
-    title,
-    amount,
-    description,
-    category,
-    isIncome,
-    hidden,
-    paymentMethod,
-    branch,
-    relatedTo,
-    realDate,
-  } = recurrence;
+    body: { newAmount, newRealDate, newPaymentMethod },
+    recurrence: {
+      title,
+      amount,
+      description,
+      category,
+      isIncome,
+      hidden,
+      paymentMethod,
+      branch,
+      relatedTo,
+      realDate,
+      id,
+    },
+  } = req;
 
   if (newAmount) amount = newAmount;
   if (newRealDate) realDate = newRealDate;
