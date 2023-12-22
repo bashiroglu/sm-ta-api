@@ -4,7 +4,6 @@ const employeeRoles = Object.freeze({
   EMPLOYEE: "employee",
   MANAGER: "manager",
   TEACHER: "teacher",
-  DESIGNER: "designer",
   values() {
     return Object.values(this).filter((v) => typeof v !== "function");
   },

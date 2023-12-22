@@ -105,9 +105,9 @@ exports.createUserByRole = catchAsync(async (req, res, next) => {
     params: { role },
   } = req;
 
-  const rolesArr = [role];
-  if (employeeRoles.values().includes(role)) rolesArr.push(roles.EMPLOYEE);
-  req.body.roles = rolesArr;
+  const rolesArr = new Set(role);
+  if (employeeRoles.values().includes(role)) rolesArr.add(roles.EMPLOYEE);
+  req.body.roles = [...rolesArr];
 
   const id = mongoose.Types.ObjectId();
   req.body._id = id;
