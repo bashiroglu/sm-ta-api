@@ -3,17 +3,16 @@ const {
   createUser,
   createUserByRole,
   getUser,
-  assignCategory,
   getUsers,
   getAllByRole,
   updateUser,
   deleteUser,
   makeDeletedUser,
-  activateUser,
   assignParamsId,
   updateMe,
   assignPassword,
   schedulePaymentNotifications,
+  setEndpointMiddleware,
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
@@ -118,11 +117,11 @@ router
   )
   .patch(updateUser)
   .delete(makeDeletedUser);
+
 router
-  .route("/:id/:category")
-  .get(assignCategory, getUser)
-  .patch(assignCategory, updateUser);
-router.route("/:id/delete").delete(deleteUser);
-router.route("/:id/active").patch(activateUser, updateUser);
+  .route("/:id/:endpoint")
+  .get(setEndpointMiddleware, getUser)
+  .patch(setEndpointMiddleware, updateUser)
+  .delete(restrictTo("roles", "admin"), setEndpointMiddleware, deleteUser);
 
 module.exports = router;

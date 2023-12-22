@@ -140,10 +140,6 @@ exports.getUsers = factory.getAll(UserModel);
 exports.updateUser = factory.updateOne(UserModel);
 exports.deleteUser = factory.deleteOne(UserModel);
 exports.makeDeletedUser = factory.makeDeletedOne(UserModel);
-exports.activateUser = catchAsync(async (req, res, next) => {
-  req.body = { active: true };
-  next();
-});
 
 exports.assignPassword = catchAsync(async (req, res, next) => {
   req.body.password = req.body.passwordConfirm =
@@ -151,25 +147,34 @@ exports.assignPassword = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.assignCategory = catchAsync(async (req, res, next) => {
-  const { category } = req.params;
-
-  // Checks if user try to update not indented field
-  // TODO: Make this more automotically
-  if (!["tags", "permissions"].includes(category))
-    return next(new AppError("dont_use_this_endpoint"));
-
-  // Excludes not indented items in req.body
-  const obj = {};
-  obj[category] = req.body[category];
-  req.body = obj;
-
-  // Excludes fields other than category
-  req.query.fields = category;
+exports.excludeFields = catchAsync(async (req, res, next) => {
+  req.query.fields = "-query -note";
   next();
 });
 
-exports.excludeFields = catchAsync(async (req, res, next) => {
-  req.query.fields = "-query -note";
+exports.setEndpointMiddleware = catchAsync(async (req, res, next) => {
+  const endpoints = ["tags", "permissions", "activate", "deactivate", "delete"];
+  const methods = ["GET", "PATCH", "DELETE"];
+
+  const {
+    method,
+    params: { endpoint },
+  } = req;
+
+  if (!endpoints.includes(endpoint) || !methods.includes(method))
+    return next(new AppError("dont_use_this_endpoint"));
+
+  if (endpoint === "tags" || endpoint === "permissions") {
+    if (method === "PATCH") {
+      if (!req.body[endpoint]) {
+        return next(new AppError("dont_use_this_endpoint"));
+      }
+
+      req.body = { [endpoint]: req.body[endpoint] };
+    }
+    req.query.fields = endpoint;
+  }
+  if (endpoint === "activate") req.body = { active: true };
+  if (endpoint === "deactivate") req.body = { active: false };
   next();
 });
