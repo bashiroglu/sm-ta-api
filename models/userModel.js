@@ -97,6 +97,11 @@ const schema = new mongoose.Schema(
         message: `enum_user_roles`,
       },
     },
+    positions: {
+      type: [mongoose.Schema.ObjectId],
+      ref: "LowerCategory",
+    },
+
     tags: {
       type: [
         {
