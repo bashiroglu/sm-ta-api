@@ -7,7 +7,6 @@ const {
   makeDeletedRecurrence,
   deleteRecurrence,
   executeRecurrence,
-  prepareRecurrences,
   scheduleRecurrenceNotifications,
 } = require("../controllers/recurrenceController");
 const {
@@ -15,7 +14,7 @@ const {
   createTransaction,
   checkBranch,
 } = require("../controllers/transactionController");
-const { protect, restrictTo } = require("../controllers/authController");
+const { protect } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const cron = require("node-cron");
 const { populate } = require("../utils/helpers");
@@ -28,7 +27,7 @@ router.use(protect);
 
 router
   .route("/")
-  .get(prepareRecurrences, getRecurrences)
+  .get(populate("executionCount"), getRecurrences)
   .post(createRecurrence);
 
 router

@@ -56,66 +56,6 @@ exports.executeRecurrence = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.prepareRecurrences = catchAsync(async (req, res, next) => {
-  const currentMonth = getCurrentMonth();
-
-  req.pipeline = RecurrenceModel.aggregate([
-    {
-      $match: {
-        deleted: { $ne: true },
-      },
-    },
-    {
-      $lookup: {
-        from: "transactions",
-        as: "transactions",
-        let: { recurrenceId: "$_id" },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ["$recurrence", "$$recurrenceId"] },
-                  {
-                    $gte: [
-                      "$createdAt",
-                      // mongoose.Types.ISODate(
-                      currentMonth.start,
-                      // ),
-                    ],
-                  },
-                  {
-                    $lte: [
-                      "$createdAt",
-                      // mongoose.Types.ISODate(
-                      currentMonth.end,
-                      // ),
-                    ],
-                  },
-                  { $ne: ["$deleted", true] },
-                ],
-              },
-            },
-          },
-        ],
-      },
-    },
-    {
-      $addFields: {
-        executionCount: { $size: "$transactions" },
-        id: "$_id",
-      },
-    },
-    {
-      $project: {
-        transactions: 0,
-      },
-    },
-  ]);
-
-  next();
-});
-
 exports.scheduleRecurrenceNotifications = catchAsync(async (req, res, next) => {
   const recurrences = await RecurrenceModel.find().populate({
     path: "recipients.user",

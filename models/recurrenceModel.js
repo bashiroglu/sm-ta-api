@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const { isValidCron } = require("cron-validator");
-const { sendNotification, scheduleTask } = require("../utils/helpers");
+const {
+  sendNotification,
+  scheduleTask,
+  getCurrentMonth,
+} = require("../utils/helpers");
 
 const collectionName = "Recurrence";
 
@@ -113,6 +117,27 @@ schema.post("findOneAndUpdate", function (doc) {
 
 schema.post("deleteOne", function (doc) {
   jobs[doc._id].stop();
+});
+
+schema.virtual("executionCount", {
+  ref: "Transaction",
+  foreignField: "recurrence",
+  localField: "_id",
+  match: {
+    $expr: {
+      $and: [
+        {
+          $gte: ["$createdAt", getCurrentMonth().start],
+        },
+        {
+          $lte: ["$createdAt", getCurrentMonth().end],
+        },
+        { $ne: ["$deleted", true] },
+      ],
+    },
+  },
+
+  count: true,
 });
 
 const Model = mongoose.model(collectionName, schema);
