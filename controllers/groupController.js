@@ -17,27 +17,25 @@ exports.crudGroupLessons = catchAsync(async (req, res, next) => {
 });
 
 exports.pushPullArray = catchAsync(async (req, res, next) => {
+  const field = req.url.split("/").at(-1);
+
   const {
-    params: { id, field },
+    params: { id },
     body: { ids },
     method,
   } = req;
 
-  const obj = {};
-  let queryObj;
-  if (method === "DELETE") {
-    obj[field] = { $in: ids };
-    queryObj = { $pull: obj };
-  } else if (method === "PATCH") {
-    obj[field] = { $each: ids };
-    queryObj = { $push: obj };
-  } else {
-    queryObj = {};
-  }
+  if (!["students", "teachers"].includes(field))
+    return next(new AppError("dont_use_this_endpoint", 400));
 
-  req.doc = await GroupModel.findByIdAndUpdate(id, queryObj, { new: true });
-  if (!req.doc) {
-    return next(new AppError("doc_not_found", 404));
-  }
+  const body =
+    method === "DELETE"
+      ? { $pull: { [field]: { $in: ids } } }
+      : method === "PATCH"
+      ? { $push: { [field]: { $each: ids } } }
+      : {};
+
+  req.doc = await GroupModel.findByIdAndUpdate(id, body, { new: true });
+  if (!req.doc) return next(new AppError("doc_not_found", 404));
   next();
 });

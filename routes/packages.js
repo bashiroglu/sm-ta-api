@@ -8,6 +8,7 @@ const {
   deletePackage,
 } = require("../controllers/packageController");
 const { protect, restrictTo } = require("../controllers/authController");
+const { archive } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -19,6 +20,9 @@ router
   .get(getPackage)
   .patch(updatePackage)
   .delete(makeDeletedPackage);
-router.route("/:id/delete").delete(deletePackage);
+
+router.route("/:id/archive").get(archive, updatePackage);
+router.route("/:id/unarchive").get(archive, updatePackage);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deletePackage);
 
 module.exports = router;

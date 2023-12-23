@@ -8,6 +8,7 @@ const {
   deleteExamResult,
 } = require("../controllers/examResultController");
 const { protect, restrictTo } = require("../controllers/authController");
+const { archive } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -19,6 +20,12 @@ router
   .get(getExamResult)
   .patch(updateExamResult)
   .delete(makeDeletedExamResult);
-router.route("/:id/delete").delete(deleteExamResult);
+
+router.route("/:id/archive").get(archive, updateExamResult);
+router.route("/:id/unarchive").get(archive, updateExamResult);
+
+router
+  .route("/:id/delete")
+  .delete(restrictTo("roles", "admin"), deleteExamResult);
 
 module.exports = router;

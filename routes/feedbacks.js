@@ -9,7 +9,7 @@ const {
   restrictFeedbacks,
 } = require("../controllers/feedbackController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { populate } = require("../utils/helpers");
+const { populate, archive } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
 const router = express.Router();
@@ -20,7 +20,11 @@ router.use(restrictTo("roles", "owner", "admin", "manager", "teacher"));
 router.route("/").post(getCode("feedback"), createFeedback);
 
 router.route("/:id").patch(updateFeedback).delete(makeDeletedFeedback);
-router.route("/:id/delete").delete(deleteFeedback);
+router.route("/:id/archive").get(archive, updateFeedback);
+router.route("/:id/unarchive").get(archive, updateFeedback);
+router
+  .route("/:id/delete")
+  .delete(restrictTo("roles", "admin"), deleteFeedback);
 
 router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher", "guardian")

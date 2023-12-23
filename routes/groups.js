@@ -11,7 +11,7 @@ const {
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
-const { populate } = require("../utils/helpers");
+const { populate, archive } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
 const router = express.Router();
@@ -33,10 +33,19 @@ router
   )
   .patch(updateGroup)
   .delete(makeDeletedGroup);
-router.route("/:id/delete").delete(deleteGroup);
+
 router
-  .route("/:id/:field")
+  .route("/:id/students")
   .patch(pushPullArray, updateGroup)
   .delete(pushPullArray, updateGroup);
+
+router
+  .route("/:id/teachers")
+  .patch(pushPullArray, updateGroup)
+  .delete(pushPullArray, updateGroup);
+
+router.route("/:id/archive").get(archive, updateGroup);
+router.route("/:id/unarchive").get(archive, updateGroup);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteGroup);
 
 module.exports = router;

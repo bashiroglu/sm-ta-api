@@ -1,6 +1,5 @@
 const factory = require("./helpers/handlerFactory");
 const RoomModel = require("../models/roomModel");
-const catchAsync = require("../utils/catchAsync");
 
 exports.getRooms = factory.getAll(RoomModel);
 exports.getRoom = factory.getOne(RoomModel);

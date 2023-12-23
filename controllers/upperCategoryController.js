@@ -16,7 +16,7 @@ exports.createUpperAndLowers = catchAsync(async (req, res, next) => {
   if (!req.session) session.startTransaction();
   let upperDoc;
   if (typeof upper === "string") {
-    upperDoc = await UpperCategoryModel.findById(upper).session(session);
+    upperDoc = await UpperCategoryModel.findById(upper);
   } else {
     [upperDoc] = await UpperCategoryModel.create([upper], { session });
   }

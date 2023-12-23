@@ -11,7 +11,7 @@ const {
   restrictHiddenTransactions,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { populate } = require("../utils/helpers");
+const { populate, archive } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
 const router = express.Router();
@@ -38,6 +38,11 @@ router
   )
   .patch(updateTransaction)
   .delete(makeDeletedTransaction);
-router.route("/:id/delete").delete(deleteTransaction);
+
+router.route("/:id/archive").get(archive, updateTransaction);
+router.route("/:id/unarchive").get(archive, updateTransaction);
+router
+  .route("/:id/delete")
+  .delete(restrictTo("roles", "admin"), deleteTransaction);
 
 module.exports = router;

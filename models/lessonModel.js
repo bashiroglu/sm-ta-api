@@ -44,8 +44,8 @@ const schema = new mongoose.Schema(
     },
     isExtra: Boolean,
 
-    query: { type: String, select: false },
     deleted: Boolean,
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -67,7 +67,7 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
-schema.statics.queryFields = ["topic", "code"];
+schema.statics.q = ["topic", "code"];
 
 schema.pre("save", async function (next) {
   next();

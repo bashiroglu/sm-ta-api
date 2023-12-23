@@ -24,7 +24,9 @@ const schema = new mongoose.Schema(
         ref: "User",
       },
     ],
+
     deleted: Boolean,
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

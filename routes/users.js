@@ -12,11 +12,13 @@ const {
   updateMe,
   assignPassword,
   schedulePaymentNotifications,
-  setEndpointMiddleware,
+  setReqBody,
+  activateUser,
+  deactivateUser,
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const { populate } = require("../utils/helpers");
+const { populate, archive } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -119,9 +121,20 @@ router
   .delete(makeDeletedUser);
 
 router
-  .route("/:id/:endpoint")
-  .get(setEndpointMiddleware, getUser)
-  .patch(setEndpointMiddleware, updateUser)
-  .delete(restrictTo("roles", "admin"), setEndpointMiddleware, deleteUser);
+  .route("/:id/tags")
+  .get(setReqBody, getUser)
+  .patch(setReqBody, updateUser);
+router
+  .route("/:id/permissions")
+  .get(setReqBody, getUser)
+  .patch(setReqBody, updateUser);
+
+router.route("/:id/activate").get(activateUser, getUser);
+router.route("/:id/deactivate").get(deactivateUser, getUser);
+
+router.route("/:id/archive").get(archive, getUser);
+router.route("/:id/unarchive").get(archive, getUser);
+
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteUser);
 
 module.exports = router;

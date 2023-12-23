@@ -9,7 +9,7 @@ const {
 } = require("../controllers/lessonController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const { populate } = require("../utils/helpers");
+const { populate, archive } = require("../utils/helpers");
 
 const router = express.Router({ mergeParams: true });
 
@@ -32,6 +32,8 @@ router
   .get(populate({ path: "group", select: "name" }), getLesson)
   .patch(updateLesson)
   .delete(makeDeletedLesson);
-router.route("/:id/delete").delete(deleteLesson);
+router.route("/:id/archive").get(archive, updateLesson);
+router.route("/:id/unarchive").get(archive, updateLesson);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteLesson);
 
 module.exports = router;

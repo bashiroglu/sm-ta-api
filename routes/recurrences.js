@@ -14,10 +14,10 @@ const {
   createTransaction,
   checkBranch,
 } = require("../controllers/transactionController");
-const { protect } = require("../controllers/authController");
+const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const cron = require("node-cron");
-const { populate } = require("../utils/helpers");
+const { populate, archive } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -51,6 +51,11 @@ router
     updateBalance,
     createTransaction
   );
-router.route("/:id/delete").delete(deleteRecurrence);
+
+router.route("/:id/archive").get(archive, updateRecurrence);
+router.route("/:id/unarchive").get(archive, updateRecurrence);
+router
+  .route("/:id/delete")
+  .delete(restrictTo("roles", "admin"), deleteRecurrence);
 
 module.exports = router;

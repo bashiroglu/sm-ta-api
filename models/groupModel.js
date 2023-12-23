@@ -53,8 +53,8 @@ const schema = new mongoose.Schema(
       },
     },
 
-    query: { type: String, select: false },
     deleted: Boolean,
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -72,7 +72,7 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
-schema.statics.queryFields = ["name"];
+schema.statics.q = ["name"];
 
 schema.pre("save", async function (next) {
   const room = await RoomModel.findById(this.room);

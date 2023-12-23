@@ -7,7 +7,7 @@ const {
   makeDeletedRoom,
   deleteRoom,
 } = require("../controllers/roomController");
-const { populate } = require("../utils/helpers");
+const { populate, archive } = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
@@ -20,6 +20,9 @@ router
   .get(populate({ path: "branch", select: "name -managers" }), getRoom)
   .patch(updateRoom)
   .delete(makeDeletedRoom);
-router.route("/:id/delete").delete(deleteRoom);
+
+router.route("/:id/archive").get(archive, updateRoom);
+router.route("/:id/unarchive").get(archive, updateRoom);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteRoom);
 
 module.exports = router;

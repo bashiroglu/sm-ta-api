@@ -76,6 +76,18 @@ const restrictPerSubdomain = (user, req) =>
         process.env.NODE_ENV === "development" && "127.0.0.1:3001",
       ].includes(req.get("origin"));
 
+const archive = catchAsync(async (req, res, next) => {
+  const field = req.url.split("/").at(-1);
+  if (!["archive", "unarchive"].includes(field) || !value)
+    return next(new AppError("dont_use_this_endpoint", 400));
+
+  req.body = { archive: field === "archive" };
+  next();
+});
+
+const hasCommons = (array1, array2) =>
+  array1.filter((el) => array2.includes(el)).length;
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
@@ -86,4 +98,6 @@ module.exports = {
   sendNotification,
   scheduleTask,
   restrictPerSubdomain,
+  archive,
+  hasCommons,
 };

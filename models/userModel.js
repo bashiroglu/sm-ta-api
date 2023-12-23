@@ -202,8 +202,8 @@ const schema = new mongoose.Schema(
     description: String,
 
     note: { type: String, select: false },
-    query: { type: String, select: false },
 
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -217,7 +217,7 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.statics.queryFields = [
+schema.statics.q = [
   "name",
   "surname",
   "patronymic",

@@ -17,11 +17,11 @@ class APIFeatures {
 
     const parsed = JSON.parse(queryStr);
 
-    if (parsed.query) {
-      parsed.$or = this.query.schema.statics.queryFields.map((f) => ({
-        [f]: new RegExp(parsed.query, "i"),
+    if (parsed.q) {
+      parsed.$or = this.query.schema.statics.q.map((f) => ({
+        [f]: new RegExp(parsed.q, "i"),
       }));
-      delete parsed.query;
+      delete parsed.q;
     }
     if (parsed.code) parsed.code = new RegExp(parsed.code, "i");
 

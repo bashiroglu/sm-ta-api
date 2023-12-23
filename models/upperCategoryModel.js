@@ -19,6 +19,7 @@ const schema = new mongoose.Schema(
       immutable: true,
     },
 
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

@@ -152,29 +152,23 @@ exports.excludeFields = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.setEndpointMiddleware = catchAsync(async (req, res, next) => {
-  const endpoints = ["tags", "permissions", "activate", "deactivate", "delete"];
-  const methods = ["GET", "PATCH", "DELETE"];
+exports.setReqBody = catchAsync(async (req, res, next) => {
+  const field = req.url.split("/").at(-1);
+  const value = req.body[field];
 
-  const {
-    method,
-    params: { endpoint },
-  } = req;
+  if (!["tags", "permissions"].includes(field) || !value)
+    return next(new AppError("dont_use_this_endpoint", 400));
 
-  if (!endpoints.includes(endpoint) || !methods.includes(method))
-    return next(new AppError("dont_use_this_endpoint"));
+  req.body = req.method === "PATCH" ? { [field]: req.body[field] } : undefined;
+  req.query.fields = field;
+  next();
+});
 
-  if (endpoint === "tags" || endpoint === "permissions") {
-    if (method === "PATCH") {
-      if (!req.body[endpoint]) {
-        return next(new AppError("dont_use_this_endpoint"));
-      }
-
-      req.body = { [endpoint]: req.body[endpoint] };
-    }
-    req.query.fields = endpoint;
-  }
-  if (endpoint === "activate") req.body = { active: true };
-  if (endpoint === "deactivate") req.body = { active: false };
+exports.activateUser = catchAsync(async (req, res, next) => {
+  req.body = { active: true };
+  next();
+});
+exports.deactivateUser = catchAsync(async (req, res, next) => {
+  req.body = { active: false };
   next();
 });

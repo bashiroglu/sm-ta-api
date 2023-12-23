@@ -81,8 +81,8 @@ const schema = new mongoose.Schema(
     hidden: Boolean,
     active: Boolean,
 
-    query: { type: String, select: false },
     deleted: Boolean,
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -100,23 +100,23 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
-const jobs = {};
+schema.statics.jobs = {};
 
 schema.post("save", function (doc, next) {
   if (!this.priority) this.priority = 0;
 
   this.query = this.title || "";
-  jobs[doc._id] = scheduleTask(doc, sendNotification);
+  schema.statics.jobs[doc._id] = scheduleTask(doc, sendNotification);
   next();
 });
 
 schema.post("findOneAndUpdate", function (doc) {
-  if (doc.deleted) jobs[doc._id].stop();
-  else jobs[doc._id] = scheduleTask(doc, sendNotification);
+  if (doc.deleted) schema.statics.jobs[doc._id].stop();
+  else schema.statics.jobs[doc._id] = scheduleTask(doc, sendNotification);
 });
 
 schema.post("deleteOne", function (doc) {
-  jobs[doc._id].stop();
+  schema.statics.jobs[doc._id].stop();
 });
 
 schema.virtual("executionCount", {
@@ -136,10 +136,11 @@ schema.virtual("executionCount", {
       ],
     },
   },
-
   count: true,
 });
 
+schema.statics.q = ["title", "category", "amount", "code"];
+
 const Model = mongoose.model(collectionName, schema);
 
-module.exports = { Model, jobs };
+module.exports = Model;

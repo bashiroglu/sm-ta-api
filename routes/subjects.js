@@ -8,6 +8,7 @@ const {
   deleteSubject,
 } = require("../controllers/subjectController");
 const { protect, restrictTo } = require("../controllers/authController");
+const { archive } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -21,6 +22,9 @@ router
   .get(getSubject)
   .patch(updateSubject)
   .delete(makeDeletedSubject);
-router.route("/:id/delete").delete(deleteSubject);
+
+router.route("/:id/archive").get(archive, updateSubject);
+router.route("/:id/unarchive").get(archive, updateSubject);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteSubject);
 
 module.exports = router;

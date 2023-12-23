@@ -7,7 +7,7 @@ const CompanyModel = require("../models/companyModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Email = require("../utils/email");
-const { restrictPerSubdomain } = require("../utils/helpers");
+const { restrictPerSubdomain, hasCommons } = require("../utils/helpers");
 
 const signToken = (id) => {
   let JWT_SECRET;
@@ -223,7 +223,7 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
 exports.restrictTo = (field, ...items) => {
   return (req, res, next) =>
     // checks if there is intersection
-    !items.filter((v) => req.user[field].includes(v)).length
+    !hasCommons(items, req.user[field])
       ? next(new AppError("not_authorized", 403))
       : next();
 };
