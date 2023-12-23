@@ -105,7 +105,7 @@ exports.createUserByRole = catchAsync(async (req, res, next) => {
     params: { role },
   } = req;
 
-  const rolesArr = new Set(role);
+  const rolesArr = new Set([role]);
   if (employeeRoles.values().includes(role)) rolesArr.add(roles.EMPLOYEE);
   req.body.roles = [...rolesArr];
 
