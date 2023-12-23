@@ -9,6 +9,7 @@ const {
   queryByUpperSlug,
   sortDescending,
   checkDeletability,
+  checkRestriction,
 } = require("../controllers/lowerCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive } = require("../utils/helpers");
@@ -20,7 +21,7 @@ router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
 router
   .route("/")
   .get(sortDescending, getLowerCategories)
-  .post(createLowerCategory);
+  .post(checkRestriction, createLowerCategory);
 router.route("/upper/:slug").get(queryByUpperSlug, getLowerCategories);
 router
   .route("/:id")

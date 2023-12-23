@@ -5,14 +5,15 @@
   "invalid_weekdays": "Weekdays validation failed",
   "invalid_period": "Enter a valid periodicity",
 
-  "route_not_found": "Can not find {{url}} route",
-  "doc_not_found": "No document found with that ID",
-  "room_not_found": "No room found with that ID",
-  "company_not_found": "Company not found with that ID",
   "branch_not_found": "Branch not found with that ID",
   "category_not_found": "Category not found with that ID",
+  "company_not_found": "Company not found with that ID",
+  "doc_not_found": "No document found with that ID",
   "group_not_found": "Group not found with that ID",
+  "room_not_found": "No room found with that ID",
+  "route_not_found": "Can not find {{url}} route",
   "teacher_not_found": "Teacher not found",
+  "upper_not_found": "Upper category not found",
 
   "wait_activation": "Please wait for the activation of the profile, if you need, contact the programmer",
   "not_logged_in": "You are not logged in! Please log in to get access",
@@ -33,6 +34,7 @@
   "db_validation_error": "Database validation error",
   "immutable_field_update": "The field {{field}} you are trying to update is immutable, cannot be updated",
   "immutable_field_delete": "The docuement cannot be deleted",
+  "upper_restricted": "You are not allowed to create lower category of this upper one",
 
   "lovercased_email": "Email should be lovercased",
   "confirm_password": "Password should be the same with passwordConfirm",

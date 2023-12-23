@@ -1,6 +1,7 @@
 const factory = require("./helpers/handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const LowerCategoryModel = require("../models/lowerCategoryModel");
+const UpperCategoryModel = require("../models/upperCategoryModel");
 const { roles } = require("../utils/constants/enums");
 const AppError = require("../utils/appError");
 
@@ -82,8 +83,15 @@ exports.checkDeletability = catchAsync(async (req, res, next) => {
     [roles.OWNER, roles.ADMIN].includes(role)
   );
 
-  if (lower.notDeletable || notOwnerOrAdmin)
+  if (!lower.deletable || notOwnerOrAdmin)
     return next(new AppError("immutable_field_delete", 400));
 
+  next();
+});
+
+exports.checkRestriction = catchAsync(async (req, res, next) => {
+  const upper = await UpperCategoryModel.findById(req.body.upperCategory);
+  if (!upper) return next(new AppError("upper_not_found", 404));
+  if (upper.restricted) return next(new AppError("upper_restricted", 404));
   next();
 });

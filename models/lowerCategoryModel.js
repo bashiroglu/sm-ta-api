@@ -26,8 +26,7 @@ const schema = new mongoose.Schema(
       unique: true,
       immutable: true,
     },
-
-    notDeletable: {
+    deletable: {
       type: Boolean,
       immutable: true,
     },

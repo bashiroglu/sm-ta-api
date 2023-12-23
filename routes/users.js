@@ -79,26 +79,10 @@ router.route("/role/student/participation").get(
 
 router.route("/role/student/:id/participation").get(
   populate([
-    {
-      path: "subject",
-      select: "name",
-    },
-    {
-      path: "packages",
-      select: "name",
-    },
-    {
-      path: "absents",
-      select: "group",
-    },
-    {
-      path: "presents",
-      select: "_id group",
-    },
-    {
-      path: "positions",
-      select: "title id",
-    },
+    { path: "subject", select: "name" },
+    { path: "packages", select: "name" },
+    { path: "absents", select: "group" },
+    { path: "presents", select: "_id group" },
   ]),
   getUser
 );

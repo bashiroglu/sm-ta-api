@@ -18,6 +18,10 @@ const schema = new mongoose.Schema(
       unique: true,
       immutable: true,
     },
+    restricted: {
+      type: Boolean,
+      immutable: true,
+    },
 
     archived: Boolean,
     createdBy: {
