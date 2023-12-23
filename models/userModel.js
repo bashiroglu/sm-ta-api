@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-const { uniqueArrValidator } = require("../utils/validators");
 const { roles } = require("../utils/constants/enums");
 const { getFirstOfNextMonth } = require("../utils/helpers");
 
@@ -44,10 +43,13 @@ const schema = new mongoose.Schema(
     //   validate: uniqueArrValidator,
     // },
     phoneNumbers: {
-      type: [String],
-      unique: true,
-      sparse: true,
-      // validate: uniqueArrValidator,
+      type: [
+        {
+          type: String,
+          unique: true,
+          sparse: true,
+        },
+      ],
     },
     dateOfBirth: { type: Date },
     gender: {

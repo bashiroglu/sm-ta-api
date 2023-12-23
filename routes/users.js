@@ -15,6 +15,7 @@ const {
   setReqBody,
   activateUser,
   deactivateUser,
+  scheduleBirthdayNotifications,
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
@@ -23,6 +24,7 @@ const { populate, archive } = require("../utils/helpers");
 const router = express.Router();
 
 schedulePaymentNotifications();
+scheduleBirthdayNotifications();
 
 router.use(protect);
 router
