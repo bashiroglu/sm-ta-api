@@ -97,7 +97,7 @@ router.route("/role/student/:id/participation").get(
     },
     {
       path: "positions",
-      select: "title",
+      select: "title id",
     },
   ]),
   getUser
