@@ -112,12 +112,10 @@ router
   .route("/:id")
   .get(
     populate([
-      {
-        path: "guardian",
-        select: "name surname",
-      },
+      { path: "guardian", select: "name surname" },
       { path: "subjects", select: "name" },
       { path: "packages", select: "name" },
+      { path: "positions", select: "title id" },
     ]),
     getUser
   )
