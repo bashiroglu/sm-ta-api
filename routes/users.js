@@ -95,6 +95,10 @@ router.route("/role/student/:id/participation").get(
       path: "presents",
       select: "_id group",
     },
+    {
+      path: "positions",
+      select: "title",
+    },
   ]),
   getUser
 );
