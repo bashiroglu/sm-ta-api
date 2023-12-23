@@ -139,7 +139,7 @@ schema.virtual("executionCount", {
   count: true,
 });
 
-schema.statics.q = ["title", "category", "amount", "code"];
+schema.statics.q = ["title", "code"];
 
 const Model = mongoose.model(collectionName, schema);
 

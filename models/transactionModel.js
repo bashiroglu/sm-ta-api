@@ -73,7 +73,7 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
-schema.statics.q = ["title", "category", "amount", "code"];
+schema.statics.q = ["title", "code"];
 
 schema.pre("save", async function (next) {
   if (!this.realDate) this.realDate = new Date();
