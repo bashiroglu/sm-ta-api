@@ -117,7 +117,7 @@ exports.getAll = (Model) =>
       requestQuery.archived = { $ne: true };
     if (requestQuery.archived === null) requestQuery.archived = undefined;
     if (requestQuery.archived === false) requestQuery.archived = false;
-    if (requestQuery.archived) requestQuery.archived = true;
+    if (requestQuery.archived === true) requestQuery.archived = true;
 
     // 2. Build the initial query
     let query = pipeline ? pipeline : Model.find();
