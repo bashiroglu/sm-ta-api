@@ -1,7 +1,6 @@
 const cron = require("node-cron");
 const mongoose = require("mongoose");
 const moment = require("moment");
-const momentTz = require("moment-timezone");
 
 const UserModel = require("./../models/userModel");
 const GroupModel = require("../models/groupModel");
@@ -71,7 +70,7 @@ exports.schedulePaymentNotifications = () => {
 
 exports.scheduleBirthdayNotifications = () => {
   cron.schedule(
-    "55 20 * * *",
+    "0 9 * * *",
     async () => {
       const tomorrow = moment().add(1, "day").startOf("day");
       const usersWithTomorrowBirthday = await UserModel.find({
@@ -85,9 +84,7 @@ exports.scheduleBirthdayNotifications = () => {
         console.log(`Sending notification to user: ${user.name}`);
       });
     },
-    {
-      timezone: "Asia/Baku",
-    }
+    { timezone: "Asia/Baku" }
   );
 };
 
