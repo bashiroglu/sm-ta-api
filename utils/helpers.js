@@ -65,6 +65,7 @@ const scheduleTask = (document, task) =>
   cron.schedule(document.periodicity, task.bind(null, document));
 
 const restrictPerSubdomain = (user, req) =>
+  // TODO: fix these urls
   user.roles.includes("student")
     ? ![
         "aspirans.students.bashiroglu.dev",

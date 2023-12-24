@@ -38,6 +38,7 @@ const schema = new mongoose.Schema(
         sparse: true,
       },
     ],
+    tgChatId: [String],
     dateOfBirth: { type: Date },
     gender: {
       type: String,

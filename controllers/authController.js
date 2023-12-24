@@ -94,7 +94,10 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const {
+    body: { email, password },
+    query: { chatId },
+  } = req;
 
   if (!email || !password) {
     return next(new AppError("invalid_credentials", 400));
@@ -110,6 +113,9 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new AppError("invalid_credentials", 401));
   }
+
+  user.tgChatId = chatId;
+  await user.save({ validateBeforeSave: false });
 
   if (restrictPerSubdomain(user, req)) {
     return next(new AppError("not_authorized", 403));

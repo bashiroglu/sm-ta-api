@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
 const app = require("./app");
+const bot = require("./bot");
 
 dotenv.config({ path: "./config.env" });
 
@@ -31,6 +32,9 @@ const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log("sm-api-aspirans runs");
 });
+
+bot.start();
+console.log("Bot is ready to accept requests...");
 
 process.on("unhandledRejection", (err) => {
   console.error("uncaughtException", "\n", err);
