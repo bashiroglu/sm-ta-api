@@ -5,7 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 
 const AppError = require("../utils/appError");
 const TransactionModel = require("../models/transactionModel");
-const { Model: RecurrenceModel } = require("../models/recurrenceModel");
+const RecurrenceModel = require("../models/recurrenceModel");
 const BranchModel = require("../models/branchModel");
 const LowerCategory = require("../models/lowerCategoryModel");
 const { roles } = require("../utils/constants/enums");
