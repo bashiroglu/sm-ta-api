@@ -14,7 +14,6 @@ const schema = new mongoose.Schema(
     },
     balance: { type: Number, default: 0 },
 
-    exam: { type: Number, default: 0 },
     feedback: { type: Number, default: 0 },
     group: { type: Number, default: 0 },
     lesson: { type: Number, default: 0 },

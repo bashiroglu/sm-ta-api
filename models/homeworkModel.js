@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Homework";
 
-const homeworkSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     lesson: {
       type: mongoose.Schema.ObjectId,
@@ -36,11 +36,11 @@ const homeworkSchema = new mongoose.Schema(
   }
 );
 
-homeworkSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const HomeworkModel = mongoose.model(collectionName, homeworkSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = HomeworkModel;
+module.exports = Model;

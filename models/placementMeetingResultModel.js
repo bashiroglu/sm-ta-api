@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const collectionName = "PlacementMeetingResult";
 
-const placementMeetingResultSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     placementMeeting: {
       type: mongoose.Schema.ObjectId,
@@ -66,12 +66,12 @@ const placementMeetingResultSchema = new mongoose.Schema(
   }
 );
 
-placementMeetingResultSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } }).populate("referalUser");
   next();
 });
 
-placementMeetingResultSchema.pre("save", function (next) {
+schema.pre("save", function (next) {
   if (mongoose.isValidObjectId(this.referal)) {
     this.referalUser = this.referal;
     this.referal = undefined;
@@ -80,9 +80,6 @@ placementMeetingResultSchema.pre("save", function (next) {
   next();
 });
 
-const PlacementMeetingResultModel = mongoose.model(
-  collectionName,
-  placementMeetingResultSchema
-);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = PlacementMeetingResultModel;
+module.exports = Model;

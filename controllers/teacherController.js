@@ -99,11 +99,7 @@ exports.directLessons = catchAsync(async (req, res, next) => {
   const teacher = await UserModel.findById(teacherId);
   if (!teacher) return next(new AppError("teacher_not_found"));
 
-  if (req.method === "POST") {
-    req.body.teacher = teacher.id;
-    req.body.subject = teacher.subject;
-  }
-
+  if (req.method === "POST") req.body.teacher = teacher.id;
   req.query.teacher = teacherId;
   next();
 });

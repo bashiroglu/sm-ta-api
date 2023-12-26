@@ -44,8 +44,6 @@ router
         path: "guardian",
         select: "name surname",
       },
-      { path: "subjects", select: "name" },
-      { path: "packages", select: "name" },
     ]),
     getUsers
   )
@@ -59,30 +57,15 @@ router
 router.route("/role/student/participation").get(
   getAllByRole,
   populate([
-    {
-      path: "guardian",
-      select: "name surname",
-    },
-    {
-      path: "packages",
-      select: "name",
-    },
-    {
-      path: "absents",
-      select: "group",
-    },
-    {
-      path: "presents",
-      select: "_id group",
-    },
+    { path: "guardian", select: "name surname" },
+    { path: "absents", select: "group" },
+    { path: "presents", select: "_id group" },
   ]),
   getUsers
 );
 
 router.route("/role/student/:id/participation").get(
   populate([
-    { path: "subject", select: "name" },
-    { path: "packages", select: "name" },
     { path: "absents", select: "group" },
     { path: "presents", select: "_id group" },
   ]),
@@ -99,8 +82,6 @@ router
   .get(
     populate([
       { path: "guardian", select: "name surname" },
-      { path: "subjects", select: "name" },
-      { path: "packages", select: "name" },
       { path: "positions", select: "title id" },
     ]),
     getUser

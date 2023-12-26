@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Inventory";
 
-const inventorySchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -59,11 +59,11 @@ const inventorySchema = new mongoose.Schema(
   }
 );
 
-inventorySchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const InventoryModel = mongoose.model(collectionName, inventorySchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = InventoryModel;
+module.exports = Model;

@@ -19,13 +19,7 @@ router.use(
 );
 router
   .route("/")
-  .get(
-    populate([
-      { path: "teacher", select: "name surname" },
-      { path: "subject", select: "name" },
-    ]),
-    getLessons
-  )
+  .get(populate([{ path: "teacher", select: "name surname" }]), getLessons)
   .post(getCode("lesson"), createLesson);
 router
   .route("/:id")

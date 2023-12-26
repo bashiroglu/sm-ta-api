@@ -68,13 +68,13 @@ const restrictPerSubdomain = (user, req) =>
   // TODO: fix these urls
   user.roles.includes("student")
     ? ![
-        "ta.students.bashiroglu.dev",
-        process.env.NODE_ENV === "development" && "127.0.0.1:3001",
+        process.env.STUDENT_SUBDOMAIN,
+        process.env.NODE_ENV === "development" && process.env.LOCALHOST,
       ].includes(req.get("origin"))
     : user.roles.includes("teacher") &&
       [
-        "ta.teachers.bashiroglu.dev",
-        process.env.NODE_ENV === "development" && "127.0.0.1:3001",
+        process.env.TEACHER_SUBDOMAIN,
+        process.env.NODE_ENV === "development" && process.env.LOCALHOST,
       ].includes(req.get("origin"));
 
 const archive = catchAsync(async (req, res, next) => {

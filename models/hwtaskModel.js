@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Hwtask";
 
-const hwtaskSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     homework: {
       type: mongoose.Schema.ObjectId,
@@ -36,11 +36,11 @@ const hwtaskSchema = new mongoose.Schema(
   }
 );
 
-hwtaskSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const HwtaskModel = mongoose.model(collectionName, hwtaskSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = HwtaskModel;
+module.exports = Model;

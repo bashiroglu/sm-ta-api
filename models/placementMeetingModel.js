@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "PlacementMeeting";
 
-const placementMeetingSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     room: {
       type: mongoose.Schema.ObjectId,
@@ -36,14 +36,11 @@ const placementMeetingSchema = new mongoose.Schema(
   }
 );
 
-placementMeetingSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const PlacementMeetingModel = mongoose.model(
-  collectionName,
-  placementMeetingSchema
-);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = PlacementMeetingModel;
+module.exports = Model;

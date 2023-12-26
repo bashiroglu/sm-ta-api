@@ -47,7 +47,6 @@
   "required_branch": "Branch is required",
   "required_company": "Company is required",
   "required_email": "Email is required",
-  "required_exam_type": "Exam type is required",
   "required_group": "Group is required",
   "required_name": "Name is required",
   "required_password": "Password is required",
@@ -56,12 +55,10 @@
   "required_repationship": "Guardian's repationship field is reuqired",
   "required_surname": "Surname is required",
   "required_teacher": "Teacher is required",
-  "required_teacher_subject": "Teacher must have at least one subject",
 
   "enum_group_status": "Status have to be some of these: {{roles}}. But you entered \"{{value}}\"",
   "enum_user_gender": "Gender have to be some of these: {{roles}}. But you entered \"{{value}}\"",
   "enum_user_roles": "Roles have to be some of these: {{roles}}. But you entered \"{{value}}\"",
-  "enum_exam_type": "Type have to be some of these: {{type}}. But you entered \"{{value}}\"",
 
   "under_construction": "Application is under construction. Please try several minutes later or contact your system administrator"
 }

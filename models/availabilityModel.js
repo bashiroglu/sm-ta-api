@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Availability";
 
-const availabilitySchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
@@ -43,11 +43,11 @@ const availabilitySchema = new mongoose.Schema(
   }
 );
 
-availabilitySchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const AvailabilityModel = mongoose.model(collectionName, availabilitySchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = AvailabilityModel;
+module.exports = Model;

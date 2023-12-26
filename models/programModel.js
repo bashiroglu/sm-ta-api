@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Program";
 
-const programSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     title: { type: String },
     description: { type: String },
@@ -22,14 +22,6 @@ const programSchema = new mongoose.Schema(
 
     name: String,
     price: Number,
-    // subjects: {
-    //   type: [
-    //     {
-    //       type: mongoose.Schema.ObjectId,
-    //       ref: "Subject",
-    //     },
-    //   ],
-    // },
 
     deleted: Boolean,
     createdBy: {
@@ -44,11 +36,11 @@ const programSchema = new mongoose.Schema(
   }
 );
 
-programSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const ProgramModel = mongoose.model(collectionName, programSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = ProgramModel;
+module.exports = Model;

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const collectionName = "Book";
 
-const bookSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     code: {
       type: String,
@@ -49,11 +49,11 @@ const bookSchema = new mongoose.Schema(
   }
 );
 
-bookSchema.pre(/^find/, function (next) {
+schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });
   next();
 });
 
-const BookModel = mongoose.model(collectionName, bookSchema);
+const Model = mongoose.model(collectionName, schema);
 
-module.exports = BookModel;
+module.exports = Model;

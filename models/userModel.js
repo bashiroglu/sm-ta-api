@@ -160,29 +160,6 @@ const schema = new mongoose.Schema(
         "required_admittion_year",
       ],
     },
-    packages: {
-      type: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "Package",
-        },
-      ],
-    },
-
-    subjects: {
-      type: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "Subject",
-        },
-      ],
-      validate: {
-        validator: function (val) {
-          return !this.roles?.includes(roles.TEACHER) || val.length;
-        },
-        message: "required_teacher_subject",
-      },
-    },
 
     active: {
       type: Boolean,
