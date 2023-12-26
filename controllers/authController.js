@@ -114,8 +114,10 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("invalid_credentials", 401));
   }
 
-  user.tgChatId = chatId;
-  await user.save({ validateBeforeSave: false });
+  if (chatId && !user.tgChatId.includes("" + chatId)) {
+    user.tgChatId = [...(user.tgChatId && []), chatId];
+    await user.save({ validateBeforeSave: false });
+  }
 
   if (restrictPerSubdomain(user, req)) {
     return next(new AppError("not_authorized", 403));
