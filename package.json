@@ -1,7 +1,7 @@
 {
-  "name": "sm-api-aspirans",
+  "name": "sm-api-ta",
   "version": "1.0.0",
-  "description": "sm-api-aspirans",
+  "description": "sm-api-ta",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",

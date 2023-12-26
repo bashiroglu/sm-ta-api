@@ -68,12 +68,12 @@ const restrictPerSubdomain = (user, req) =>
   // TODO: fix these urls
   user.roles.includes("student")
     ? ![
-        "aspirans.students.bashiroglu.dev",
+        "ta.students.bashiroglu.dev",
         process.env.NODE_ENV === "development" && "127.0.0.1:3001",
       ].includes(req.get("origin"))
     : user.roles.includes("teacher") &&
       [
-        "aspirans.teachers.bashiroglu.dev",
+        "ta.teachers.bashiroglu.dev",
         process.env.NODE_ENV === "development" && "127.0.0.1:3001",
       ].includes(req.get("origin"));
 

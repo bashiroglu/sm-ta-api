@@ -30,7 +30,7 @@ mongoose
 const port = process.env.PORT || 3000;
 
 const server = app.listen(port, () => {
-  console.log("sm-api-aspirans runs");
+  console.log("sm-api-ta runs");
 });
 
 bot.start();
