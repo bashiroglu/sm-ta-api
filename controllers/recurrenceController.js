@@ -14,7 +14,6 @@ exports.getRecurrences = factory.getAll(RecurrenceModel);
 exports.getRecurrence = factory.getOne(RecurrenceModel);
 exports.createRecurrence = factory.createOne(RecurrenceModel);
 exports.updateRecurrence = factory.updateOne(RecurrenceModel);
-exports.makeDeletedRecurrence = factory.makeDeletedOne(RecurrenceModel);
 exports.deleteRecurrence = factory.deleteOne(RecurrenceModel);
 
 exports.executeRecurrence = catchAsync(async (req, res, next) => {

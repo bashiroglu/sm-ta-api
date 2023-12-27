@@ -7,7 +7,6 @@ exports.getGroups = factory.getAll(GroupModel);
 exports.getGroup = factory.getOne(GroupModel);
 exports.createGroup = factory.createOne(GroupModel);
 exports.updateGroup = factory.updateOne(GroupModel);
-exports.makeDeletedGroup = factory.makeDeletedOne(GroupModel);
 exports.deleteGroup = factory.deleteOne(GroupModel);
 
 exports.crudGroupLessons = catchAsync(async (req, res, next) => {

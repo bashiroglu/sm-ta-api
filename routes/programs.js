@@ -4,11 +4,10 @@ const {
   createProgram,
   getProgram,
   updateProgram,
-  makeDeletedProgram,
   deleteProgram,
 } = require("../controllers/programController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router
   .route("/:id")
   .get(getProgram)
   .patch(updateProgram)
-  .delete(makeDeletedProgram);
+  .delete(makeDeleted, updateProgram);
 
 router.route("/:id/archive").get(archive, updateProgram);
 router.route("/:id/unarchive").get(archive, updateProgram);

@@ -4,11 +4,10 @@ const {
   createHwtask,
   getHwtask,
   updateHwtask,
-  makeDeletedHwtask,
   deleteHwtask,
 } = require("../controllers/hwtaskController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router
   .route("/:id")
   .get(getHwtask)
   .patch(updateHwtask)
-  .delete(makeDeletedHwtask);
+  .delete(makeDeleted, updateHwtask);
 
 router.route("/:id/archive").get(archive, updateHwtask);
 router.route("/:id/unarchive").get(archive, updateHwtask);

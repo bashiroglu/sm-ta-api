@@ -6,7 +6,6 @@ exports.getFeedbacks = factory.getAll(FeedbackModel);
 exports.getFeedback = factory.getOne(FeedbackModel);
 exports.createFeedback = factory.createOne(FeedbackModel);
 exports.updateFeedback = factory.updateOne(FeedbackModel);
-exports.makeDeletedFeedback = factory.makeDeletedOne(FeedbackModel);
 exports.deleteFeedback = factory.deleteOne(FeedbackModel);
 
 exports.restrictFeedbacks = catchAsync(async (req, res, next) => {

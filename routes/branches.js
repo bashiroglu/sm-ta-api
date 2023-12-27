@@ -4,7 +4,6 @@ const {
   getBranch,
   getBranches,
   updateBranch,
-  makeDeletedBranch,
   deleteBranch,
   setCompany,
   getOnlyBlance,
@@ -17,7 +16,7 @@ const {
   getStatBranchesIncomeByMonth,
 } = require("./../controllers/branchController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -47,7 +46,7 @@ router
   .route("/:id")
   .get(getBranch)
   .patch(updateBranch)
-  .delete(makeDeletedBranch);
+  .delete(makeDeleted, updateBranch);
 router.route("/:id/balance").get(getOnlyBlance, getBranch);
 
 router.route("/:id/archive").get(archive, updateBranch);

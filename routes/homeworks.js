@@ -4,11 +4,10 @@ const {
   createHomework,
   getHomework,
   updateHomework,
-  makeDeletedHomework,
   deleteHomework,
 } = require("../controllers/homeworkController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router
   .route("/:id")
   .get(getHomework)
   .patch(updateHomework)
-  .delete(makeDeletedHomework);
+  .delete(makeDeleted, updateHomework);
 router.route("/:id/archive").get(archive, updateHomework);
 router.route("/:id/unarchive").get(archive, updateHomework);
 router.route("/:id/delete").delete(deleteHomework);

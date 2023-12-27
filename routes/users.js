@@ -19,7 +19,7 @@ const {
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const { populate, archive } = require("../utils/helpers");
+const { populate, archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ router
   .route("/me")
   .get(assignParamsId, getUser)
   .patch(assignParamsId, updateMe, updateUser)
-  .delete(assignParamsId, makeDeletedUser);
+  .delete(assignParamsId, makeDeleted, updateUser);
 
 router.use(restrictTo("roles", "owner", "admin", "manager"));
 
@@ -87,7 +87,7 @@ router
     getUser
   )
   .patch(updateUser)
-  .delete(makeDeletedUser);
+  .delete(makeDeleted, updateUser);
 
 router
   .route("/:id/tags")

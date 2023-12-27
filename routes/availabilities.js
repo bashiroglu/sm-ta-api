@@ -4,12 +4,11 @@ const {
   createAvailability,
   getAvailability,
   updateAvailability,
-  makeDeletedAvailability,
   deleteAvailability,
   assignUser,
 } = require("../controllers/availabilityController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -23,7 +22,7 @@ router
   .route("/:id")
   .get(getAvailability)
   .patch(updateAvailability)
-  .delete(makeDeletedAvailability);
+  .delete(makeDeleted, updateAvailability);
 
 router.route("/:id/archive").get(archive, updateAvailability);
 router.route("/:id/unarchive").get(archive, updateAvailability);

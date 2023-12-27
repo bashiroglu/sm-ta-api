@@ -6,7 +6,6 @@ exports.getAvailabilities = factory.getAll(AvailabilityModel);
 exports.getAvailability = factory.getOne(AvailabilityModel);
 exports.createAvailability = factory.createOne(AvailabilityModel);
 exports.updateAvailability = factory.updateOne(AvailabilityModel);
-exports.makeDeletedAvailability = factory.makeDeletedOne(AvailabilityModel);
 exports.deleteAvailability = factory.deleteOne(AvailabilityModel);
 
 exports.assignUser = catchAsync(async (req, res, next) => {

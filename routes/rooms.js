@@ -4,10 +4,9 @@ const {
   createRoom,
   getRoom,
   updateRoom,
-  makeDeletedRoom,
   deleteRoom,
 } = require("../controllers/roomController");
-const { populate, archive } = require("../utils/helpers");
+const { populate, archive, makeDeleted } = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
@@ -19,7 +18,7 @@ router
   .route("/:id")
   .get(populate({ path: "branch", select: "name -managers" }), getRoom)
   .patch(updateRoom)
-  .delete(makeDeletedRoom);
+  .delete(makeDeleted, updateRoom);
 
 router.route("/:id/archive").get(archive, updateRoom);
 router.route("/:id/unarchive").get(archive, updateRoom);

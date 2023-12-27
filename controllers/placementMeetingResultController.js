@@ -11,9 +11,6 @@ exports.createPlacementMeetingResult = factory.createOne(
 exports.updatePlacementMeetingResult = factory.updateOne(
   PlacementMeetingResultModel
 );
-exports.makeDeletedPlacementMeetingResult = factory.makeDeletedOne(
-  PlacementMeetingResultModel
-);
 exports.deletePlacementMeetingResult = factory.deleteOne(
   PlacementMeetingResultModel
 );

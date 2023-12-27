@@ -1,35 +1,11 @@
-const mongoose = require("mongoose");
-
 const catchAsync = require("../../utils/catchAsync");
-const { filterObject } = require("../../utils/helpers");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
-
-    if (!doc) {
-      return next(new AppError("doc_not_found", 404));
-    }
-
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  });
-
-exports.makeDeletedOne = (Model) =>
-  catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(
-      req.params.id,
-      { deleted: true },
-      { new: true }
-    );
-
-    if (!doc) {
-      return next(new AppError("doc_not_found", 404));
-    }
+    if (!doc) return next(new AppError("doc_not_found", 404));
 
     res.status(204).json({
       status: "success",
@@ -44,6 +20,7 @@ exports.updateOne = (Model) =>
       params: { id },
       body,
       query: reqQuery,
+      deleted,
     } = req;
 
     if (!doc) {
@@ -63,7 +40,7 @@ exports.updateOne = (Model) =>
 
     res.status(200).json({
       status: "success",
-      data: doc,
+      data: deleted ? null : doc,
     });
   });
 
@@ -82,10 +59,7 @@ exports.createOne = (Model) =>
       session.endSession();
     }
 
-    res.status(201).json({
-      status: "success",
-      data: doc,
-    });
+    res.status(201).json({ status: "success", data: doc });
   });
 
 exports.getOne = (Model) =>
@@ -93,19 +67,12 @@ exports.getOne = (Model) =>
     if (!req.doc) {
       let query = Model.findById(req.params.id);
       if (req.popOptions) query = query.populate(req.popOptions);
-
       const features = new APIFeatures(query, req.query).filter().limitFields();
       req.doc = (await features.query)?.at(0);
-
-      if (!req.doc) {
-        return next(new AppError("doc_not_found", 404));
-      }
+      if (!req.doc) return next(new AppError("doc_not_found", 404));
     }
 
-    res.status(200).json({
-      status: "success",
-      data: req.doc,
-    });
+    res.status(200).json({ status: "success", data: req.doc });
   });
 
 exports.getAll = (Model) =>

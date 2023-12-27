@@ -11,7 +11,7 @@ const {
   restrictHiddenTransactions,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { populate, archive } = require("../utils/helpers");
+const { populate, archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
 const router = express.Router();
@@ -37,7 +37,7 @@ router
     getTransaction
   )
   .patch(updateTransaction)
-  .delete(makeDeletedTransaction);
+  .delete(makeDeleted, updateTransaction);
 
 router.route("/:id/archive").get(archive, updateTransaction);
 router.route("/:id/unarchive").get(archive, updateTransaction);

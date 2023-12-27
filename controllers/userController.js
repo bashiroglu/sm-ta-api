@@ -160,7 +160,6 @@ exports.getUsers = factory.getAll(UserModel);
 // Should NOT update passwords with this!
 exports.updateUser = factory.updateOne(UserModel);
 exports.deleteUser = factory.deleteOne(UserModel);
-exports.makeDeletedUser = factory.makeDeletedOne(UserModel);
 
 exports.assignPassword = catchAsync(async (req, res, next) => {
   req.body.password = req.body.passwordConfirm =

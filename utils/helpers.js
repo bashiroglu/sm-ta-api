@@ -86,6 +86,12 @@ const archive = catchAsync(async (req, res, next) => {
   next();
 });
 
+const makeDeleted = catchAsync(async (req, res, next) => {
+  req.body = { deleted: true };
+  req.deleted = true;
+  next();
+});
+
 const hasCommons = (array1, array2) =>
   array1.filter((el) => array2.includes(el)).length;
 
@@ -100,5 +106,6 @@ module.exports = {
   scheduleTask,
   restrictPerSubdomain,
   archive,
+  makeDeleted,
   hasCommons,
 };

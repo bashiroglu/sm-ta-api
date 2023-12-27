@@ -4,14 +4,13 @@ const {
   createGroup,
   getGroup,
   updateGroup,
-  makeDeletedGroup,
   deleteGroup,
   crudGroupLessons,
   pushPullArray,
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
-const { populate, archive } = require("../utils/helpers");
+const { populate, archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
 const router = express.Router();
@@ -32,7 +31,7 @@ router
     getGroup
   )
   .patch(updateGroup)
-  .delete(makeDeletedGroup);
+  .delete(makeDeleted, updateGroup);
 
 router
   .route("/:id/students")

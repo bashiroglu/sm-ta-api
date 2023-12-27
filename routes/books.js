@@ -4,11 +4,10 @@ const {
   createBook,
   getBook,
   updateBook,
-  makeDeletedBook,
   deleteBook,
 } = require("../controllers/bookController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -18,7 +17,11 @@ router.use(
 );
 
 router.route("/").get(getBooks).post(createBook);
-router.route("/:id").get(getBook).patch(updateBook).delete(makeDeletedBook);
+router
+  .route("/:id")
+  .get(getBook)
+  .patch(updateBook)
+  .delete(makeDeleted, updateBook);
 
 router.route("/:id/archive").get(archive, updateBook);
 router.route("/:id/unarchive").get(archive, updateBook);

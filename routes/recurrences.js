@@ -4,7 +4,6 @@ const {
   createRecurrence,
   getRecurrences,
   updateRecurrence,
-  makeDeletedRecurrence,
   deleteRecurrence,
   executeRecurrence,
   scheduleRecurrenceNotifications,
@@ -17,7 +16,7 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const cron = require("node-cron");
-const { populate, archive } = require("../utils/helpers");
+const { populate, archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -41,7 +40,7 @@ router
     getRecurrence
   )
   .patch(updateRecurrence)
-  .delete(makeDeletedRecurrence);
+  .delete(makeDeleted, updateRecurrence);
 router
   .route("/:id/execute")
   .post(

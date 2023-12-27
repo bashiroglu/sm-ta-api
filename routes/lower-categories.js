@@ -12,7 +12,7 @@ const {
   checkRestriction,
 } = require("../controllers/lowerCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router({ mergeParams: true });
 
@@ -27,7 +27,7 @@ router
   .route("/:id")
   .get(getLowerCategory)
   .patch(updateLowerCategory)
-  .delete(checkDeletability, makeDeletedLowerCategory);
+  .delete(checkDeletability, makeDeleted, updateLowerCategory);
 
 router.route("/:id/archive").get(archive, updateLowerCategory);
 router.route("/:id/unarchive").get(archive, updateLowerCategory);

@@ -9,7 +9,6 @@ exports.getLowerCategories = factory.getAll(LowerCategoryModel);
 exports.getLowerCategory = factory.getOne(LowerCategoryModel);
 exports.createLowerCategory = factory.createOne(LowerCategoryModel);
 exports.updateLowerCategory = factory.updateOne(LowerCategoryModel);
-exports.makeDeletedLowerCategory = factory.makeDeletedOne(LowerCategoryModel);
 exports.deleteLowerCategory = factory.deleteOne(LowerCategoryModel);
 
 exports.queryByUpperSlug = catchAsync(async (req, res, next) => {

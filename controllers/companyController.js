@@ -7,7 +7,6 @@ exports.getCompany = factory.getOne(CompanyModel);
 exports.getCompanies = factory.getAll(CompanyModel);
 exports.createCompany = factory.createOne(CompanyModel);
 exports.updateCompany = factory.updateOne(CompanyModel);
-exports.makeDeletedCompany = factory.makeDeletedOne(CompanyModel);
 exports.deleteCompany = factory.deleteOne(CompanyModel);
 
 exports.checkConstruction = catchAsync(async (req, res, next) => {

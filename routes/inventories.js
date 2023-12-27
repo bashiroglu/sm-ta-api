@@ -4,12 +4,11 @@ const {
   createInventory,
   getInventory,
   updateInventory,
-  makeDeletedInventory,
   deleteInventory,
 } = require("../controllers/inventoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -26,7 +25,7 @@ router
   .route("/:id")
   .get(getInventory)
   .patch(updateInventory)
-  .delete(makeDeletedInventory);
+  .delete(makeDeleted, updateInventory);
 
 router.route("/:id/archive").get(archive, updateInventory);
 router.route("/:id/unarchive").get(archive, updateInventory);

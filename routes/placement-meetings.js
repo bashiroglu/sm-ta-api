@@ -4,11 +4,10 @@ const {
   createPlacementMeeting,
   getPlacementMeeting,
   updatePlacementMeeting,
-  makeDeletedPlacementMeeting,
   deletePlacementMeeting,
 } = require("../controllers/placementMeetingController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive } = require("../utils/helpers");
+const { archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router
   .route("/:id")
   .get(getPlacementMeeting)
   .patch(updatePlacementMeeting)
-  .delete(makeDeletedPlacementMeeting);
+  .delete(makeDeleted, updatePlacementMeeting);
 
 router.route("/:id/archive").get(archive, updatePlacementMeeting);
 router.route("/:id/unarchive").get(archive, updatePlacementMeeting);

@@ -5,5 +5,4 @@ exports.getRooms = factory.getAll(RoomModel);
 exports.getRoom = factory.getOne(RoomModel);
 exports.createRoom = factory.createOne(RoomModel);
 exports.updateRoom = factory.updateOne(RoomModel);
-exports.makeDeletedRoom = factory.makeDeletedOne(RoomModel);
 exports.deleteRoom = factory.deleteOne(RoomModel);

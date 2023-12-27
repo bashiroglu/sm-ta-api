@@ -4,11 +4,11 @@ const {
   getCompany,
   getCompanies,
   updateCompany,
-  makeDeletedCompany,
   deleteCompany,
   checkConstruction,
 } = require("../controllers/companyController");
 const { protect, restrictTo } = require("../controllers/authController");
+const { makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router
   .route("/:id")
   .get(getCompany)
   .patch(updateCompany)
-  .delete(makeDeletedCompany);
+  .delete(makeDeleted, updateCompany);
 router.route("/:id/delete").delete(deleteCompany);
 
 module.exports = router;
