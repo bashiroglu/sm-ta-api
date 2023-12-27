@@ -19,9 +19,7 @@ i18next
   .use(middleware.LanguageDetector)
   .init({
     fallbackLng: "en",
-    backend: {
-      loadPath: "./locales/{{lng}}/translation.json",
-    },
+    backend: { loadPath: "./locales/{{lng}}/translation.json" },
   });
 
 const AppError = require("./utils/appError");

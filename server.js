@@ -33,8 +33,8 @@ const server = app.listen(port, () => {
   console.log("sm-api-ta runs");
 });
 
-bot.start();
-console.log("Bot is ready to accept requests...");
+// bot.start();
+// console.log("Bot is ready to accept requests...");
 
 process.on("unhandledRejection", (err) => {
   console.error("uncaughtException", "\n", err);

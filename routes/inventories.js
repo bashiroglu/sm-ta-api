@@ -9,10 +9,14 @@ const {
 } = require("../controllers/inventoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
+const { archive } = require("../utils/helpers");
 
 const router = express.Router();
 
-router.use(protect);
+router.use(
+  protect,
+  restrictTo("roles", "owner", "admin", "manager", "teacher")
+);
 
 router
   .route("/")
@@ -23,6 +27,9 @@ router
   .get(getInventory)
   .patch(updateInventory)
   .delete(makeDeletedInventory);
+
+router.route("/:id/archive").get(archive, updateInventory);
+router.route("/:id/unarchive").get(archive, updateInventory);
 router.route("/:id/delete").delete(deleteInventory);
 
 module.exports = router;

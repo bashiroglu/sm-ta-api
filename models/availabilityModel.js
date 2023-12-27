@@ -31,6 +31,7 @@ const schema = new mongoose.Schema(
       ref: "LowerCategory",
     },
     deleted: Boolean,
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

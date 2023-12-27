@@ -24,6 +24,7 @@ const schema = new mongoose.Schema(
     price: Number,
 
     deleted: Boolean,
+    archived: Boolean,
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
