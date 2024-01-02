@@ -92,7 +92,7 @@ const makeDeleted = catchAsync(async (req, res, next) => {
   next();
 });
 
-const hasCommons = (array1, array2) =>
+const hasCommon = (array1, array2) =>
   array1.filter((el) => array2.includes(el)).length;
 
 module.exports = {
@@ -107,5 +107,5 @@ module.exports = {
   restrictPerSubdomain,
   archive,
   makeDeleted,
-  hasCommons,
+  hasCommon,
 };
