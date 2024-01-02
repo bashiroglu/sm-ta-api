@@ -20,6 +20,7 @@ const schema = new mongoose.Schema(
     group: { type: Number, default: 0 },
     inventory: { type: Number, default: 0 },
     lesson: { type: Number, default: 0 },
+    sale: { type: Number, default: 0 },
     transaction: { type: Number, default: 0 },
     user: { type: Number, default: 0 },
 

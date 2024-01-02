@@ -13,7 +13,7 @@ const catchAsync = require("./catchAsync");
  * @param {*} options
  * @returns
  */
-module.exports = (field, options = {}) =>
+module.exports = (field, { modifier, digitCount = 4 } = {}) =>
   catchAsync(async (req, res, next) => {
     let session = req.session;
     if (!session) {
@@ -32,8 +32,6 @@ module.exports = (field, options = {}) =>
       return next(new AppError("company_id_not_assigned", 400));
     }
 
-    const { modifier = field.toUpperCase(), digitCount = 4 } = options;
-
     const obj = {};
     obj[field] = req.count || 1;
 
@@ -50,7 +48,7 @@ module.exports = (field, options = {}) =>
     const codes = Array.from(
       { length: req.count || 1 },
       (_, i) =>
-        `${company.code}${modifier}${"0".repeat(
+        `${company.code}${modifier ?? field.toUpperCase()}${"0".repeat(
           digitCount - `${codeCount + i}`.length
         )}${codeCount + 1 + i}`
     );
