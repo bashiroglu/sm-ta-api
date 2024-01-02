@@ -3,6 +3,16 @@ const CompanyModel = require("../models/companyModel");
 const AppError = require("./appError");
 const catchAsync = require("./catchAsync");
 
+/**
+ * Add this middleware before create middleware.
+ *
+ * Add collection name to (singular) to company
+ * model as field
+ *
+ * @param {*} field
+ * @param {*} options
+ * @returns
+ */
 module.exports = (field, options = {}) =>
   catchAsync(async (req, res, next) => {
     let session = req.session;

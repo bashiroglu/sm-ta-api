@@ -25,9 +25,12 @@ class APIFeatures {
     }
     if (parsed.code) parsed.code = new RegExp(parsed.code, "i");
 
-    this.query = isAggregate(this)
-      ? this.query.match(parsed)
-      : this.query.find(parsed);
+    this.query =
+      this.query.op === "findOne"
+        ? this.query.findOne(parsed)
+        : isAggregate(this)
+        ? this.query.match(parsed)
+        : this.query.find(parsed);
 
     return this;
   }

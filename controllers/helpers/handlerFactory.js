@@ -66,9 +66,10 @@ exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (!req.doc) {
       let query = Model.findById(req.params.id);
+
       if (req.popOptions) query = query.populate(req.popOptions);
       const features = new APIFeatures(query, req.query).filter().limitFields();
-      req.doc = (await features.query)?.at(0);
+      req.doc = await features.query;
       if (!req.doc) return next(new AppError("doc_not_found", 404));
     }
 

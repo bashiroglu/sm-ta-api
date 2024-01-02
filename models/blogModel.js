@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const collectionName = "Company";
+const collectionName = "Blog";
 
 const schema = new mongoose.Schema(
   {
@@ -8,27 +8,26 @@ const schema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    name: {
+
+    author: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+    title: {
       type: String,
-      required: [true, "required_name."],
     },
-    balance: { type: Number, default: 0 },
-
-    blog: { type: Number, default: 0 },
-    book: { type: Number, default: 0 },
-    feedback: { type: Number, default: 0 },
-    group: { type: Number, default: 0 },
-    inventory: { type: Number, default: 0 },
-    lesson: { type: Number, default: 0 },
-    transaction: { type: Number, default: 0 },
-    user: { type: Number, default: 0 },
-
-    isUnderConstruction: {
-      type: Boolean,
-      default: false,
+    subtitle: {
+      type: String,
+    },
+    body: {
+      type: String,
     },
 
-    active: Boolean,
+    viewCount: {
+      type: Number,
+      default: 0,
+    },
+
     deleted: Boolean,
     archived: Boolean,
     createdBy: {
@@ -47,6 +46,13 @@ schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
+
+// schema.post("findOne", function (doc) {
+//   doc.viewCount += 1;
+//   doc.save();
+// });
+
+schema.statics.q = ["title", "subtitle", "body"];
 
 const Model = mongoose.model(collectionName, schema);
 
