@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
 const { roles } = require("../utils/constants/enums");
-const { getFirstOfNextMonth } = require("../utils/helpers");
 
 const collectionName = "User";
 
@@ -122,14 +121,17 @@ const schema = new mongoose.Schema(
         linkedin: String,
       },
     },
-    nextPaymentDate: {
-      type: Date,
-      default: function () {
-        return this.roles.includes(roles.STUDENT)
-          ? getFirstOfNextMonth()
-          : undefined;
+
+    balance: Number,
+    earnings: [
+      {
+        program: {
+          type: mongoose.Schema.ObjectId,
+          ref: "Program",
+        },
+        amount: Number,
       },
-    },
+    ],
 
     relationship: {
       type: String,

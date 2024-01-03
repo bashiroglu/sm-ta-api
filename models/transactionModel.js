@@ -44,6 +44,16 @@ const schema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    internal: {
+      type: Boolean,
+      default: false,
+    },
+    paidStudents: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
 
     recurrence: {
       type: mongoose.Schema.ObjectId,

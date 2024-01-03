@@ -38,3 +38,24 @@ exports.pushPullArray = catchAsync(async (req, res, next) => {
   if (!req.doc) return next(new AppError("doc_not_found", 404));
   next();
 });
+
+exports.deactivateStudent = catchAsync(async (req, res, next) => {
+  const {
+    params: { id },
+    body: { student },
+  } = req;
+
+  req.params.id = {
+    _id: id,
+    "students.student": student,
+  };
+
+  req.body = {
+    $set: {
+      "students.$.status": "deactive",
+      "students.$.permissionCount": 0,
+    },
+  };
+
+  next();
+});

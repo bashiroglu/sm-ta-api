@@ -9,6 +9,7 @@ const RecurrenceModel = require("../models/recurrenceModel");
 const BranchModel = require("../models/branchModel");
 const LowerCategory = require("../models/lowerCategoryModel");
 const { roles } = require("../utils/constants/enums");
+const { session } = require("grammy");
 
 exports.getTransactions = factory.getAll(TransactionModel);
 exports.getTransaction = factory.getOne(TransactionModel);
@@ -81,6 +82,19 @@ exports.checkBranch = catchAsync(async (req, res, next) => {
 exports.restrictHiddenTransactions = catchAsync(async (req, res, next) => {
   const permissions = req.user.permissions.map((p) => p.slug);
   if (!permissions.includes("see-hidden-transaction")) req.query.hidden = false;
+
+  next();
+});
+
+exports.createTransactionOnly = catchAsync(async (req, res, next) => {
+  const {
+    transactionBody,
+    lessonBody,
+    body: { code },
+  } = req;
+  await TransactionModel.create([{ code, ...transactionBody }], { session });
+
+  req.body = lessonBody;
 
   next();
 });

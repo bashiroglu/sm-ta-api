@@ -18,7 +18,11 @@ const schema = new mongoose.Schema(
     lessonsDuration: {
       type: Number,
     },
-    maxDefaultParticipantCount: Number,
+    possibleParticipantCount: Number,
+    monthly: {
+      type: Boolean,
+      default: true,
+    },
 
     name: String,
     price: Number,

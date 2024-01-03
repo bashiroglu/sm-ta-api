@@ -5,7 +5,11 @@ const {
   getLesson,
   updateLesson,
   deleteLesson,
+  prepareLesson,
 } = require("../controllers/lessonController");
+const {
+  createTransactionOnly,
+} = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
@@ -19,7 +23,13 @@ router.use(
 router
   .route("/")
   .get(populate([{ path: "teacher", select: "name surname" }]), getLessons)
-  .post(getCode("lesson"), createLesson);
+  .post(
+    getCode("lesson"),
+    prepareLesson,
+    getCode("transaction"),
+    createTransactionOnly,
+    createLesson
+  );
 router
   .route("/:id")
   .get(populate({ path: "group", select: "name" }), getLesson)

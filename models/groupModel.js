@@ -15,19 +15,34 @@ const schema = new mongoose.Schema(
       ref: "Branch",
       required: [true, "required_branch"],
     },
+    program: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Program",
+      required: [true, "required_branch"],
+    },
     name: {
       type: String,
     },
-    teachers: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-      },
-    ],
+    teacher: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
     students: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
+        student: {
+          type: mongoose.Schema.ObjectId,
+          ref: "User",
+        },
+        lessonCount: Number,
+        permissionCount: {
+          type: Number,
+          default: 1,
+        },
+        status: {
+          type: String,
+          enum: ["active", "inactive"],
+          default: "active",
+        },
       },
     ],
     room: {
