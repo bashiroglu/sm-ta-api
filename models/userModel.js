@@ -181,7 +181,7 @@ const schema = new mongoose.Schema(
     collation: { locale: "en", strength: 2 },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 schema.statics.q = [
@@ -209,7 +209,10 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
-schema.methods.checkPassword = async function (cadidatePassword, userPassword) {
+schema.methods.checkPassword = async function (
+  cadidatePassword,
+  userPassword,
+) {
   return await bcrypt.compare(cadidatePassword, userPassword);
 };
 
