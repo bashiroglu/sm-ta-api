@@ -2,6 +2,7 @@ const factory = require("./helpers/handlerFactory");
 const BonusModel = require("../models/bonusModel");
 const UserModel = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
+const AppError = require("../utils/appError");
 
 exports.getBonuses = factory.getAll(BonusModel);
 exports.getBonus = factory.getOne(BonusModel);

@@ -86,7 +86,7 @@ exports.restrictHiddenTransactions = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.createTransactionOnly = catchAsync(async (req, res, next) => {
+exports.createTransactionOnLessonCreate = catchAsync(async (req, res, next) => {
   const {
     transactionBody,
     lessonBody,

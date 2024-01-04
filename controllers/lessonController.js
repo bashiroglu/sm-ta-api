@@ -2,7 +2,7 @@ const factory = require("./helpers/handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const LessonModel = require("../models/lessonModel");
 const GroupModel = require("../models/groupModel");
-const UserModel = require("../models/UserModel");
+const UserModel = require("../models/userModel");
 
 exports.getLessons = factory.getAll(LessonModel);
 exports.getLesson = factory.getOne(LessonModel);
@@ -33,7 +33,7 @@ exports.prepareLesson = catchAsync(async (req, res, next) => {
 
     if (isActive) {
       if (isPresent || !hasPermission) {
-        lessonCount -= 1;
+        if (lessonCount) lessonCount -= 1;
         if (lessonCount === 1 && program.monthly) {
           // TODO: send sms
           console.log(
@@ -41,9 +41,9 @@ exports.prepareLesson = catchAsync(async (req, res, next) => {
 
 Balansinizda cemi 1 ders qalib.
 
-Derslere davam etmek ucun balansinizi artirin, zehmet olmasa. Eks halda sisteme giris ve ev tapsiriqlarini gormek mumkun olmayacaq.
+Derslere davam etmek ucun, zehmet olmasa, balansinizi artirin. Eks halda sisteme girisiniz ve ev tapsiriqlarini gormeyiniz mumkun olmayacaq.
 
-Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun, xahis edirik, bizi melumatlandirin.`
+Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmaginizi xahis edirik.`
           );
         }
         paidStudents.push(student);
@@ -68,7 +68,6 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun, xahis edirik, bizi mel
 
   teacher.balance += newAmount;
   await teacher.save({ session: session });
-  // TODO: create transaction
 
   req.transactionBody = {
     title: req.body.code,

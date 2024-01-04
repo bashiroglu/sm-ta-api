@@ -7,6 +7,8 @@ const {
   deleteGroup,
   crudGroupLessons,
   pushPullArray,
+  toggleStudentStatus,
+  convertStudents,
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
@@ -18,13 +20,16 @@ const router = express.Router();
 router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
 router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
-router.route("/").get(getGroups).post(getCode("group"), createGroup);
+router
+  .route("/")
+  .get(getGroups)
+  .post(getCode("group"), convertStudents, createGroup);
 router
   .route("/:id")
   .get(
     populate([
       { path: "createdBy", select: "name surname" },
-      { path: "students", select: "name surname code email" },
+      { path: "students.student", select: "name surname code email" },
       { path: "teachers", select: "name surname code email" },
       { path: "room", select: "name number" },
     ]),
@@ -37,6 +42,10 @@ router
   .route("/:id/students")
   .patch(pushPullArray, updateGroup)
   .delete(pushPullArray, updateGroup);
+
+router
+  .route("/:id/students/:studentId/toggle-status")
+  .get(toggleStudentStatus, updateGroup);
 
 router
   .route("/:id/teachers")

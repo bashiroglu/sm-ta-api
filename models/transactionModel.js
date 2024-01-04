@@ -54,6 +54,10 @@ const schema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    group: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Group",
+    },
 
     recurrence: {
       type: mongoose.Schema.ObjectId,

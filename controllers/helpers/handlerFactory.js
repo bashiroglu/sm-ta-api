@@ -21,12 +21,14 @@ exports.updateOne = (Model) =>
       body,
       query: reqQuery,
       deleted,
+      arrayFilters,
     } = req;
 
     if (!doc) {
       let query = Model.findByIdAndUpdate(id, body, {
         new: true,
         runValidators: true,
+        arrayFilters,
       });
 
       const features = new APIFeatures(query, reqQuery).limitFields();
@@ -48,6 +50,7 @@ exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     let { session, doc, body } = req;
     req.body.createdBy = req.user.id;
+
     if (!doc)
       doc = await Model.create(
         session ? [body] : body,

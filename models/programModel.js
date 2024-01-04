@@ -12,6 +12,7 @@ const schema = new mongoose.Schema(
     lessonsCount: {
       type: Number,
     },
+
     permissionsCount: {
       type: Number,
     },

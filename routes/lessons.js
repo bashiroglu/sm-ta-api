@@ -8,7 +8,7 @@ const {
   prepareLesson,
 } = require("../controllers/lessonController");
 const {
-  createTransactionOnly,
+  createTransactionOnLessonCreate,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
@@ -27,7 +27,7 @@ router
     getCode("lesson"),
     prepareLesson,
     getCode("transaction"),
-    createTransactionOnly,
+    createTransactionOnLessonCreate,
     createLesson
   );
 router

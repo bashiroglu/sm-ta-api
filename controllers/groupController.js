@@ -18,7 +18,7 @@ exports.crudGroupLessons = catchAsync(async (req, res, next) => {
 exports.pushPullArray = catchAsync(async (req, res, next) => {
   const field = req.url.split("/").at(-1);
 
-  const {
+  let {
     params: { id },
     body: { ids },
     method,
@@ -26,6 +26,8 @@ exports.pushPullArray = catchAsync(async (req, res, next) => {
 
   if (!["students", "teachers"].includes(field))
     return next(new AppError("dont_use_this_endpoint", 400));
+
+  if (field === "students") ids = ids.map((id) => ({ student: id }));
 
   const body =
     method === "DELETE"
@@ -39,23 +41,37 @@ exports.pushPullArray = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.deactivateStudent = catchAsync(async (req, res, next) => {
+exports.convertStudents = catchAsync(async (req, res, next) => {
+  req.body.students = req.body.students.map((student) => ({ student }));
+  next();
+});
+
+exports.toggleStudentStatus = catchAsync(async (req, res, next) => {
   const {
-    params: { id },
-    body: { student },
+    params: { id, studentId },
   } = req;
 
-  req.params.id = {
+  const group = await GroupModel.findOne({
     _id: id,
-    "students.student": student,
-  };
+    "students.student": studentId,
+  });
+
+  if (!group) return next(new AppError("doc_not_found", 404));
+
+  const student = group.students.find(
+    ({ student }) => String(student) === studentId
+  );
+
+  const status = student.status === "active" ? "inactive" : "active";
 
   req.body = {
     $set: {
-      "students.$.status": "deactive",
-      "students.$.permissionCount": 0,
+      "students.$[elem].status": status,
+      "students.$[elem].permissionCount": 0,
     },
   };
+
+  req.arrayFilters = [{ "elem.student": studentId }];
 
   next();
 });

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const RoomModel = require("./roomModel");
+const AppError = require("../utils/appError");
 
 const collectionName = "Group";
 
@@ -33,7 +34,10 @@ const schema = new mongoose.Schema(
           type: mongoose.Schema.ObjectId,
           ref: "User",
         },
-        lessonCount: Number,
+        lessonCount: {
+          type: Number,
+          default: 0,
+        },
         permissionCount: {
           type: Number,
           default: 1,
