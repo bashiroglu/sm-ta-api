@@ -1,12 +1,11 @@
 const express = require("express");
+const Model = require("../models/groupModel");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
 const {
-  getGroups,
-  createGroup,
-  getGroup,
-  updateGroup,
-  deleteGroup,
   crudGroupLessons,
-  pushPullArray,
+  toggleArrayEl,
   toggleStudentStatus,
   convertStudents,
 } = require("../controllers/groupController");
@@ -22,8 +21,8 @@ router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
 router
   .route("/")
-  .get(getGroups)
-  .post(getCode("group"), convertStudents, createGroup);
+  .get(getAll)
+  .post(getCode("group"), convertStudents, createOne);
 router
   .route("/:id")
   .get(
@@ -33,27 +32,27 @@ router
       { path: "teachers", select: "name surname code email" },
       { path: "room", select: "name number" },
     ]),
-    getGroup
+    getOne
   )
-  .patch(updateGroup)
-  .delete(makeDeleted, updateGroup);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
 router
   .route("/:id/students")
-  .patch(pushPullArray, updateGroup)
-  .delete(pushPullArray, updateGroup);
+  .patch(toggleArrayEl, updateOne)
+  .delete(toggleArrayEl, updateOne);
 
 router
   .route("/:id/students/:studentId/toggle-status")
-  .get(toggleStudentStatus, updateGroup);
+  .get(toggleStudentStatus, updateOne);
 
 router
   .route("/:id/teachers")
-  .patch(pushPullArray, updateGroup)
-  .delete(pushPullArray, updateGroup);
+  .patch(toggleArrayEl, updateOne)
+  .delete(toggleArrayEl, updateOne);
 
-router.route("/:id/archive").get(archive, updateGroup);
-router.route("/:id/unarchive").get(archive, updateGroup);
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteGroup);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 
 module.exports = router;

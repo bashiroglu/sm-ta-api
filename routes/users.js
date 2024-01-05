@@ -1,16 +1,13 @@
 const express = require("express");
+const Model = require("../models/userModel");
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
 const {
-  createUser,
   createUserByRole,
-  getUser,
-  getUsers,
   getAllByRole,
-  updateUser,
-  deleteUser,
-  makeDeletedUser,
   assignParamsId,
   updateMe,
-  assignPassword,
+  setPassword,
   schedulePaymentNotifications,
   setReqBody,
   activateUser,
@@ -29,9 +26,9 @@ scheduleBirthdayNotifications();
 router.use(protect);
 router
   .route("/me")
-  .get(assignParamsId, getUser)
-  .patch(assignParamsId, updateMe, updateUser)
-  .delete(assignParamsId, makeDeleted, updateUser);
+  .get(assignParamsId, getOne)
+  .patch(assignParamsId, updateMe, updateOne)
+  .delete(assignParamsId, makeDeleted, updateOne);
 
 router.use(restrictTo("roles", "owner", "admin", "manager"));
 
@@ -45,13 +42,13 @@ router
         select: "name surname",
       },
     ]),
-    getUsers
+    getAll
   )
   .post(
     getCode("user", { modifier: "" }),
     createUserByRole,
-    assignPassword,
-    createUser
+    setPassword,
+    createOne
   );
 
 router.route("/role/student/participation").get(
@@ -61,7 +58,7 @@ router.route("/role/student/participation").get(
     { path: "absents", select: "group" },
     { path: "presents", select: "_id group" },
   ]),
-  getUsers
+  getAll
 );
 
 router.route("/role/student/:id/participation").get(
@@ -69,13 +66,13 @@ router.route("/role/student/:id/participation").get(
     { path: "absents", select: "group" },
     { path: "presents", select: "_id group" },
   ]),
-  getUser
+  getOne
 );
 
 router
   .route("/")
-  .get(getUsers)
-  .post(getCode("user", { modifier: "" }), assignPassword, createUser);
+  .get(getAll)
+  .post(getCode("user", { modifier: "" }), setPassword, createOne);
 
 router
   .route("/:id")
@@ -84,26 +81,23 @@ router
       { path: "guardian", select: "name surname" },
       { path: "positions", select: "title id" },
     ]),
-    getUser
+    getOne
   )
-  .patch(updateUser)
-  .delete(makeDeleted, updateUser);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router
-  .route("/:id/tags")
-  .get(setReqBody, getUser)
-  .patch(setReqBody, updateUser);
+router.route("/:id/tags").get(setReqBody, getOne).patch(setReqBody, updateOne);
 router
   .route("/:id/permissions")
-  .get(setReqBody, getUser)
-  .patch(setReqBody, updateUser);
+  .get(setReqBody, getOne)
+  .patch(setReqBody, updateOne);
 
-router.route("/:id/activate").get(activateUser, getUser);
-router.route("/:id/deactivate").get(deactivateUser, getUser);
+router.route("/:id/activate").get(activateUser, getOne);
+router.route("/:id/deactivate").get(deactivateUser, getOne);
 
-router.route("/:id/archive").get(archive, getUser);
-router.route("/:id/unarchive").get(archive, getUser);
+router.route("/:id/archive").get(archive, getOne);
+router.route("/:id/unarchive").get(archive, getOne);
 
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteUser);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 
 module.exports = router;

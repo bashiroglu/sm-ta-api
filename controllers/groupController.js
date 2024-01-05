@@ -1,21 +1,14 @@
-const factory = require("./helpers/handlerFactory");
-const GroupModel = require("../models/groupModel");
+const Model = require("../models/groupModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
-exports.getGroups = factory.getAll(GroupModel);
-exports.getGroup = factory.getOne(GroupModel);
-exports.createGroup = factory.createOne(GroupModel);
-exports.updateGroup = factory.updateOne(GroupModel);
-exports.deleteGroup = factory.deleteOne(GroupModel);
-
-exports.crudGroupLessons = catchAsync(async (req, res, next) => {
+const crudGroupLessons = catchAsync(async (req, res, next) => {
   req.query = { group: req.params.groupId, teacher: req.query.teachers };
   if (req.method === "POST") req.body = { ...req.body, ...req.query };
   next();
 });
 
-exports.pushPullArray = catchAsync(async (req, res, next) => {
+const toggleArrayEl = catchAsync(async (req, res, next) => {
   const field = req.url.split("/").at(-1);
 
   let {
@@ -36,22 +29,22 @@ exports.pushPullArray = catchAsync(async (req, res, next) => {
       ? { $push: { [field]: { $each: ids } } }
       : {};
 
-  req.doc = await GroupModel.findByIdAndUpdate(id, body, { new: true });
+  req.doc = await Model.findByIdAndUpdate(id, body, { new: true });
   if (!req.doc) return next(new AppError("doc_not_found", 404));
   next();
 });
 
-exports.convertStudents = catchAsync(async (req, res, next) => {
+const convertStudents = catchAsync(async (req, res, next) => {
   req.body.students = req.body.students.map((student) => ({ student }));
   next();
 });
 
-exports.toggleStudentStatus = catchAsync(async (req, res, next) => {
+const toggleStudentStatus = catchAsync(async (req, res, next) => {
   const {
     params: { id, studentId },
   } = req;
 
-  const group = await GroupModel.findOne({
+  const group = await Model.findOne({
     _id: id,
     "students.student": studentId,
   });
@@ -75,3 +68,10 @@ exports.toggleStudentStatus = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+module.exports = {
+  crudGroupLessons,
+  toggleArrayEl,
+  convertStudents,
+  toggleStudentStatus,
+};

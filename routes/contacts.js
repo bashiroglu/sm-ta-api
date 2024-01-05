@@ -1,7 +1,9 @@
 const express = require("express");
-const { protect, restrictTo } = require("../controllers/authController");
+const Model = require("../models/userModel");
 
-const { getContacts } = require("../controllers/contactController");
+const { getAll: getContacts } = require("./helpers/handlerFactory")(Model);
+
+const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 

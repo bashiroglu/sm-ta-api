@@ -1,28 +1,21 @@
-const factory = require("./helpers/handlerFactory");
-const BranchModel = require("../models/branchModel");
+const Model = require("../models/branchModel");
 const GroupModel = require("../models/groupModel");
 const TransactionModel = require("../models/transactionModel");
 const catchAsync = require("../utils/catchAsync");
 const mongoose = require("mongoose");
 const AppError = require("../utils/appError");
 
-exports.getBranches = factory.getAll(BranchModel);
-exports.getBranch = factory.getOne(BranchModel);
-exports.createBranch = factory.createOne(BranchModel);
-exports.updateBranch = factory.updateOne(BranchModel);
-exports.deleteBranch = factory.deleteOne(BranchModel);
-
-exports.setCompany = catchAsync(async (req, res, next) => {
+const setCompany = catchAsync(async (req, res, next) => {
   req.body.company = process.env.COMPANY_ID;
   next();
 });
 
-exports.getOnlyBlance = catchAsync(async (req, res, next) => {
+const getOnlyBlance = catchAsync(async (req, res, next) => {
   req.query.fields = "balance -managers";
   next();
 });
 
-exports.getStatBranchesStudentCount = catchAsync(async (req, res, next) => {
+const getStatBranchesStudentCount = catchAsync(async (req, res, next) => {
   req.pipeline = GroupModel.aggregate([
     {
       $unwind: "$students",
@@ -61,8 +54,8 @@ exports.getStatBranchesStudentCount = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getStatBranchStudentCount = catchAsync(async (req, res, next) => {
-  req.doc = await BranchModel.aggregate([
+const getStatBranchStudentCount = catchAsync(async (req, res, next) => {
+  req.doc = await Model.aggregate([
     // TODO: Apply following match (deleted: { $ne: true }) for all required places
     {
       $match: {
@@ -110,50 +103,48 @@ exports.getStatBranchStudentCount = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getStatBranchesGroupStudentCount = catchAsync(
+const getStatBranchesGroupStudentCount = catchAsync(async (req, res, next) => {
+  req.pipeline = GroupModel.aggregate([
+    {
+      $match: {
+        deleted: { $ne: true },
+      },
+    },
+    {
+      $group: {
+        _id: "$branch",
+        studentCount: {
+          $sum: { $size: "$students" },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "branches",
+        localField: "_id",
+        foreignField: "_id",
+        as: "branch",
+      },
+    },
+    {
+      $unwind: "$branch",
+    },
+    {
+      $project: {
+        studentCount: 1,
+        name: "$branch.name",
+      },
+    },
+  ]);
+
+  req.query.sort = "name";
+
+  next();
+});
+
+const getStatBranchesStudentCountByMonths = catchAsync(
   async (req, res, next) => {
-    req.pipeline = GroupModel.aggregate([
-      {
-        $match: {
-          deleted: { $ne: true },
-        },
-      },
-      {
-        $group: {
-          _id: "$branch",
-          studentCount: {
-            $sum: { $size: "$students" },
-          },
-        },
-      },
-      {
-        $lookup: {
-          from: "branches",
-          localField: "_id",
-          foreignField: "_id",
-          as: "branch",
-        },
-      },
-      {
-        $unwind: "$branch",
-      },
-      {
-        $project: {
-          studentCount: 1,
-          name: "$branch.name",
-        },
-      },
-    ]);
-
-    req.query.sort = "name";
-
-    next();
-  }
-);
-
-exports.getStatBranchesStudentCountByMonths = catchAsync(
-  async (req, res, next) => {
-    req.pipeline = BranchModel.aggregate([
+    req.pipeline = Model.aggregate([
       {
         $match: {
           deleted: { $ne: true },
@@ -251,8 +242,8 @@ exports.getStatBranchesStudentCountByMonths = catchAsync(
   }
 );
 
-exports.getStatBranchesBalance = catchAsync(async (req, res, next) => {
-  req.pipeline = BranchModel.aggregate([
+const getStatBranchesBalance = catchAsync(async (req, res, next) => {
+  req.pipeline = Model.aggregate([
     {
       $match: {
         deleted: { $ne: true },
@@ -295,7 +286,7 @@ exports.getStatBranchesBalance = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getStatBranchesIncomeByMonth = catchAsync(async (req, res, next) => {
+const getStatBranchesIncomeByMonth = catchAsync(async (req, res, next) => {
   const [sixMonths, now] = [
     new Date(new Date().setMonth(new Date().getMonth() - 6)),
     new Date(Date.now()),
@@ -375,3 +366,14 @@ exports.getStatBranchesIncomeByMonth = catchAsync(async (req, res, next) => {
   req.query.sort = "name";
   next();
 });
+
+module.exports = {
+  setCompany,
+  getOnlyBlance,
+  getStatBranchesStudentCount,
+  getStatBranchStudentCount,
+  getStatBranchesGroupStudentCount,
+  getStatBranchesStudentCountByMonths,
+  getStatBranchesBalance,
+  getStatBranchesIncomeByMonth,
+};

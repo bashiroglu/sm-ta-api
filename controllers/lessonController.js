@@ -1,16 +1,8 @@
-const factory = require("./helpers/handlerFactory");
 const catchAsync = require("../utils/catchAsync");
-const LessonModel = require("../models/lessonModel");
 const GroupModel = require("../models/groupModel");
 const UserModel = require("../models/userModel");
 
-exports.getLessons = factory.getAll(LessonModel);
-exports.getLesson = factory.getOne(LessonModel);
-exports.createLesson = factory.createOne(LessonModel);
-exports.updateLesson = factory.updateOne(LessonModel);
-exports.deleteLesson = factory.deleteOne(LessonModel);
-
-exports.prepareLesson = catchAsync(async (req, res, next) => {
+const prepareLesson = catchAsync(async (req, res, next) => {
   const {
     session,
     body: { teacher: teacherId, group: groupId, absent, present, isExtra },
@@ -88,3 +80,5 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
 
   next();
 });
+
+module.exports = { prepareLesson };

@@ -16,6 +16,7 @@ const schema = new mongoose.Schema(
 
     blog: { type: Number, default: 0 },
     book: { type: Number, default: 0 },
+    conversation: { type: Number, default: 0 },
     feedback: { type: Number, default: 0 },
     group: { type: Number, default: 0 },
     inventory: { type: Number, default: 0 },

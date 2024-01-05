@@ -1,11 +1,9 @@
 const express = require("express");
-const {
-  getHwtasks,
-  createHwtask,
-  getHwtask,
-  updateHwtask,
-  deleteHwtask,
-} = require("../controllers/hwtaskController");
+const Model = require("../models/hwtaskModel");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 
@@ -16,15 +14,15 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getHwtasks).post(createHwtask);
+router.route("/").get(getAll).post(createOne);
 router
   .route("/:id")
-  .get(getHwtask)
-  .patch(updateHwtask)
-  .delete(makeDeleted, updateHwtask);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateHwtask);
-router.route("/:id/unarchive").get(archive, updateHwtask);
-router.route("/:id/delete").delete(deleteHwtask);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
 module.exports = router;

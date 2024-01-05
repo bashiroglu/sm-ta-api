@@ -5,6 +5,7 @@ const {
   protect,
   signup,
   login,
+  createTokenAndSignIn,
   logout,
   forgotPassword,
   resetPassword,
@@ -15,8 +16,13 @@ const AppError = require("../utils/appError");
 
 const router = express.Router();
 
-router.post("/signup", getCode("user", { modifier: "" }), signup);
-router.post("/login", login);
+router.post(
+  "/signup",
+  getCode("user", { modifier: "" }),
+  signup,
+  createTokenAndSignIn
+);
+router.post("/login", login, createTokenAndSignIn);
 
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);

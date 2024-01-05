@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const GroupModel = require("../models/groupModel");
 const UserModel = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");

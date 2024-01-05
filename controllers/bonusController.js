@@ -1,19 +1,12 @@
-const factory = require("./helpers/handlerFactory");
-const BonusModel = require("../models/bonusModel");
+const Model = require("../models/bonusModel");
 const UserModel = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
-exports.getBonuses = factory.getAll(BonusModel);
-exports.getBonus = factory.getOne(BonusModel);
-exports.createBonus = factory.createOne(BonusModel);
-exports.updateBonus = factory.updateOne(BonusModel);
-exports.deleteBonus = factory.deleteOne(BonusModel);
-
-exports.checkBonus = catchAsync(async (req, res, next) => {
+const checkBonus = catchAsync(async (req, res, next) => {
   const { url } = req;
   console.log(url);
-  const { recipients } = await BonusModel.findOne({ endpoint: url });
+  const { recipients } = await Model.findOne({ endpoint: url });
 
   if (!recipients) return next(new AppError("doc_not_found", 404));
 
@@ -25,3 +18,5 @@ exports.checkBonus = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+module.exports = { checkBonus };

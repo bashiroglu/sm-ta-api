@@ -1,13 +1,11 @@
 const express = require("express");
+const Model = require("../models/branchModel");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
 const {
-  createBranch,
-  getBranch,
-  getBranches,
-  updateBranch,
-  deleteBranch,
   setCompany,
   getOnlyBlance,
-
   getStatBranchesStudentCount,
   getStatBranchStudentCount,
   getStatBranchesGroupStudentCount,
@@ -21,36 +19,32 @@ const { archive, makeDeleted } = require("../utils/helpers");
 const router = express.Router();
 
 router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
-router.route("/").get(getBranches).post(setCompany, createBranch);
+router.route("/").get(getAll).post(setCompany, createOne);
 
 router.use(restrictTo("roles", "owner", "admin"));
 
-router
-  .route("/stats/student-count")
-  .get(getStatBranchesStudentCount, getBranches);
-router
-  .route("/stats/student-count/:id")
-  .get(getStatBranchStudentCount, getBranch);
+router.route("/stats/student-count").get(getStatBranchesStudentCount, getAll);
+router.route("/stats/student-count/:id").get(getStatBranchStudentCount, getOne);
 router
   .route("/stats/group-student-count")
-  .get(getStatBranchesGroupStudentCount, getBranches);
+  .get(getStatBranchesGroupStudentCount, getAll);
 router
   .route("/stats/student-count-by-months")
-  .get(getStatBranchesStudentCountByMonths, getBranches);
-router.route("/stats/balance").get(getStatBranchesBalance, getBranches);
+  .get(getStatBranchesStudentCountByMonths, getAll);
+router.route("/stats/balance").get(getStatBranchesBalance, getAll);
 router
   .route("/stats/income-by-months")
-  .get(getStatBranchesIncomeByMonth, getBranches);
+  .get(getStatBranchesIncomeByMonth, getAll);
 
 router
   .route("/:id")
-  .get(getBranch)
-  .patch(updateBranch)
-  .delete(makeDeleted, updateBranch);
-router.route("/:id/balance").get(getOnlyBlance, getBranch);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
+router.route("/:id/balance").get(getOnlyBlance, getOne);
 
-router.route("/:id/archive").get(archive, updateBranch);
-router.route("/:id/unarchive").get(archive, updateBranch);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
 
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteBranch);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 module.exports = router;

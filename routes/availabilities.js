@@ -1,12 +1,9 @@
 const express = require("express");
-const {
-  getAvailabilities,
-  createAvailability,
-  getAvailability,
-  updateAvailability,
-  deleteAvailability,
-  assignUser,
-} = require("../controllers/availabilityController");
+const Model = require("../models/availabilityModel");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+const { assignUser } = require("../controllers/availabilityController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 
@@ -17,15 +14,15 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getAvailabilities).post(assignUser, createAvailability);
+router.route("/").get(getAll).post(assignUser, createOne);
 router
   .route("/:id")
-  .get(getAvailability)
-  .patch(updateAvailability)
-  .delete(makeDeleted, updateAvailability);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateAvailability);
-router.route("/:id/unarchive").get(archive, updateAvailability);
-router.route("/:id/delete").delete(deleteAvailability);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
 module.exports = router;

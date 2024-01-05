@@ -2,19 +2,18 @@ const cron = require("node-cron");
 const mongoose = require("mongoose");
 const moment = require("moment");
 
-const UserModel = require("./../models/userModel");
+const Model = require("./../models/userModel");
 const GroupModel = require("../models/groupModel");
 const AppError = require("./../utils/appError");
-const factory = require("./helpers/handlerFactory");
 const catchAsync = require("./../utils/catchAsync");
 const { filterObject } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
 const { sendSmsRequest } = require("../utils/sms");
 
-exports.schedulePaymentNotifications = () => {
+const schedulePaymentNotifications = () => {
   // TODO: schedule a task to run at 17:58 on the 3rd of every month change if needed
   cron.schedule("58 17 3 * *", async () => {
-    const guardians = await UserModel.aggregate([
+    const guardians = await Model.aggregate([
       [
         {
           $match: {
@@ -68,12 +67,12 @@ exports.schedulePaymentNotifications = () => {
   });
 };
 
-exports.scheduleBirthdayNotifications = () => {
+const scheduleBirthdayNotifications = () => {
   cron.schedule(
     "0 9 * * *",
     async () => {
       const tomorrow = moment().add(1, "day").startOf("day");
-      const usersWithTomorrowBirthday = await UserModel.find({
+      const usersWithTomorrowBirthday = await Model.find({
         dateOfBirth: {
           $gte: tomorrow.toDate(),
           $lt: moment(tomorrow).add(1, "day").toDate(),
@@ -88,12 +87,12 @@ exports.scheduleBirthdayNotifications = () => {
   );
 };
 
-exports.assignParamsId = (req, res, next) => {
+const assignParamsId = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
 
-exports.updateMe = catchAsync(async (req, res, next) => {
+const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -119,7 +118,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.createUserByRole = catchAsync(async (req, res, next) => {
+const createUserByRole = catchAsync(async (req, res, next) => {
   const {
     session,
     body: { group },
@@ -148,31 +147,23 @@ exports.createUserByRole = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getAllByRole = (req, res, next) => {
+const getAllByRole = (req, res, next) => {
   req.query.roles = req.params.role;
   next();
 };
 
-exports.createUser = factory.createOne(UserModel);
-exports.getUser = factory.getOne(UserModel);
-exports.getUsers = factory.getAll(UserModel);
-
-// Should NOT update passwords with this!
-exports.updateUser = factory.updateOne(UserModel);
-exports.deleteUser = factory.deleteOne(UserModel);
-
-exports.assignPassword = catchAsync(async (req, res, next) => {
+const setPassword = catchAsync(async (req, res, next) => {
   req.body.password = req.body.passwordConfirm =
     process.env.DEFAULT_USER_PASSWORD;
   next();
 });
 
-exports.excludeFields = catchAsync(async (req, res, next) => {
+const excludeFields = catchAsync(async (req, res, next) => {
   req.query.fields = "-query -note";
   next();
 });
 
-exports.setReqBody = catchAsync(async (req, res, next) => {
+const setReqBody = catchAsync(async (req, res, next) => {
   const field = req.url.split("/").at(-1);
   const value = req.body[field];
 
@@ -184,12 +175,26 @@ exports.setReqBody = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.activateUser = catchAsync(async (req, res, next) => {
+const activateUser = catchAsync(async (req, res, next) => {
   req.body = { active: true };
   next();
 });
 
-exports.deactivateUser = catchAsync(async (req, res, next) => {
+const deactivateUser = catchAsync(async (req, res, next) => {
   req.body = { active: false };
   next();
 });
+
+module.exports = {
+  schedulePaymentNotifications,
+  scheduleBirthdayNotifications,
+  assignParamsId,
+  updateMe,
+  createUserByRole,
+  getAllByRole,
+  setPassword,
+  excludeFields,
+  setReqBody,
+  activateUser,
+  deactivateUser,
+};

@@ -1,11 +1,9 @@
 const express = require("express");
-const {
-  getHomeworks,
-  createHomework,
-  getHomework,
-  updateHomework,
-  deleteHomework,
-} = require("../controllers/homeworkController");
+const Model = require("../models/homeworkModel");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 
@@ -16,14 +14,14 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getHomeworks).post(createHomework);
+router.route("/").get(getAll).post(createOne);
 router
   .route("/:id")
-  .get(getHomework)
-  .patch(updateHomework)
-  .delete(makeDeleted, updateHomework);
-router.route("/:id/archive").get(archive, updateHomework);
-router.route("/:id/unarchive").get(archive, updateHomework);
-router.route("/:id/delete").delete(deleteHomework);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
 module.exports = router;

@@ -1,21 +1,21 @@
 const express = require("express");
+const Model = require("../models/recurrenceModel");
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+const TransactionModel = require("../models/transactionModel");
+const { createOne: createTransaction } = require("./helpers/handlerFactory")(
+  TransactionModel
+);
 const {
-  getRecurrence,
-  createRecurrence,
-  getRecurrences,
-  updateRecurrence,
-  deleteRecurrence,
   executeRecurrence,
   scheduleRecurrenceNotifications,
 } = require("../controllers/recurrenceController");
 const {
   updateBalance,
-  createTransaction,
   checkBranch,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const cron = require("node-cron");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
@@ -24,10 +24,7 @@ scheduleRecurrenceNotifications();
 
 router.use(protect);
 
-router
-  .route("/")
-  .get(populate("executionCount"), getRecurrences)
-  .post(createRecurrence);
+router.route("/").get(populate("executionCount"), getAll).post(createOne);
 
 router
   .route("/:id")
@@ -37,10 +34,10 @@ router
       { path: "branch", select: "name" },
       { path: "releatedTo", select: "name surname patronymic code" },
     ]),
-    getRecurrence
+    getOne
   )
-  .patch(updateRecurrence)
-  .delete(makeDeleted, updateRecurrence);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 router
   .route("/:id/execute")
   .post(
@@ -51,10 +48,8 @@ router
     createTransaction
   );
 
-router.route("/:id/archive").get(archive, updateRecurrence);
-router.route("/:id/unarchive").get(archive, updateRecurrence);
-router
-  .route("/:id/delete")
-  .delete(restrictTo("roles", "admin"), deleteRecurrence);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 
 module.exports = router;

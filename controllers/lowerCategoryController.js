@@ -1,17 +1,10 @@
-const factory = require("./helpers/handlerFactory");
 const catchAsync = require("../utils/catchAsync");
-const LowerCategoryModel = require("../models/lowerCategoryModel");
+const Model = require("../models/lowerCategoryModel");
 const UpperCategoryModel = require("../models/upperCategoryModel");
 const { roles } = require("../utils/constants/enums");
 const AppError = require("../utils/appError");
 
-exports.getLowerCategories = factory.getAll(LowerCategoryModel);
-exports.getLowerCategory = factory.getOne(LowerCategoryModel);
-exports.createLowerCategory = factory.createOne(LowerCategoryModel);
-exports.updateLowerCategory = factory.updateOne(LowerCategoryModel);
-exports.deleteLowerCategory = factory.deleteOne(LowerCategoryModel);
-
-exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
+const queryByUpperSlug = catchAsync(async (req, res, next) => {
   req.pipeline = LowerCategoryModel.aggregate([
     {
       $match: {
@@ -53,7 +46,7 @@ exports.queryByUpperSlug = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.queryByUpperSlug2 = catchAsync(async (req, res, next) => {
+const queryByUpperSlug2 = catchAsync(async (req, res, next) => {
   req.doc = await LowerCategoryModel.find({ deleted: { $ne: true } })
     .populate({
       path: "upperCategory",
@@ -69,12 +62,12 @@ exports.queryByUpperSlug2 = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.sortDescending = catchAsync(async (req, res, next) => {
+const sortDescending = catchAsync(async (req, res, next) => {
   req.query.sort = "-priority";
   next();
 });
 
-exports.checkDeletability = catchAsync(async (req, res, next) => {
+const checkDeletability = catchAsync(async (req, res, next) => {
   const lower = await LowerCategoryModel.findById(req.params.id);
   if (!lower) return next(new AppError("doc_not_found", 404));
 
@@ -88,9 +81,17 @@ exports.checkDeletability = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.checkRestriction = catchAsync(async (req, res, next) => {
+const checkRestriction = catchAsync(async (req, res, next) => {
   const upper = await UpperCategoryModel.findById(req.body.upperCategory);
   if (!upper) return next(new AppError("upper_not_found", 404));
   if (upper.restricted) return next(new AppError("upper_restricted", 404));
   next();
 });
+
+module.exports = {
+  queryByUpperSlug,
+  queryByUpperSlug2,
+  sortDescending,
+  checkDeletability,
+  checkRestriction,
+};

@@ -1,12 +1,9 @@
 const express = require("express");
-const {
-  getLessons,
-  createLesson,
-  getLesson,
-  updateLesson,
-  deleteLesson,
-  prepareLesson,
-} = require("../controllers/lessonController");
+const Model = require("../models/lessonModel");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+const { prepareLesson } = require("../controllers/lessonController");
 const {
   createTransactionOnLessonCreate,
 } = require("../controllers/transactionController");
@@ -22,21 +19,21 @@ router.use(
 );
 router
   .route("/")
-  .get(populate([{ path: "teacher", select: "name surname" }]), getLessons)
+  .get(populate([{ path: "teacher", select: "name surname" }]), getAll)
   .post(
     getCode("lesson"),
     prepareLesson,
     getCode("transaction"),
     createTransactionOnLessonCreate,
-    createLesson
+    createOne
   );
 router
   .route("/:id")
-  .get(populate({ path: "group", select: "name" }), getLesson)
-  .patch(updateLesson)
-  .delete(makeDeleted, updateLesson);
-router.route("/:id/archive").get(archive, updateLesson);
-router.route("/:id/unarchive").get(archive, updateLesson);
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteLesson);
+  .get(populate({ path: "group", select: "name" }), getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 
 module.exports = router;

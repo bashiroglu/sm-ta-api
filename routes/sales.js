@@ -1,11 +1,8 @@
 const express = require("express");
-const {
-  getSales,
-  createSale,
-  getSale,
-  updateSale,
-  deleteSale,
-} = require("../controllers/saleController");
+const Model = require("../models/saleModel");
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
@@ -17,15 +14,15 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getSales).post(getCode("sale"), createSale);
+router.route("/").get(getAll).post(getCode("sale"), createOne);
 router
   .route("/:id")
-  .get(getSale)
-  .patch(updateSale)
-  .delete(makeDeleted, updateSale);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateSale);
-router.route("/:id/unarchive").get(archive, updateSale);
-router.route("/:id/delete").delete(deleteSale);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
 module.exports = router;

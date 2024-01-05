@@ -1,11 +1,9 @@
 const express = require("express");
+const Model = require("../models/transactionModel");
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+
 const {
-  getTransactions,
-  createTransaction,
-  getTransaction,
-  updateTransaction,
-  makeDeletedTransaction,
-  deleteTransaction,
   updateBalance,
   checkBranch,
   restrictHiddenTransactions,
@@ -24,8 +22,8 @@ router.use(
 
 router
   .route("/")
-  .get(populate({ path: "createdBy", select: "name surname" }), getTransactions)
-  .post(checkBranch, getCode("transaction"), updateBalance, createTransaction);
+  .get(populate({ path: "createdBy", select: "name surname" }), getAll)
+  .post(checkBranch, getCode("transaction"), updateBalance, createOne);
 router
   .route("/:id")
   .get(
@@ -34,15 +32,13 @@ router
       { path: "relatedTo", select: "name surname" },
       { path: "createdBy", select: "name surname" },
     ]),
-    getTransaction
+    getOne
   )
-  .patch(updateTransaction)
-  .delete(makeDeleted, updateTransaction);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateTransaction);
-router.route("/:id/unarchive").get(archive, updateTransaction);
-router
-  .route("/:id/delete")
-  .delete(restrictTo("roles", "admin"), deleteTransaction);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 
 module.exports = router;

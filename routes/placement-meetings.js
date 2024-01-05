@@ -1,11 +1,7 @@
 const express = require("express");
-const {
-  getPlacementMeetings,
-  createPlacementMeeting,
-  getPlacementMeeting,
-  updatePlacementMeeting,
-  deletePlacementMeeting,
-} = require("../controllers/placementMeetingController");
+const Model = require("../models/placementMeetingModel");
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 
@@ -16,15 +12,15 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getPlacementMeetings).post(createPlacementMeeting);
+router.route("/").get(getAll).post(createOne);
 router
   .route("/:id")
-  .get(getPlacementMeeting)
-  .patch(updatePlacementMeeting)
-  .delete(makeDeleted, updatePlacementMeeting);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updatePlacementMeeting);
-router.route("/:id/unarchive").get(archive, updatePlacementMeeting);
-router.route("/:id/delete").delete(deletePlacementMeeting);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
 module.exports = router;

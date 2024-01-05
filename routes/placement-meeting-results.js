@@ -1,11 +1,7 @@
 const express = require("express");
-const {
-  getPlacementMeetingResults,
-  createPlacementMeetingResult,
-  getPlacementMeetingResult,
-  updatePlacementMeetingResult,
-  deletePlacementMeetingResult,
-} = require("../controllers/placementMeetingResultController");
+const Model = require("../models/placementMeetingResultModel");
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 
@@ -16,18 +12,15 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router
-  .route("/")
-  .get(getPlacementMeetingResults)
-  .post(createPlacementMeetingResult);
+router.route("/").get(getAll).post(createOne);
 router
   .route("/:id")
-  .get(getPlacementMeetingResult)
-  .patch(updatePlacementMeetingResult)
-  .delete(makeDeleted, updatePlacementMeetingResult);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updatePlacementMeetingResult);
-router.route("/:id/unarchive").get(archive, updatePlacementMeetingResult);
-router.route("/:id/delete").delete(deletePlacementMeetingResult);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
 module.exports = router;

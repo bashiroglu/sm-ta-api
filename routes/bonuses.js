@@ -1,11 +1,11 @@
 const express = require("express");
-const {
-  getBonuses,
-  createBonus,
-  getBonus,
-  updateBonus,
-  deleteBonus,
-} = require("../controllers/bonusController");
+
+const Model = require("../models/bonusModel");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  require("./helpers/handlerFactory")(Model);
+
+const { checkBonus } = require("../controllers/bonusController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 
@@ -16,15 +16,15 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getBonuses).post(createBonus);
+router.route("/").get(getAll).post(createOne);
 router
   .route("/:id")
-  .get(getBonus)
-  .patch(updateBonus)
-  .delete(makeDeleted, updateBonus);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateBonus);
-router.route("/:id/unarchive").get(archive, updateBonus);
-router.route("/:id/delete").delete(deleteBonus);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
 module.exports = router;
