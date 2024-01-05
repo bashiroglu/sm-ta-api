@@ -21,7 +21,8 @@ const signToken = (id) => {
   });
 };
 
-const createTokenAndSignIn = (user, statusCode, req, res) => {
+exports.createTokenAndSignIn = catchAsync(async (req, res, next) => {
+  const { user, statusCode } = req;
   const token = signToken(user._id);
 
   const cookieOptions = {
@@ -41,7 +42,7 @@ const createTokenAndSignIn = (user, statusCode, req, res) => {
     token,
     user,
   });
-};
+});
 
 exports.signup = catchAsync(async (req, res, next) => {
   const {
@@ -89,7 +90,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     const url = `${req.protocol}://${req.get("host")}/me`;
     await new Email(newUser, url).sendWelcome();
   }
-  createTokenAndSignIn(newUser, 201, req, res);
+  req.user = newUser;
+  req.statusCode = 201;
+  next();
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -126,7 +129,9 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("wait_activation", 400));
   }
 
-  createTokenAndSignIn(user, 200, req, res);
+  req.user = user;
+  req.statusCode = 200;
+  next();
 });
 
 exports.logout = (req, res) => {

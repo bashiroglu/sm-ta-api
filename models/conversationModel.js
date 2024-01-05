@@ -15,17 +15,22 @@ const schema = new mongoose.Schema(
     topic: {
       type: String,
     },
-    status: {
+    stage: {
       type: String,
-      enum: ["waits-register", "filled", "done", "archived"],
-      default: "waits-register",
+      enum: ["open", "close", "occured", "completed"],
+      default: "open",
     },
-    levels: {
-      type: [
-        { type: String, enum: ["BEG", "ELE", "PRE", "INT", "INT+", "UPI"] },
-      ],
-      required: [true, "levels is required"],
-    },
+    levels: [
+      {
+        type: String,
+        enum: ["BEG", "ELE", "PRE", "INT", "INT+", "UPI"],
+        validate: {
+          validator: (v) => {
+            console.log("😀😀😀", v, "😀😀😀");
+          },
+        },
+      },
+    ],
     maxLimit: {
       type: Number,
       required: [true, "maxLimit is required"],
@@ -50,8 +55,14 @@ const schema = new mongoose.Schema(
             type: mongoose.Schema.ObjectId,
             ref: "User",
           },
-          participated: Boolean,
-          paid: Boolean,
+          participated: {
+            type: Boolean,
+            default: false,
+          },
+          paid: {
+            type: Boolean,
+            default: false,
+          },
         },
       ],
       default: [],
@@ -86,6 +97,40 @@ const schema = new mongoose.Schema(
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
+});
+
+schema.post("save", async function (doc) {
+  // TODO: send sms
+  const popdoc = await doc
+    .populate({ path: "createdBy", select: "name surname email" })
+    .execPopulate();
+  console.log("notify teacher and all students", popdoc);
+  doc.createdBy = doc.createdBy.id;
+});
+
+schema.post("findOneAndUpdate", async function (doc) {
+  if (doc.participants.length === doc.maxLimit && doc.status === "open") {
+    doc.status = "close";
+    await doc.save();
+  }
+
+  if (doc.participants.length < doc.maxLimit && doc.status === "close") {
+    while (true) {
+      if (!doc.waitingList.length) {
+        doc.status = "open";
+        breake;
+      }
+      let participant = doc.waitingList.shift();
+      doc.participants = [...doc.participants, { participant }];
+      participant = await UserModel.findById(participant);
+      if (participant) {
+        breake;
+        // TODO: notify participant
+        console.log(participant);
+      }
+    }
+    await doc.save();
+  }
 });
 
 const Model = mongoose.model(collectionName, schema);

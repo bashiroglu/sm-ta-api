@@ -2,7 +2,7 @@ const express = require("express");
 const Model = require("../models/bookModel");
 
 const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("../controllers/helpers/handlerFactory")(Model);
+  require("./helpers/handlerFactory")(Model);
 
 const { populate, archive, makeDeleted } = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
