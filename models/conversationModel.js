@@ -1,4 +1,9 @@
 const mongoose = require("mongoose");
+const {
+  getPeriod,
+  scheduleTask,
+  sendNotification,
+} = require("../utils/helpers");
 
 const collectionName = "Conversation";
 
@@ -15,7 +20,7 @@ const schema = new mongoose.Schema(
     topic: {
       type: String,
     },
-    stage: {
+    status: {
       type: String,
       enum: ["open", "close", "occured", "completed"],
       default: "open",
@@ -108,6 +113,8 @@ schema.post("save", async function (doc) {
   doc.createdBy = doc.createdBy.id;
 });
 
+schema.statics.jobs = {};
+
 schema.post("findOneAndUpdate", async function (doc) {
   if (doc.participants.length === doc.maxLimit && doc.status === "open") {
     doc.status = "close";
@@ -130,7 +137,22 @@ schema.post("findOneAndUpdate", async function (doc) {
       }
     }
     await doc.save();
-  }
+  } else schema.statics.jobs[doc.id] = scheduleTask(doc, sendNotification);
+
+  // Schedule or stop notification job
+  if (doc.deleted) schema.statics.jobs[doc.id].stop();
+  else
+    schema.statics.jobs[doc.id] = scheduleTask(
+      doc,
+      sendNotification,
+      getPeriod(d.date)
+    );
+  console.log(schema.statics.jobs);
+});
+
+schema.post("deleteOne", function (doc) {
+  // Stop notification job
+  schema.statics.jobs[doc.id].stop();
 });
 
 const Model = mongoose.model(collectionName, schema);

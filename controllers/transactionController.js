@@ -8,19 +8,10 @@ const { roles } = require("../utils/constants/enums");
 const { session } = require("grammy");
 
 const updateBalance = catchAsync(async (req, res, next) => {
-  const { session } = req;
-
-  let { amount, isIncome, branch: branchId, category } = req.body;
-  amount = amount * (isIncome || -1);
-  const branch = await BranchModel.findByIdAndUpdate(
-    branchId,
-    { $inc: { balance: amount } },
-    { session }
-  );
-
-  if (!branch) {
-    return next(new AppError("branch_not_found", 404));
-  }
+  let {
+    body: { amount, isIncome, branch: branchId, category, internal },
+    session,
+  } = req;
 
   const lower = await LowerCategory.findByIdAndUpdate(
     category,
@@ -28,16 +19,22 @@ const updateBalance = catchAsync(async (req, res, next) => {
     { session }
   );
 
-  if (!lower) {
-    return next(new AppError("category_not_found", 404));
-  }
+  if (!lower) return next(new AppError("category_not_found", 404));
 
-  req.body = {
-    ...req.body,
-    amount,
-    balanceBefore: branch.balance,
-    balanceAfter: branch.balance + amount,
-  };
+  if (internal) return next();
+
+  amount = amount * (isIncome || -1);
+  const branch = await BranchModel.findByIdAndUpdate(
+    branchId,
+    { $inc: { balance: amount } },
+    { session }
+  );
+
+  if (!branch) return next(new AppError("branch_not_found", 404));
+
+  req.body.amount = amount;
+  req.body.balanceBefore = branch.balance;
+  req.body.balanceAfter = branch.balance + amount;
 
   next();
 });

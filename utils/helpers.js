@@ -61,8 +61,8 @@ const sendNotification = (doc) => {
   );
 };
 
-const scheduleTask = (document, task) =>
-  cron.schedule(document.periodicity, task.bind(null, document));
+const scheduleTask = (document, task, period) =>
+  cron.schedule(period || document.periodicity, task.bind(null, document));
 
 const restrictPerSubdomain = (user, req) =>
   // TODO: fix these urls
@@ -95,6 +95,8 @@ const makeDeleted = catchAsync(async (req, res, next) => {
 const hasCommon = (array1, array2) =>
   array1.filter((el) => array2.includes(el)).length;
 
+const getPeriod = (date) => `0 10 ${date.getDate()} ${date.getMonth() + 1} *`;
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
@@ -108,4 +110,5 @@ module.exports = {
   archive,
   makeDeleted,
   hasCommon,
+  getPeriod,
 };

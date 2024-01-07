@@ -8,7 +8,6 @@ const {
   assignParamsId,
   updateMe,
   setPassword,
-  schedulePaymentNotifications,
   setReqBody,
   activateUser,
   deactivateUser,
@@ -20,7 +19,6 @@ const { populate, archive, makeDeleted } = require("../utils/helpers");
 
 const router = express.Router();
 
-schedulePaymentNotifications();
 scheduleBirthdayNotifications();
 
 router.use(protect);

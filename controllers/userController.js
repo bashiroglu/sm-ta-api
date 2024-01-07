@@ -10,63 +10,6 @@ const { filterObject } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
 const { sendSmsRequest } = require("../utils/sms");
 
-const schedulePaymentNotifications = () => {
-  // TODO: schedule a task to run at 17:58 on the 3rd of every month change if needed
-  cron.schedule("58 17 3 * *", async () => {
-    const guardians = await Model.aggregate([
-      [
-        {
-          $match: {
-            roles: "student",
-            deleted: { $ne: true },
-            nextPaymentDate: { $lt: new Date() },
-          },
-        },
-        {
-          $lookup: {
-            from: "users",
-            localField: "guardian",
-            foreignField: "_id",
-            as: "guardian",
-          },
-        },
-        {
-          $unwind: "$guardian",
-        },
-        {
-          $project: {
-            studentName: "$name",
-            studentSurname: "$surname",
-            guardianName: "$guardian.name",
-            guardianSurname: "$guardian.surname",
-            phoneNumber: { $arrayElemAt: ["$guardian.phoneNumbers", 0] },
-            email: "$guardian.email",
-          },
-        },
-      ],
-    ]);
-
-    guardians.forEach(
-      async ({
-        studentName,
-        studentSurname,
-        guardianName,
-        guardianSurname,
-        phoneNumber,
-        email,
-      }) => {
-        const smsText = `Dear, ${guardianName} ${guardianSurname}. Please pay the monthly fee for your child ${studentName} ${studentSurname}`;
-        if (process.env.NODE_ENV.trim() === "development") {
-          console.log(smsText);
-        } else {
-          // const result = await sendSmsRequest(phoneNumber, smsText);
-          // TODO: Send Email and SMS
-        }
-      }
-    );
-  });
-};
-
 const scheduleBirthdayNotifications = () => {
   cron.schedule(
     "0 9 * * *",
@@ -186,7 +129,6 @@ const deactivateUser = catchAsync(async (req, res, next) => {
 });
 
 module.exports = {
-  schedulePaymentNotifications,
   scheduleBirthdayNotifications,
   assignParamsId,
   updateMe,

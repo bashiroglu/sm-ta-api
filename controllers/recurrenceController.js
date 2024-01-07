@@ -18,6 +18,7 @@ const executeRecurrence = catchAsync(async (req, res, next) => {
       branch,
       relatedTo,
       realDate,
+      internal,
       id,
     },
   } = req;
@@ -38,6 +39,7 @@ const executeRecurrence = catchAsync(async (req, res, next) => {
     paymentMethod,
     realDate,
     recurrence: id,
+    internal,
     ...req.body,
   };
   next();

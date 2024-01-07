@@ -1,7 +1,13 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const { roles } = require("../utils/constants/enums");
 const name = "conversation";
 const Model = require(`../models/${name}Model`);
+const {
+  scheduleTask,
+  sendNotification,
+  getPeriod,
+} = require("./../utils/helpers");
 
 const registerUser = catchAsync(async (req, res, next) => {
   const {
@@ -56,8 +62,38 @@ const toggleArrayEl = catchAsync(async (req, res, next) => {
   next();
 });
 
+const scheduleConversationNotifications = catchAsync(async (req, res, next) => {
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+  const docs = await Model.find({
+    status: "open",
+    createdAt: { $gte: threeMonthsAgo, $lt: new Date() },
+  });
+
+  docs.forEach((doc, i) => {
+    Model.schema.statics.jobs[doc.id] = scheduleTask(
+      doc,
+      sendNotification,
+      getPeriod(doc.date)
+    );
+  });
+});
+
+const checkRole = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  if (!user || !user.roles.includes(roles.STUDENT)) {
+    req.query.status = "open";
+    return next();
+  }
+  if (user.roles.includes(roles.TEACHER)) req.query.teacher = user.id;
+  next();
+});
+
 module.exports = {
   toggleArrayEl,
   registerUser,
   unregisterUser,
+  scheduleConversationNotifications,
+  checkRole,
 };

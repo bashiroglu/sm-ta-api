@@ -7,6 +7,8 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 const {
   registerUser,
   unregisterUser,
+  scheduleConversationNotifications,
+  checkRole,
 } = require("../controllers/conversationController");
 const { setPassword } = require("../controllers/userController");
 const {
@@ -17,7 +19,11 @@ const {
 const { archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
+scheduleConversationNotifications();
+
 const router = express.Router();
+
+router.use(checkRole);
 
 router
   .route("/:id/register")
@@ -29,17 +35,16 @@ router
     updateOne
   );
 
+router.route("/").get(getAll);
+router.route("/:id").get(getOne);
+
 router.use(
   protect,
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getAll).post(getCode(name), createOne);
-router
-  .route("/:id")
-  .get(getOne)
-  .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+router.route("/").post(getCode(name), createOne);
+router.route("/:id").patch(checkRole, updateOne).delete(makeDeleted, updateOne);
 
 router
   .route("/:id/register")

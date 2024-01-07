@@ -41,6 +41,10 @@ const schema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    internal: {
+      type: Boolean,
+      default: false,
+    },
 
     priority: {
       type: Number,
@@ -111,11 +115,13 @@ schema.post("save", function (doc, next) {
 });
 
 schema.post("findOneAndUpdate", function (doc) {
+  // Schedule or stop notification job
   if (doc.deleted) schema.statics.jobs[doc._id].stop();
   else schema.statics.jobs[doc._id] = scheduleTask(doc, sendNotification);
 });
 
 schema.post("deleteOne", function (doc) {
+  // Stop notification job
   schema.statics.jobs[doc._id].stop();
 });
 
