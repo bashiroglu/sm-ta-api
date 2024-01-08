@@ -54,7 +54,13 @@ const updateStudent = catchAsync(async (req, res, next) => {
   req.body = body;
   req.filterObj = { "students._id": req.params.id };
   req.fields = "students";
-  req.query = { "students.$._id": req.params.id };
+  req.query = { "students._id": req.params.id };
+  next();
+});
+
+const aliasStudent = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  req.query["students.student"] = id;
   next();
 });
 
@@ -64,4 +70,5 @@ module.exports = {
   convertStudents,
   checkRole,
   updateStudent,
+  aliasStudent,
 };

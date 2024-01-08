@@ -9,6 +9,7 @@ const {
   convertStudents,
   checkRole,
   updateStudent,
+  aliasStudent,
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
@@ -49,7 +50,10 @@ router
   .patch(toggleArrayEl, updateOne)
   .delete(toggleArrayEl, updateOne);
 
-router.route("/students/:id").patch(updateStudent, updateOne);
+router
+  .route("/students/:id")
+  .get(aliasStudent, getAll)
+  .patch(updateStudent, updateOne);
 
 router
   .route("/:id/teachers")
