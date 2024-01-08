@@ -22,14 +22,19 @@ module.exports = (Model) => {
         query: reqQuery,
         deleted,
         arrayFilters,
+        filterObj,
       } = req;
 
       if (!doc) {
-        let query = Model.findByIdAndUpdate(id, body, {
-          new: true,
-          runValidators: true,
-          arrayFilters,
-        });
+        let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](
+          filterObj || id,
+          body,
+          {
+            new: true,
+            runValidators: true,
+            arrayFilters,
+          }
+        );
 
         const features = new APIFeatures(query, reqQuery).limitFields();
 

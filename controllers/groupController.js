@@ -40,39 +40,21 @@ const convertStudents = catchAsync(async (req, res, next) => {
   next();
 });
 
-const toggleStudentStatus = catchAsync(async (req, res, next) => {
-  const {
-    params: { id, studentId },
-  } = req;
-
-  const group = await Model.findOne({
-    _id: id,
-    "students.student": studentId,
-  });
-
-  if (!group) return next(new AppError("doc_not_found", 404));
-
-  const student = group.students.find(
-    ({ student }) => String(student) === studentId
-  );
-
-  const status = student.status === "active" ? "inactive" : "active";
-
-  req.body = {
-    $set: {
-      "students.$[elem].status": status,
-      "students.$[elem].permissionCount": 0,
-    },
-  };
-
-  req.arrayFilters = [{ "elem.student": studentId }];
-
-  next();
-});
-
 const checkRole = catchAsync(async (req, res, next) => {
   const { user } = req;
   if (user.roles.includes(roles.TEACHER)) req.query.teacher = user.id;
+  next();
+});
+
+const updateStudent = catchAsync(async (req, res, next) => {
+  const body = { $set: {} };
+  ["lessonCount", "permissionCount", "status"].forEach((f) => {
+    if (f in req.body) body.$set[`students.$.${f}`] = req.body[f];
+  });
+  req.body = body;
+  req.filterObj = { "students._id": req.params.id };
+  req.fields = "students";
+  req.query = { "students.$._id": req.params.id };
   next();
 });
 
@@ -80,6 +62,6 @@ module.exports = {
   crudGroupLessons,
   toggleArrayEl,
   convertStudents,
-  toggleStudentStatus,
   checkRole,
+  updateStudent,
 };

@@ -6,9 +6,9 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 const {
   crudGroupLessons,
   toggleArrayEl,
-  toggleStudentStatus,
   convertStudents,
   checkRole,
+  updateStudent,
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
@@ -49,9 +49,7 @@ router
   .patch(toggleArrayEl, updateOne)
   .delete(toggleArrayEl, updateOne);
 
-router
-  .route("/:id/students/:studentId/toggle-status")
-  .get(toggleStudentStatus, updateOne);
+router.route("/students/:id").patch(updateStudent, updateOne);
 
 router
   .route("/:id/teachers")
