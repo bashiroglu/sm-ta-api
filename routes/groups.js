@@ -8,17 +8,22 @@ const {
   toggleArrayEl,
   toggleStudentStatus,
   convertStudents,
+  checkRole,
 } = require("../controllers/groupController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
+const { roles } = require("../utils/constants/enums");
 
 const router = express.Router();
 
 router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
-router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
+router.use(
+  protect,
+  restrictTo("roles", roles.OWNER, roles.ADMIN, roles.MANAGER)
+);
 router
   .route("/")
   .get(getAll)
@@ -26,6 +31,8 @@ router
 router
   .route("/:id")
   .get(
+    restrictTo("roles", roles.OWNER, roles.ADMIN, roles.MANAGER, roles.TEACHER),
+    checkRole,
     populate([
       { path: "createdBy", select: "name surname" },
       { path: "students.student", select: "name surname code email" },

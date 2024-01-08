@@ -28,27 +28,34 @@ const schema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    students: [
-      {
-        student: {
-          type: mongoose.Schema.ObjectId,
-          ref: "User",
+    students: {
+      type: [
+        {
+          student: {
+            type: mongoose.Schema.ObjectId,
+            ref: "User",
+          },
+          lessonCount: {
+            type: Number,
+            default: 0,
+          },
+          permissionCount: {
+            type: Number,
+            default: 1,
+          },
+          status: {
+            type: String,
+            enum: ["active", "inactive"],
+            default: "active",
+          },
         },
-        lessonCount: {
-          type: Number,
-          default: 0,
-        },
-        permissionCount: {
-          type: Number,
-          default: 1,
-        },
-        status: {
-          type: String,
-          enum: ["active", "inactive"],
-          default: "active",
-        },
+      ],
+
+      validate: {
+        validator: (v) => {},
+        message: "",
       },
-    ],
+    },
     room: {
       type: mongoose.Schema.ObjectId,
       ref: "Room",

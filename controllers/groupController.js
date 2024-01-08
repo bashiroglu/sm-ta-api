@@ -1,6 +1,7 @@
 const Model = require("../models/groupModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const { roles } = require("../utils/constants/enums");
 
 const crudGroupLessons = catchAsync(async (req, res, next) => {
   req.query = { group: req.params.groupId, teacher: req.query.teachers };
@@ -69,9 +70,16 @@ const toggleStudentStatus = catchAsync(async (req, res, next) => {
   next();
 });
 
+const checkRole = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  if (user.roles.includes(roles.TEACHER)) req.query.teacher = user.id;
+  next();
+});
+
 module.exports = {
   crudGroupLessons,
   toggleArrayEl,
   convertStudents,
   toggleStudentStatus,
+  checkRole,
 };
