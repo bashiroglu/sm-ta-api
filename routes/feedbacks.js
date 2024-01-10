@@ -20,9 +20,7 @@ router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
 router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 
-router.use(
-  restrictTo("roles", "owner", "admin", "manager", "teacher", "guardian")
-);
+router.use(restrictTo("roles", "owner", "admin", "manager", "teacher"));
 router.route("/").get(restrictFeedbacks, getAll);
 router
   .route("/:id")

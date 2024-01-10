@@ -13,7 +13,6 @@ const roles = Object.freeze({
   ...employeeRoles,
   ADMIN: "admin",
   STUDENT: "student",
-  GUARDIAN: "guardian",
   values() {
     return Object.values(this).filter((v) => typeof v !== "function");
   },

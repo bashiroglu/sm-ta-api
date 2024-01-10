@@ -133,26 +133,8 @@ const schema = new mongoose.Schema(
       },
     ],
 
-    relationship: {
-      type: String,
-      enum: {
-        values: ["father", "mother", "other"],
-        message: "enum_user_relationship",
-      },
-      required: [
-        function () {
-          return !!this.guardian;
-        },
-        "required_repationship",
-      ],
-    },
-
     // Groups of degree programs (ixtisas qrupu)
     groupDP: Number,
-    guardian: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
     schoolAdmittionYear: {
       type: Number,
       required: [
@@ -183,7 +165,7 @@ const schema = new mongoose.Schema(
     collation: { locale: "en", strength: 2 },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 schema.statics.q = [
@@ -211,10 +193,16 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
-schema.methods.checkPassword = async function (
-  cadidatePassword,
-  userPassword,
-) {
+schema.post(/^find/, function (docs) {
+  // console.log(students)
+  // docs.forEach((doc) => {
+  //   doc.groups.forEach((group) => {
+  //     group.students = group.students.map(({ student }) => student === doc._id);
+  //   });
+  // });
+});
+
+schema.methods.checkPassword = async function (cadidatePassword, userPassword) {
   return await bcrypt.compare(cadidatePassword, userPassword);
 };
 
@@ -243,8 +231,8 @@ schema.virtual("fullName").get(function () {
 });
 
 schema.virtual("groups", {
-  ref: "Group",
-  foreignField: "students",
+  ref: "Student",
+  foreignField: "student",
   localField: "_id",
 });
 
