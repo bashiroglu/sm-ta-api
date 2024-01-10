@@ -97,6 +97,12 @@ const hasCommon = (array1, array2) =>
 
 const getPeriod = (date) => `0 10 ${date.getDate()} ${date.getMonth() + 1} *`;
 
+const setDefaultLang = (lang) =>
+  catchAsync(async (req, res, next) => {
+    if (!req.headers["accept-language"]) req.headers["accept-language"] = lang;
+    next();
+  });
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
@@ -111,4 +117,5 @@ module.exports = {
   makeDeleted,
   hasCommon,
   getPeriod,
+  setDefaultLang,
 };
