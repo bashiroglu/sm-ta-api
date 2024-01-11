@@ -5,6 +5,7 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
+const getCode = require("../utils/getCode");
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.use(
   restrictTo("roles", "owner", "admin", "manager", "teacher")
 );
 
-router.route("/").get(getAll).post(createOne);
+router.route("/").get(getAll).post(getCode("program"), createOne);
 router
   .route("/:id")
   .get(getOne)
