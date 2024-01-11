@@ -7,7 +7,7 @@ bot.command("start", (ctx) => {
 
   ctx.reply("Welcome", {
     reply_markup: {
-      keyboard: [
+      inline_keyboard: [
         [
           {
             text: "Login",

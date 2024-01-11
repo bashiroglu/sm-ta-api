@@ -168,6 +168,12 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.virtual("teacherGroups", {
+  ref: "Group",
+  foreignField: "teachers",
+  localField: "_id",
+});
+
 schema.statics.q = [
   "name",
   "surname",
@@ -191,15 +197,6 @@ schema.pre("save", async function (next) {
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
-});
-
-schema.post(/^find/, function (docs) {
-  // console.log(students)
-  // docs.forEach((doc) => {
-  //   doc.groups.forEach((group) => {
-  //     group.students = group.students.map(({ student }) => student === doc._id);
-  //   });
-  // });
 });
 
 schema.methods.checkPassword = async function (cadidatePassword, userPassword) {

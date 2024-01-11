@@ -45,7 +45,7 @@ const executeRecurrence = catchAsync(async (req, res, next) => {
   next();
 });
 
-const scheduleRecurrenceNotifications = catchAsync(async (req, res, next) => {
+const scheduleRecurrenceNotifications = async () => {
   const recurrences = await Model.find().populate({
     path: "recipients.user",
     select: "code name surname patronymic email active",
@@ -57,7 +57,7 @@ const scheduleRecurrenceNotifications = catchAsync(async (req, res, next) => {
       sendNotification
     );
   });
-});
+};
 
 const stopScheduleNotificationsOnDelete = catchAsync(async (req, res, next) => {
   // TODO: make send email, SMS and notificaiton

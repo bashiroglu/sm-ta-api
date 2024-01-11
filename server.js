@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
 const app = require("./app");
-const bot = require("./bot");
+// const bot = require("./bot");
 
 dotenv.config({ path: "./config.env" });
 

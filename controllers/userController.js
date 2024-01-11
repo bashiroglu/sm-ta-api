@@ -77,15 +77,10 @@ const createUserByRole = catchAsync(async (req, res, next) => {
   if (group) {
     const groupDoc = await GroupModel.findByIdAndUpdate(
       group,
-      {
-        $push: { students: id },
-      },
+      { $addToSet: { students: { student: id } } },
       { new: true, session }
     );
-
-    if (!groupDoc) {
-      return next(new AppError("group_not_found", 404));
-    }
+    if (!groupDoc) return next(new AppError("group_not_found", 404));
   }
   next();
 });
@@ -107,13 +102,18 @@ const excludeFields = catchAsync(async (req, res, next) => {
 });
 
 const setReqBody = catchAsync(async (req, res, next) => {
-  const field = req.url.split("/").at(-1);
-  const value = req.body[field];
+  const {
+    body: { url },
+    body,
+    method,
+  } = req;
+  const field = url.split("/").at(-1);
+  const value = body[field];
 
   if (!["tags", "permissions"].includes(field) || !value)
     return next(new AppError("dont_use_this_endpoint", 400));
 
-  req.body = req.method === "PATCH" ? { [field]: req.body[field] } : undefined;
+  req.body = method === "PATCH" ? { [field]: body[field] } : undefined;
   req.query.fields = field;
   next();
 });

@@ -32,16 +32,7 @@ router.use(restrictTo("roles", "owner", "admin", "manager"));
 
 router
   .route("/role/:role")
-  .get(
-    getAllByRole,
-    populate([
-      {
-        path: "guardian",
-        select: "name surname",
-      },
-    ]),
-    getAll
-  )
+  .get(getAllByRole, getAll)
   .post(
     getCode("user", { modifier: "" }),
     createUserByRole,
@@ -52,7 +43,6 @@ router
 router.route("/role/student/participation").get(
   getAllByRole,
   populate([
-    { path: "guardian", select: "name surname" },
     { path: "absents", select: "group" },
     { path: "presents", select: "_id group" },
   ]),
@@ -74,27 +64,24 @@ router
 
 router
   .route("/:id")
-  .get(
-    populate([
-      { path: "guardian", select: "name surname" },
-      { path: "positions", select: "title id" },
-    ]),
-    getOne
-  )
+  .get(populate({ path: "positions", select: "title id" }), getOne)
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
 
-router.route("/:id/tags").get(setReqBody, getOne).patch(setReqBody, updateOne);
+router
+  .route("/:id/tags")
+  .get(setReqBody, updateOne)
+  .patch(setReqBody, updateOne);
 router
   .route("/:id/permissions")
   .get(setReqBody, getOne)
   .patch(setReqBody, updateOne);
 
-router.route("/:id/activate").get(activateUser, getOne);
-router.route("/:id/deactivate").get(deactivateUser, getOne);
+router.route("/:id/activate").get(activateUser, updateOne);
+router.route("/:id/deactivate").get(deactivateUser, updateOne);
 
-router.route("/:id/archive").get(archive, getOne);
-router.route("/:id/unarchive").get(archive, getOne);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
 
 router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
 

@@ -66,6 +66,8 @@ module.exports = (Model) => {
         session.endSession();
       }
 
+      if (doc?.length > 0) doc = doc.at(0);
+
       res.status(201).json({ status: "success", data: doc });
     }),
 

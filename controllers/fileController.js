@@ -1,4 +1,7 @@
 const cloudinary = require("cloudinary").v2;
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
+
 const dotenv = require("dotenv");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
@@ -12,18 +15,27 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-exports.upload = catchAsync(async (req, res, next) => {
-  const { file } = req.body;
-  let result;
+const storage = multer.memoryStorage();
+const parser = multer({ storage });
 
-  const folder = req.body.folder;
-  const publicId = `${Date.now()}`;
+exports.uploadFile = parser.fields([{ name: "file" }, { name: "folder" }]);
+
+exports.upload = catchAsync(async (req, res, next) => {
+  let {
+    files: { file },
+    body: { folder },
+  } = req;
+
+  file = file.at(0);
+
+  const b64 = Buffer.from(file.buffer).toString("base64");
+  let dataURI = "data:" + file.mimetype + ";base64," + b64;
+
+  let result;
   if (file) {
-    result = await cloudinary.uploader.upload(file, {
+    result = await cloudinary.uploader.upload(dataURI, {
       folder: folder,
-      width: 300,
-      height: 300,
-      public_id: publicId,
+      public_id: uuidv4(),
       resource_type: "auto", // jpeg, png
     });
     if (!result) return next(new AppError("add_file", 400));
