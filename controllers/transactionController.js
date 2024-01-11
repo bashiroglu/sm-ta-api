@@ -5,7 +5,6 @@ const RecurrenceModel = require("../models/recurrenceModel");
 const BranchModel = require("../models/branchModel");
 const LowerCategory = require("../models/lowerCategoryModel");
 const { roles } = require("../utils/constants/enums");
-const { session } = require("grammy");
 
 const updateBalance = catchAsync(async (req, res, next) => {
   let {
@@ -20,7 +19,6 @@ const updateBalance = catchAsync(async (req, res, next) => {
   );
 
   if (!lower) return next(new AppError("category_not_found", 404));
-
   if (internal) return next();
 
   amount = amount * (isIncome || -1);
@@ -42,15 +40,12 @@ const updateBalance = catchAsync(async (req, res, next) => {
 const checkBranch = catchAsync(async (req, res, next) => {
   let {
     params: { id },
+    body: { branch },
     user: { roles: userRoles, branches },
   } = req;
 
   const recurrence = await RecurrenceModel.findById(id);
-
-  if (!recurrence) {
-    return next(new AppError("doc_not_found", 404));
-  }
-
+  if (!recurrence) return next(new AppError("doc_not_found", 404));
   req.recurrence = recurrence;
 
   const isOwner = userRoles.includes(roles.OWNER);
@@ -60,7 +55,10 @@ const checkBranch = catchAsync(async (req, res, next) => {
     const isManager = userRoles.includes(roles.MANAGER);
     if (!isManager) return next(new AppError("not_authorized", 401));
     const branchIds = branches?.map((b) => b.id);
-    const notOwnBranch = !branchIds.includes(String(recurrence.branch));
+
+    const branchId = id ? String(recurrence.branch) : branch;
+    const notOwnBranch = !branchIds.includes(branchId);
+
     if (notOwnBranch) return next(new AppError("not_authorized", 401));
   }
   next();
