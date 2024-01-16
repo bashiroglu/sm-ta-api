@@ -147,6 +147,4 @@ schema.virtual("executionCount", {
 
 schema.statics.q = ["title", "code"];
 
-const Model = mongoose.model(collectionName, schema);
-
-module.exports = Model;
+module.exports = mongoose.model(collectionName, schema);

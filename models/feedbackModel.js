@@ -45,6 +45,4 @@ schema.pre("save", async function (next) {
   next();
 });
 
-const Model = mongoose.model(collectionName, schema);
-
-module.exports = Model;
+module.exports = mongoose.model(collectionName, schema);

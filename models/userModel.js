@@ -253,6 +253,4 @@ schema.virtual("branches", {
   localField: "_id",
 });
 
-const Model = mongoose.model(collectionName, schema);
-
-module.exports = Model;
+module.exports = mongoose.model(collectionName, schema);

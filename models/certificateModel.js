@@ -90,7 +90,7 @@ const schema = new mongoose.Schema(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 schema.pre(/^find/, function (next) {
@@ -98,6 +98,4 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
-const Model = mongoose.model(collectionName, schema);
-
-module.exports = Model;
+module.exports = mongoose.model(collectionName, schema);

@@ -153,6 +153,4 @@ schema.post("deleteOne", function (doc) {
   schema.statics.jobs[doc.id].stop();
 });
 
-const Model = mongoose.model(collectionName, schema);
-
-module.exports = Model;
+module.exports = mongoose.model(collectionName, schema);
