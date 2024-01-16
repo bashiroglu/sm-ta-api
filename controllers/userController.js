@@ -90,6 +90,22 @@ const getAllByRole = (req, res, next) => {
   next();
 };
 
+const aliasTinyStudent = catchAsync(async (req, res, next) => {
+  req.query.fields = "name surname patronymic code";
+  req.query.roles = "student";
+  req.popOptions = {
+    path: "groups",
+    match: { status: "active" },
+    select: "group",
+    populate: {
+      path: "group",
+      select: "program",
+      populate: "program",
+    },
+  };
+  next();
+});
+
 const setPassword = catchAsync(async (req, res, next) => {
   req.body.password = req.body.passwordConfirm =
     process.env.DEFAULT_USER_PASSWORD;
@@ -139,4 +155,5 @@ module.exports = {
   setReqBody,
   activateUser,
   deactivateUser,
+  aliasTinyStudent,
 };

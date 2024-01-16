@@ -2,13 +2,25 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Model = require("../models/transactionModel");
 const RecurrenceModel = require("../models/recurrenceModel");
+const StudentModel = require("../models/studentModel");
 const BranchModel = require("../models/branchModel");
+const GroupModel = require("../models/groupModel");
 const LowerCategory = require("../models/lowerCategoryModel");
 const { roles } = require("../utils/constants/enums");
 
 const updateBalance = catchAsync(async (req, res, next) => {
   let {
-    body: { amount, isIncome, branch: branchId, category, internal },
+    body: {
+      amount,
+      isIncome,
+      branch: branchId,
+      category,
+      internal,
+      relatedTo,
+      groupId,
+      permissionCount,
+      lessonCount,
+    },
     session,
   } = req;
 
@@ -17,8 +29,30 @@ const updateBalance = catchAsync(async (req, res, next) => {
     { $inc: { priority: 1 } },
     { session }
   );
-
   if (!lower) return next(new AppError("category_not_found", 404));
+
+  if (category === process.env.STUDENT_PAYMENT_CATEGORY_ID) {
+    const {
+      program: {
+        lessonCount: progLessonCount,
+        permissionCount: progPermissionCount,
+      },
+    } = await GroupModel.findById(groupId).populate("program").session(session);
+
+    const student = await StudentModel.findOneAndUpdate(
+      {
+        student: relatedTo,
+        group: groupId,
+      },
+      {
+        $inc: { lessonCount: lessonCount || progLessonCount },
+        permissionCount: permissionCount || progPermissionCount,
+      }
+    );
+
+    if (!student) return next(new AppError("student_not_found", 404));
+  }
+
   if (internal) return next();
 
   amount = amount * (isIncome || -1);
@@ -44,9 +78,11 @@ const checkBranch = catchAsync(async (req, res, next) => {
     user: { roles: userRoles, branches },
   } = req;
 
-  const recurrence = await RecurrenceModel.findById(id);
-  if (!recurrence) return next(new AppError("doc_not_found", 404));
-  req.recurrence = recurrence;
+  if (id) {
+    const recurrence = await RecurrenceModel.findById(id);
+    if (!recurrence) return next(new AppError("doc_not_found", 404));
+    req.recurrence = recurrence;
+  }
 
   const isOwner = userRoles.includes(roles.OWNER);
   const isAdmin = userRoles.includes(roles.ADMIN);

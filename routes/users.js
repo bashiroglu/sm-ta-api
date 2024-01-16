@@ -12,6 +12,7 @@ const {
   activateUser,
   deactivateUser,
   scheduleBirthdayNotifications,
+  aliasTinyStudent,
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
@@ -40,6 +41,7 @@ router
     createOne
   );
 
+router.route("/role/student/tiny").get(aliasTinyStudent, getAll);
 router.route("/role/student/participation").get(
   getAllByRole,
   populate([
