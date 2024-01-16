@@ -1,13 +1,16 @@
 const mongoose = require("mongoose");
-
-const collectionName = "Program";
-
+const collectionName = "Student";
 const schema = new mongoose.Schema(
   {
-    title: { type: String },
-    description: { type: String },
-    predictedPayment: {
-      type: Number,
+    group: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Group",
+      required: true,
+    },
+    student: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
     },
     lessonCount: {
       type: Number,
@@ -15,17 +18,11 @@ const schema = new mongoose.Schema(
     permissionCount: {
       type: Number,
     },
-    lessonsDuration: {
-      type: Number,
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
     },
-    possibleParticipantCount: Number,
-    monthly: {
-      type: Boolean,
-      default: true,
-    },
-
-    name: String,
-    price: Number,
 
     deleted: Boolean,
     archived: Boolean,
@@ -40,6 +37,8 @@ const schema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+schema.index({ student: 1, group: 1 }, { unique: true });
 
 schema.pre(/^find/, function (next) {
   this.find({ archived: { $ne: true } });

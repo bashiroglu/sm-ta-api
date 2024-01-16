@@ -76,6 +76,7 @@ const createTransactionOnLessonCreate = catchAsync(async (req, res, next) => {
     transactionBody,
     lessonBody,
     body: { code },
+    session,
   } = req;
   await Model.create([{ code, ...transactionBody }], { session });
 

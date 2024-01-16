@@ -5,12 +5,9 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
   require("./helpers/handlerFactory")(Model);
 const {
   crudGroupLessons,
-  toggleArrayEl,
-  convertStudents,
   checkRole,
-  updateStudent,
-  aliasStudent,
 } = require("../controllers/groupController");
+const { createStudents } = require("../controllers/studentController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
@@ -25,10 +22,8 @@ router.use(
   protect,
   restrictTo("roles", roles.OWNER, roles.ADMIN, roles.MANAGER)
 );
-router
-  .route("/")
-  .get(getAll)
-  .post(getCode("group"), convertStudents, createOne);
+router.route("/").get(getAll).post(getCode("group"), createStudents, createOne);
+
 router
   .route("/:id")
   .get(
@@ -36,8 +31,8 @@ router
     checkRole,
     populate([
       { path: "createdBy", select: "name surname" },
-      { path: "students.student", select: "name surname code email" },
-      { path: "teachers", select: "name surname code email" },
+      Model.schema.statics.studentsPopOpts,
+      { path: "teacher", select: "name surname code email" },
       { path: "room", select: "name number" },
     ]),
     getOne
@@ -45,20 +40,7 @@ router
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
 
-router
-  .route("/:id/students")
-  .patch(toggleArrayEl, updateOne)
-  .delete(toggleArrayEl, updateOne);
-
-router
-  .route("/students/:id")
-  .get(aliasStudent, getAll)
-  .patch(updateStudent, updateOne);
-
-router
-  .route("/:id/teachers")
-  .patch(toggleArrayEl, updateOne)
-  .delete(toggleArrayEl, updateOne);
+router.route("/:id/students").post(createStudents, getOne);
 
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);

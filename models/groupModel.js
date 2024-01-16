@@ -28,34 +28,6 @@ const schema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    students: {
-      type: [
-        {
-          student: {
-            type: mongoose.Schema.ObjectId,
-            ref: "User",
-          },
-          lessonCount: {
-            type: Number,
-            default: 0,
-          },
-          permissionCount: {
-            type: Number,
-            default: 1,
-          },
-          status: {
-            type: String,
-            enum: ["active", "inactive"],
-            default: "active",
-          },
-        },
-      ],
-
-      validate: {
-        validator: (v) => {},
-        message: "",
-      },
-    },
     room: {
       type: mongoose.Schema.ObjectId,
       ref: "Room",
@@ -93,9 +65,38 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.virtual("students", {
+  ref: "Student",
+  foreignField: "group",
+  localField: "_id",
+});
+
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
+});
+
+schema.statics.studentsPopOpts = {
+  path: "students",
+  select: "student lessonCount permissionCount",
+  populate: { path: "student", select: "id name surname code email" },
+  transform: ({
+    student: { id, name, surname, code, email },
+    lessonCount,
+    permissionCount,
+  }) => ({
+    id,
+    name,
+    surname,
+    code,
+    email,
+    lessonCount,
+    permissionCount,
+  }),
+};
+
+schema.post("save", async function (doc) {
+  await doc.populate(schema.statics.studentsPopOpts).execPopulate();
 });
 
 schema.statics.q = ["name"];

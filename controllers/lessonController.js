@@ -1,31 +1,49 @@
 const catchAsync = require("../utils/catchAsync");
 const GroupModel = require("../models/groupModel");
+const StudentModel = require("../models/studentModel");
 const UserModel = require("../models/userModel");
+const AppError = require("../utils/appError");
 
 const prepareLesson = catchAsync(async (req, res, next) => {
   const {
     session,
-    body: { teacher: teacherId, group: groupId, absent, present, isExtra },
+    params: { id },
+    body: { absent, present, isExtra },
+    user: { id: userId },
   } = req;
+
   if (isExtra) return next();
 
-  const group = await GroupModel.findById(groupId).session(session);
-  if (String(group.teacher) !== teacherId) {
-    // TODO: add error handler
-  }
-  const { program, students } = group;
+  const teacherId = req.body.teacherId || userId;
+
+  const group = await GroupModel.findById(id)
+    .populate(["teacher", "program"])
+    .session(session);
+
+  if (!group) return next(new AppError("group_not_found", 404));
+
+  if (String(group.teacher.id) !== String(teacherId))
+    return next(new AppError("group_teacher_is_other_user", 404));
+  const { program } = group;
+
+  console.log(id);
+  const students = await StudentModel.find({
+    group: id,
+    status: "active",
+  }).session(session);
+  if (!students.length) return next(new AppError("students_not_faund", 404));
 
   const paidStudents = [];
 
-  students.forEach(({ lessonCount, permissionCount, status, student }) => {
-    const isActive = status !== "active";
-    const isPresent = present.includes(student);
-    const isAbsent = absent.includes(student);
+  students.forEach(async (studentObj) => {
+    const { lessonCount, permissionCount, status, student } = studentObj;
+    const isActive = status === "active";
+    const isPresent = present.includes(String(student));
+    const isAbsent = absent.includes(String(student));
     const hasPermission = permissionCount;
-
     if (isActive) {
       if (isPresent || !hasPermission) {
-        if (lessonCount) lessonCount -= 1;
+        if (lessonCount) studentObj.lessonCount -= 1;
         if (lessonCount === 1 && program.monthly) {
           // TODO: send sms
           console.log(
@@ -42,30 +60,32 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
       }
       if (isAbsent) {
         if (!hasPermission) paidStudents.push(student);
-        permissionCount = 0;
+        studentObj.permissionCount = 0;
       }
+      await studentObj.save({ session });
     }
   });
 
-  await group.save({ session: session });
+  const teacherProgram = group.teacher.earnings.find(
+    (earning) => String(earning.program) === String(program.id)
+  );
 
-  const teacher = await UserModel.findById(teacherId).session(session);
-  // TODO: add error handler
+  if (!teacherProgram)
+    return next(new AppError("teacher_program_not_found", 404));
 
-  const amount = teacher.earnings.find(
-    (earning) => earning.program === program
-  )?.amount;
+  const totalIncome = teacherProgram.amount * paidStudents.length;
+  console.log("😀😀😀", totalIncome, group.teacher.id, "😀😀😀");
 
-  const newAmount = amount * paidStudents.length;
-
-  teacher.balance += newAmount;
-  await teacher.save({ session: session });
+  const teacher = await UserModel.findByIdAndUpdate(String(group.teacher.id), {
+    $inc: { balance: totalIncome },
+  }).session(session);
+  if (!teacher) return next(new AppError("doc_not_found", 404));
 
   req.transactionBody = {
     title: req.body.code,
-    amount: newAmount,
+    amount: totalIncome,
     description: "",
-    category: "656a0db22adbf90014f3ebd3",
+    category: process.env.LESSON_CREATE_CATEGORY,
     isIncome: false,
     realDate: new Date(),
     paymentMethod: "online",

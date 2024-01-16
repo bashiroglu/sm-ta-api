@@ -30,9 +30,7 @@ const schema = new mongoose.Schema(
         type: String,
         enum: ["BEG", "ELE", "PRE", "INT", "INT+", "UPI"],
         validate: {
-          validator: (v) => {
-            console.log("😀😀😀", v, "😀😀😀");
-          },
+          validator: (v) => {},
         },
       },
     ],

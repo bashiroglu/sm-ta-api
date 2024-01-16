@@ -1,6 +1,3 @@
-const mongoose = require("mongoose");
-const UserModel = require("../models/userModel");
-const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getStudents = catchAsync(async (req, res, next) => {
@@ -19,6 +16,12 @@ exports.getStudent = catchAsync(async (req, res, next) => {
     { path: "room", select: "name" },
     { path: "students", select: "name surname code profileImage" },
   ];
+  next();
+});
+
+exports.directGroups = catchAsync(async (req, res, next) => {
+  req.query = { ...req.query, fields: "-teachers", teachers: req.user.id };
+  req.popOptions = [{ path: "room", select: "name" }];
   next();
 });
 

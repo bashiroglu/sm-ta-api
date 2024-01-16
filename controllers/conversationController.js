@@ -53,10 +53,11 @@ const unregisterUser = catchAsync(async (req, res, next) => {
 const toggleArrayEl = catchAsync(async (req, res, next) => {
   const {
     method,
-    params: { id, field, item: item },
+    params: { field, item: item },
   } = req;
 
-  const key = method === "DELETE" ? "$pull" : method === "patch" ? "$push" : "";
+  const key =
+    method === "DELETE" ? "$pull" : method === "patch" ? "$addToSet" : "";
 
   req.body = { [key]: { [field]: item } };
   next();

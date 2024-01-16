@@ -122,14 +122,22 @@ const schema = new mongoose.Schema(
       },
     },
 
-    balance: Number,
+    balance: {
+      type: Number,
+      default: 0,
+    },
+
     earnings: [
       {
         program: {
           type: mongoose.Schema.ObjectId,
           ref: "Program",
+          required: true,
         },
-        amount: Number,
+        amount: {
+          type: Number,
+          required: true,
+        },
       },
     ],
 
