@@ -3,7 +3,13 @@ const Model = require("../models/studentModel");
 const { getAll, createOne, getOne, updateOne, deleteOne } =
   require("./helpers/handlerFactory")(Model);
 
-const { archive, makeDeleted, populate } = require("../utils/helpers");
+const {
+  archive,
+  makeDeleted,
+  populate,
+  activate,
+  deactivate,
+} = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
 const { roles } = require("../utils/constants/enums");
 const { prepareStudent } = require("../controllers/studentController");
@@ -25,6 +31,9 @@ router
   .get(getOne)
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
+
+router.route("/:id/activate").get(activate, updateOne);
+router.route("/:id/deactivate").get(deactivate, updateOne);
 
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
