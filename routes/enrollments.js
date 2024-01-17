@@ -1,8 +1,6 @@
 const express = require("express");
 const Model = require("../models/enrollmentModel");
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
-
+const handlerFactory = require("./helpers/handlerFactory");
 const {
   archive,
   makeDeleted,
@@ -13,6 +11,9 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 const { roles } = require("../utils/constants/enums");
 const { prepareEnrollment } = require("../controllers/enrollmentController");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 
 const router = express.Router();
 

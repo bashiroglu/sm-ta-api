@@ -1,7 +1,6 @@
 const express = require("express");
 const Model = require("../models/lowerCategoryModel");
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
+const handlerFactory = require("./helpers/handlerFactory");
 const {
   queryByUpperSlug,
   sortDescending,
@@ -10,6 +9,9 @@ const {
 } = require("../controllers/lowerCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 
 const router = express.Router({ mergeParams: true });
 

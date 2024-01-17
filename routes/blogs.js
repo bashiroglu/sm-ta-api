@@ -1,14 +1,16 @@
 const express = require("express");
 const Model = require("../models/blogModel");
-
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
+const handlerFactory = require("./helpers/handlerFactory");
 const { incrementViewCount } = require("../controllers/blogController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
+
 const router = express.Router();
+
 router.route("/").get(getAll);
 router.route("/:id").get(getOne);
 router.route("/:id/view").get(incrementViewCount, updateOne);

@@ -1,9 +1,9 @@
 const express = require("express");
 const Model = require("../models/userModel");
-
-const { getAll: getContacts } = require("./helpers/handlerFactory")(Model);
-
+const handlerFactory = require("./helpers/handlerFactory");
 const { protect, restrictTo } = require("../controllers/authController");
+
+const { getAll: getContacts } = handlerFactory(Model);
 
 const router = express.Router();
 

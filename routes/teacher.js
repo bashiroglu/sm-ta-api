@@ -1,11 +1,8 @@
 const express = require("express");
 const { protect, restrictTo } = require("../controllers/authController");
 const Model = require("../models/userModel");
+const handlerFactory = require("./helpers/handlerFactory");
 const GroupModel = require("../models/groupModel");
-const { getAll: getUsers, getOne: getUser } =
-  require("./helpers/handlerFactory")(Model);
-const { getAll: getGroups, getOne: getGroup } =
-  require("./helpers/handlerFactory")(GroupModel);
 const {
   getStudent,
   getStudents,
@@ -13,7 +10,9 @@ const {
   directLessons,
 } = require("../controllers/teacherController");
 const lessonRouter = require("./lessons");
-const { populate } = require("../utils/helpers");
+
+const { getAll: getUsers, getOne: getUser } = handlerFactory(Model);
+const { getAll: getGroups, getOne: getGroup } = handlerFactory(GroupModel);
 
 const router = express.Router();
 

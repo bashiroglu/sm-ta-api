@@ -1,8 +1,7 @@
 const express = require("express");
 const Model = require("../models/groupModel");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
+const handlerFactory = require("./helpers/handlerFactory");
 const {
   crudGroupLessons,
   checkRole,
@@ -13,6 +12,9 @@ const lessonRouter = require("./lessons");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 const { roles } = require("../utils/constants/enums");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 
 const router = express.Router();
 

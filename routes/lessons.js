@@ -1,8 +1,6 @@
 const express = require("express");
 const Model = require("../models/lessonModel");
-
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
+const handlerFactory = require("./helpers/handlerFactory");
 const { prepareLesson } = require("../controllers/lessonController");
 const {
   createTransactionOnLessonCreate,
@@ -10,6 +8,9 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 
 const router = express.Router({ mergeParams: true });
 

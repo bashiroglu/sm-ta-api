@@ -1,11 +1,7 @@
 const express = require("express");
 const Model = require("../models/recurrenceModel");
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
+const handlerFactory = require("./helpers/handlerFactory");
 const TransactionModel = require("../models/transactionModel");
-const { createOne: createTransaction } = require("./helpers/handlerFactory")(
-  TransactionModel
-);
 const {
   executeRecurrence,
   scheduleRecurrenceNotifications,
@@ -17,6 +13,10 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
+const { createOne: createTransaction } = handlerFactory(TransactionModel);
 
 const router = express.Router();
 

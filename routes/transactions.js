@@ -1,8 +1,6 @@
 const express = require("express");
 const Model = require("../models/transactionModel");
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
-
+const handlerFactory = require("./helpers/handlerFactory");
 const {
   updateBalance,
   checkBranch,
@@ -11,6 +9,9 @@ const {
 const { protect, restrictTo } = require("../controllers/authController");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 
 const router = express.Router();
 

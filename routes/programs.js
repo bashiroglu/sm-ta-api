@@ -1,11 +1,12 @@
 const express = require("express");
 const Model = require("../models/programModel");
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
-
+const handlerFactory = require("./helpers/handlerFactory");
 const { protect, restrictTo } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 
 const router = express.Router();
 

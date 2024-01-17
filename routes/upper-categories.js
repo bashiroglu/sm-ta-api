@@ -1,13 +1,14 @@
 const express = require("express");
 const Model = require("../models/upperCategoryModel");
-const { getAll, createOne, getOne, updateOne } =
-  require("./helpers/handlerFactory")(Model);
+const handlerFactory = require("./helpers/handlerFactory");
 
 const {
   createUpperAndLowers,
 } = require("../controllers/upperCategoryController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { populate, archive } = require("../utils/helpers");
+
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router({ mergeParams: true });
 

@@ -1,9 +1,7 @@
 const express = require("express");
 const name = "conversation";
 const Model = require(`../models/${name}Model`);
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
-
+const handlerFactory = require("./helpers/handlerFactory");
 const {
   registerUser,
   unregisterUser,
@@ -18,6 +16,9 @@ const {
 } = require("../controllers/authController");
 const { archive, makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
+
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 
 scheduleConversationNotifications();
 

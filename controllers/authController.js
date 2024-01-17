@@ -255,7 +255,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     if (process.env.NODE_ENV.trim() === "production")
       await new Email(user, resetURL).sendPasswordReset();
-    else console.log(resetURL);
+    console.log(resetURL);
 
     res.status(200).json({
       status: "success",

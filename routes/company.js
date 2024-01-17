@@ -1,12 +1,12 @@
 const express = require("express");
 const Model = require("../models/companyModel");
-
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  require("./helpers/handlerFactory")(Model);
+const handlerFactory = require("./helpers/handlerFactory");
 const { checkConstruction } = require("../controllers/companyController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { makeDeleted } = require("../utils/helpers");
 
+const { getAll, createOne, getOne, updateOne, deleteOne } =
+  handlerFactory(Model);
 const router = express.Router();
 
 router.route("/is-under-construction").get(checkConstruction);
