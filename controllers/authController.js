@@ -1,7 +1,13 @@
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+<<<<<<< Updated upstream
 const UserModel = require("../models/userModel");
+=======
+
+const UserModel = require("../models/user");
+const CompanyModel = require("../models/company");
+>>>>>>> Stashed changes
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Email = require("../utils/email");
@@ -33,12 +39,19 @@ const createTokenAndSignIn = (user, statusCode, req, res) => {
 
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined;
+<<<<<<< Updated upstream
   res.status(statusCode).json({
     status: "success",
     token,
     user,
   });
 };
+=======
+  req.status = statusCode;
+  req.obj = { token, user };
+  next();
+});
+>>>>>>> Stashed changes
 
 exports.signup = catchAsync(async (req, res, next) => {
   const {
@@ -52,8 +65,14 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm,
   } = req.body;
 
+<<<<<<< Updated upstream
   const roles = process.env.OWNER_EMAIL === email ? ["owner"] : undefined;
   const active = process.env.OWNER_EMAIL === email || undefined;
+=======
+  const roles = process.env.ADMIN_EMAIL === email ? ["admin"] : undefined;
+  const active = process.env.ADMIN_EMAIL === email || undefined;
+  let newUser;
+>>>>>>> Stashed changes
 
   const newUser = await UserModel.create({
     roles,
@@ -99,14 +118,6 @@ exports.login = catchAsync(async (req, res, next) => {
 
   createTokenAndSignIn(user, 200, req, res);
 });
-
-exports.logout = (req, res) => {
-  res.cookie("jwt", "loggedout", {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-  res.status(200).json({ status: "success" });
-};
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
@@ -188,12 +199,11 @@ exports.getCurrentUser = catchAsync(async (req, res) => {
     return next(new AppError("please log in again", 401));
   }
 
-  res.status(200).json({
-    status: "success",
-    user,
-  });
+  req.obj = { user };
+  next();
 });
 
+<<<<<<< Updated upstream
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
@@ -228,6 +238,18 @@ exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     return !roles.filter((v) => req.user.roles.includes(v)).length
       ? next(new AppError("You are not authorized to finish this action", 403))
+=======
+/**
+ * Use for permissions or roles restrictions
+ * @param {string} field
+ * @param  {...string} items
+ * @returns next()
+ */
+exports.restrictTo = (items, field = "roles") => {
+  return (req, res, next) =>
+    !hasCommon(items, req.user[field])
+      ? next(new AppError("not_authorized", 403))
+>>>>>>> Stashed changes
       : next();
   };
 };
@@ -288,7 +310,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.paswordResetToken = undefined;
   user.paswordResetTokenExpires = undefined;
   await user.save();
-  createTokenAndSignIn(user, 200, req, res);
+  req.user = user;
+  req.statusCode = 200;
+  next();
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -302,5 +326,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   await user.save();
 
-  createTokenAndSignIn(user, 200, req, res);
+  req.user = user;
+  req.statusCode = 200;
+  next();
 });
