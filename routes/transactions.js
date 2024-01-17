@@ -7,7 +7,7 @@ const {
   restrictHiddenTransactions,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { populate, archive, makeDeleted } = require("../utils/helpers");
+const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
 const { getAll, createOne, getOne, updateOne, deleteOne } =
@@ -23,8 +23,8 @@ router.use(
 
 router
   .route("/")
-  .get(populate({ path: "createdBy", select: "name surname" }), getAll)
-  .post(checkBranch, getCode("transaction"), updateBalance, createOne);
+  .get(populate({ path: "createdBy", select: "name surname" }), getAll, sendRes)
+  .post(checkBranch, getCode("transaction"), updateBalance, createOne, sendRes);
 router
   .route("/:id")
   .get(
@@ -35,11 +35,11 @@ router
     ]),
     getOne
   )
-  .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+  .patch(updateOne, sendRes)
+  .delete(makeDeleted, updateOne, sendRes);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+router.route("/:id/archive").get(archive, updateOne, sendRes);
+router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
 
 module.exports = router;

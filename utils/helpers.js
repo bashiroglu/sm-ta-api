@@ -111,6 +111,14 @@ const deactivate = catchAsync(async (req, res, next) => {
   next();
 });
 
+const sendRes = catchAsync(async (req, res, next) => {
+  const { status = 200, obj } = req;
+  res.status(status).json({
+    status: "success",
+    ...obj,
+  });
+});
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
@@ -128,4 +136,5 @@ module.exports = {
   setDefaultLang,
   activate,
   deactivate,
+  sendRes,
 };

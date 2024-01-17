@@ -8,10 +8,9 @@ module.exports = (Model) => {
       const doc = await Model.findByIdAndDelete(req.params.id);
       if (!doc) return next(new AppError("doc_not_found", 404));
 
-      res.status(204).json({
-        status: "success",
-        data: null,
-      });
+      req.status = 204;
+      req.obj = { data: null };
+      next();
     }),
 
     updateOne: catchAsync(async (req, res, next) => {
@@ -45,10 +44,8 @@ module.exports = (Model) => {
         }
       }
 
-      res.status(200).json({
-        status: "success",
-        data: deleted ? null : doc,
-      });
+      req.obj = { data: deleted ? null : doc };
+      next();
     }),
 
     createOne: catchAsync(async (req, res, next) => {
@@ -68,7 +65,9 @@ module.exports = (Model) => {
 
       if (doc?.length > 0) doc = doc.at(0);
 
-      res.status(201).json({ status: "success", data: doc });
+      req.status = 201;
+      req.obj = { data: doc };
+      next();
     }),
 
     getOne: catchAsync(async (req, res, next) => {
@@ -83,7 +82,8 @@ module.exports = (Model) => {
         if (!req.doc) return next(new AppError("doc_not_found", 404));
       }
 
-      res.status(200).json({ status: "success", data: req.doc });
+      req.obj = { data: req.doc };
+      next();
     }),
 
     getAll: catchAsync(async (req, res, next) => {
@@ -118,12 +118,12 @@ module.exports = (Model) => {
       const result = await paginatedFeatures.query;
 
       // 8. Send the response
-      res.status(200).json({
-        status: "success",
+      res.obj = {
         total: total.length,
         results: result.length,
         data: result,
-      });
+      };
+      next();
     }),
   };
 };

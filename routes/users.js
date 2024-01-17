@@ -15,7 +15,7 @@ const {
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const { populate, archive, makeDeleted } = require("../utils/helpers");
+const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne, deleteOne } =
   handlerFactory(Model);
@@ -27,15 +27,15 @@ scheduleBirthdayNotifications();
 router.use(protect);
 router
   .route("/me")
-  .get(assignParamsId, getOne)
-  .patch(assignParamsId, updateMe, updateOne)
-  .delete(assignParamsId, makeDeleted, updateOne);
+  .get(assignParamsId, getOne, sendRes)
+  .patch(assignParamsId, updateMe, updateOne, sendRes)
+  .delete(assignParamsId, makeDeleted, updateOne, sendRes);
 
 router.use(restrictTo(["owner", "admin", "manager"]));
 
 router
   .route("/role/:role")
-  .get(getAllByRole, getAll)
+  .get(getAllByRole, getAll, sendRes)
   .post(
     getCode("user", { modifier: "" }),
     createUserByRole,
@@ -43,7 +43,7 @@ router
     createOne
   );
 
-router.route("/role/student/tiny").get(aliasTinyStudent, getAll);
+router.route("/role/student/tiny").get(aliasTinyStudent, getAll, sendRes);
 router.route("/role/student/participation").get(
   getAllByRole,
   populate([
@@ -63,30 +63,30 @@ router.route("/role/student/:id/participation").get(
 
 router
   .route("/")
-  .get(getAll)
-  .post(getCode("user", { modifier: "" }), setPassword, createOne);
+  .get(getAll, sendRes)
+  .post(getCode("user", { modifier: "" }), setPassword, createOne, sendRes);
 
 router
   .route("/:id")
-  .get(populate({ path: "positions", select: "title id" }), getOne)
-  .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+  .get(populate({ path: "positions", select: "title id" }), getOne, sendRes)
+  .patch(updateOne, sendRes)
+  .delete(makeDeleted, updateOne, sendRes);
 
 router
   .route("/:id/tags")
-  .get(setReqBody, updateOne)
-  .patch(setReqBody, updateOne);
+  .get(setReqBody, updateOne, sendRes)
+  .patch(setReqBody, updateOne, sendRes);
 router
   .route("/:id/permissions")
-  .get(setReqBody, getOne)
-  .patch(setReqBody, updateOne);
+  .get(setReqBody, getOne, sendRes)
+  .patch(setReqBody, updateOne, sendRes);
 
-router.route("/:id/activate").get(activateUser, updateOne);
-router.route("/:id/deactivate").get(deactivateUser, updateOne);
+router.route("/:id/activate").get(activateUser, updateOne, sendRes);
+router.route("/:id/deactivate").get(deactivateUser, updateOne, sendRes);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/archive").get(archive, updateOne, sendRes);
+router.route("/:id/unarchive").get(archive, updateOne, sendRes);
 
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
 
 module.exports = router;

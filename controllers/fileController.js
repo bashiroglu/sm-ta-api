@@ -43,10 +43,8 @@ exports.upload = catchAsync(async (req, res, next) => {
 
   const { public_id, url } = result;
 
-  res.status(200).json({
-    status: "success",
-    data: { public_id, url },
-  });
+  req.obj = { data: { public_id, url } };
+  next();
 });
 
 exports.remove = catchAsync(async (req, res, next) => {
@@ -54,8 +52,7 @@ exports.remove = catchAsync(async (req, res, next) => {
 
   if (data.result !== "ok") return next(new AppError("try_again", 400));
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
+  req.status = 204;
+  req.obj = { data: null };
+  next();
 });

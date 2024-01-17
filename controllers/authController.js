@@ -37,11 +37,9 @@ exports.createTokenAndSignIn = catchAsync(async (req, res, next) => {
 
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined;
-  res.status(statusCode).json({
-    status: "success",
-    token,
-    user,
-  });
+  req.status = statusCode;
+  req.obj = { token, user };
+  next();
 });
 
 exports.signup = catchAsync(async (req, res, next) => {
@@ -139,7 +137,8 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
-  res.status(200).json({ status: "success" });
+
+  next();
 };
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -220,10 +219,8 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
   if (user.changedPasswordAfter(decoded.iat))
     return next(new AppError("password_changed_recent", 401));
 
-  res.status(200).json({
-    status: "success",
-    user,
-  });
+  req.obj = { user };
+  next();
 });
 
 /**
@@ -257,10 +254,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       await new Email(user, resetURL).sendPasswordReset();
     console.log(resetURL);
 
-    res.status(200).json({
-      status: "success",
-      message: "Token sent to email!",
-    });
+    res.obj = { message: "Token sent to email!" };
+    next();
   } catch (error) {
     user.paswordResetToken = undefined;
     user.paswordResetTokenExpires = undefined;
@@ -287,7 +282,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.paswordResetToken = undefined;
   user.paswordResetTokenExpires = undefined;
   await user.save();
-  createTokenAndSignIn(user, 200, req, res);
+  req.statusCode = 200;
+  req.user = user;
+  next();
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -300,6 +297,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
 
   await user.save();
-
-  createTokenAndSignIn(user, 200, req, res);
+  req.statusCode = 200;
+  req.user = user;
+  next();
 });

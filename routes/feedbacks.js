@@ -3,7 +3,7 @@ const Model = require("../models/feedbackModel");
 const handlerFactory = require("./helpers/handlerFactory");
 const { restrictFeedbacks } = require("../controllers/feedbackController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { populate, archive, makeDeleted } = require("../utils/helpers");
+const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
 const { getAll, createOne, getOne, updateOne, deleteOne } =
@@ -14,15 +14,18 @@ const router = express.Router();
 router.use(protect);
 
 router.use(restrictTo(["owner", "admin", "manager", "teacher"]));
-router.route("/").post(getCode("feedback"), createOne);
+router.route("/").post(getCode("feedback"), createOne, sendRes);
 
-router.route("/:id").patch(updateOne).delete(makeDeleted, updateOne);
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+router
+  .route("/:id")
+  .patch(updateOne, sendRes)
+  .delete(makeDeleted, updateOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne, sendRes);
+router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
 
 router.use(restrictTo(["owner", "admin", "manager", "teacher"]));
-router.route("/").get(restrictFeedbacks, getAll);
+router.route("/").get(restrictFeedbacks, getAll, sendRes);
 router
   .route("/:id")
   .get(

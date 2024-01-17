@@ -12,7 +12,7 @@ const {
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const { populate, archive, makeDeleted } = require("../utils/helpers");
+const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne, deleteOne } =
   handlerFactory(Model);
@@ -24,7 +24,10 @@ scheduleRecurrenceNotifications();
 
 router.use(protect);
 
-router.route("/").get(populate("executionCount"), getAll).post(createOne);
+router
+  .route("/")
+  .get(populate("executionCount"), getAll, sendRes)
+  .post(createOne, sendRes);
 
 router
   .route("/:id")
@@ -36,8 +39,8 @@ router
     ]),
     getOne
   )
-  .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+  .patch(updateOne, sendRes)
+  .delete(makeDeleted, updateOne, sendRes);
 router
   .route("/:id/execute")
   .post(
@@ -48,8 +51,8 @@ router
     createTransaction
   );
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+router.route("/:id/archive").get(archive, updateOne, sendRes);
+router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
 
 module.exports = router;

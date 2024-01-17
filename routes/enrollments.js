@@ -7,6 +7,7 @@ const {
   populate,
   activate,
   deactivate,
+  sendRes,
 } = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
 const { roles } = require("../utils/constants/enums");
@@ -21,20 +22,20 @@ router.use(protect, restrictTo([roles.OWNER, roles.ADMIN, roles.MANAGER]));
 
 router
   .route("/")
-  .get(populate([{ path: "group" }, { path: "student" }]), getAll)
-  .post(prepareEnrollment, createOne);
+  .get(populate([{ path: "group" }, { path: "student" }]), getAll, sendRes)
+  .post(prepareEnrollment, createOne, sendRes);
 
 router
   .route("/:id")
-  .get(getOne)
-  .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+  .get(getOne, sendRes)
+  .patch(updateOne, sendRes)
+  .delete(makeDeleted, updateOne, sendRes);
 
-router.route("/:id/activate").get(activate, updateOne);
-router.route("/:id/deactivate").get(deactivate, updateOne);
+router.route("/:id/activate").get(activate, updateOne, sendRes);
+router.route("/:id/deactivate").get(deactivate, updateOne, sendRes);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+router.route("/:id/archive").get(archive, updateOne, sendRes);
+router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
 
 module.exports = router;
