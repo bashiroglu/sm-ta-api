@@ -10,17 +10,7 @@ const { roles } = require("../utils/constants/enums");
 
 const updateBalance = catchAsync(async (req, res, next) => {
   let {
-    body: {
-      amount,
-      isIncome,
-      branch: branchId,
-      category,
-      internal,
-      relatedTo,
-      groupId,
-      permissionCount,
-      lessonCount,
-    },
+    body: { amount, isIncome, branch: branchId, category, internal, relatedTo },
     session,
   } = req;
 

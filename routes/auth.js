@@ -12,7 +12,6 @@ const {
   getCurrentUser,
   updatePassword,
 } = require("../controllers/authController");
-const AppError = require("../utils/appError");
 
 const router = express.Router();
 
