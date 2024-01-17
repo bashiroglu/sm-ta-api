@@ -7,7 +7,7 @@ const {
   crudGroupLessons,
   checkRole,
 } = require("../controllers/groupController");
-const { createStudents } = require("../controllers/studentController");
+const { createEnrollments } = require("../controllers/enrollmentController");
 const { protect, restrictTo } = require("../controllers/authController");
 const lessonRouter = require("./lessons");
 const { populate, archive, makeDeleted } = require("../utils/helpers");
@@ -22,7 +22,10 @@ router.use(
   protect,
   restrictTo("roles", roles.OWNER, roles.ADMIN, roles.MANAGER)
 );
-router.route("/").get(getAll).post(getCode("group"), createStudents, createOne);
+router
+  .route("/")
+  .get(getAll)
+  .post(getCode("group"), createEnrollments, createOne);
 
 router
   .route("/:id")
@@ -40,7 +43,7 @@ router
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
 
-router.route("/:id/students").post(createStudents, getOne);
+router.route("/:id/students").post(createEnrollments, getOne);
 
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);

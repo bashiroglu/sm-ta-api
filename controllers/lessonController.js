@@ -1,6 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const GroupModel = require("../models/groupModel");
-const StudentModel = require("../models/studentModel");
+const EnrollmentModel = require("../models/enrollmentModel");
 const UserModel = require("../models/userModel");
 const AppError = require("../utils/appError");
 
@@ -25,17 +25,15 @@ const prepareLesson = catchAsync(async (req, res, next) => {
   if (String(group.teacher.id) !== String(teacherId))
     return next(new AppError("group_teacher_is_other_user", 404));
   const { program } = group;
-
-  console.log(id);
-  const students = await StudentModel.find({
+  const enrollments = await EnrollmentModel.find({
     group: id,
     status: "active",
   }).session(session);
-  if (!students.length) return next(new AppError("students_not_faund", 404));
+  if (!enrollments.length) return next(new AppError("students_not_faund", 404));
 
   const paidStudents = [];
 
-  students.forEach(async (studentObj) => {
+  enrollments.forEach(async (studentObj) => {
     const { lessonCount, permissionCount, status, student } = studentObj;
     const isActive = status === "active";
     const isPresent = present.includes(String(student));
@@ -96,7 +94,7 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
     paidStudents,
   };
 
-  req.lessonBody = { ...req.body, studentState: students };
+  req.lessonBody = { ...req.body, studentState: enrollments };
 
   next();
 });

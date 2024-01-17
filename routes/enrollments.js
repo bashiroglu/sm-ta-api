@@ -1,5 +1,5 @@
 const express = require("express");
-const Model = require("../models/studentModel");
+const Model = require("../models/enrollmentModel");
 const { getAll, createOne, getOne, updateOne, deleteOne } =
   require("./helpers/handlerFactory")(Model);
 
@@ -12,7 +12,7 @@ const {
 } = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
 const { roles } = require("../utils/constants/enums");
-const { prepareStudent } = require("../controllers/studentController");
+const { prepareEnrollment } = require("../controllers/enrollmentController");
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.use(
 router
   .route("/")
   .get(populate([{ path: "group" }, { path: "student" }]), getAll)
-  .post(prepareStudent, createOne);
+  .post(prepareEnrollment, createOne);
 
 router
   .route("/:id")

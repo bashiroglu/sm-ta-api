@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const collectionName = "Student";
+const collectionName = "Enrollment";
 const schema = new mongoose.Schema(
   {
     group: {

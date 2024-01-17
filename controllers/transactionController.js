@@ -2,7 +2,7 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Model = require("../models/transactionModel");
 const RecurrenceModel = require("../models/recurrenceModel");
-const StudentModel = require("../models/studentModel");
+const EnrollmentModel = require("../models/enrollmentModel");
 const BranchModel = require("../models/branchModel");
 const GroupModel = require("../models/groupModel");
 const LowerCategory = require("../models/lowerCategoryModel");
@@ -10,7 +10,16 @@ const { roles } = require("../utils/constants/enums");
 
 const updateBalance = catchAsync(async (req, res, next) => {
   let {
-    body: { amount, isIncome, branch: branchId, category, internal, relatedTo },
+    body: {
+      amount,
+      isIncome,
+      branch: branchId,
+      category,
+      internal,
+      relatedTo,
+      lessonCount,
+      permissionCount,
+    },
     session,
   } = req;
 
@@ -29,7 +38,7 @@ const updateBalance = catchAsync(async (req, res, next) => {
       },
     } = await GroupModel.findById(groupId).populate("program").session(session);
 
-    const student = await StudentModel.findOneAndUpdate(
+    const enrollment = await EnrollmentModel.findOneAndUpdate(
       {
         student: relatedTo,
         group: groupId,
@@ -40,7 +49,7 @@ const updateBalance = catchAsync(async (req, res, next) => {
       }
     );
 
-    if (!student) return next(new AppError("student_not_found", 404));
+    if (!enrollment) return next(new AppError("student_not_found", 404));
   }
 
   if (internal) return next();

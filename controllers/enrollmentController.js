@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
-const Model = require("../models/studentModel");
+const Model = require("../models/enrollmentModel");
 const GroupModel = require("../models/groupModel");
 const ProgramModel = require("../models/programModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
-const createStudents = catchAsync(async (req, res, next) => {
+const createEnrollments = catchAsync(async (req, res, next) => {
   let {
     body: { students, program },
     params: { id },
@@ -37,7 +37,7 @@ const createStudents = catchAsync(async (req, res, next) => {
   next();
 });
 
-const prepareStudent = catchAsync(async (req, res, next) => {
+const prepareEnrollment = catchAsync(async (req, res, next) => {
   const { program } = await GroupModel.findById(req.body.group).populate(
     "program"
   );
@@ -48,4 +48,7 @@ const prepareStudent = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports = { createStudents, prepareStudent };
+module.exports = {
+  createEnrollments,
+  prepareEnrollment,
+};

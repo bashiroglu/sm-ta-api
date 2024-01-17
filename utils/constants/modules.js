@@ -59,5 +59,5 @@ exports.modules = [
     collectionName: "UpperCategory",
   },
   { route: "users", model: "user", collectionName: "User" },
-  { route: "students", model: "student", collectionName: "Student" },
+  { route: "enrollments", model: "enrollment", collectionName: "Enrollment" },
 ];

@@ -65,8 +65,8 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.virtual("students", {
-  ref: "Student",
+schema.virtual("enrollments", {
+  ref: "Enrolment",
   foreignField: "group",
   localField: "_id",
 });
@@ -77,7 +77,7 @@ schema.pre(/^find/, function (next) {
 });
 
 schema.statics.studentsPopOpts = {
-  path: "students",
+  path: "enrollments",
   select: "student lessonCount permissionCount",
   populate: { path: "student", select: "id name surname code email" },
   transform: ({
