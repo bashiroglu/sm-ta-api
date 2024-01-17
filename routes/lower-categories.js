@@ -15,7 +15,7 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 
 const router = express.Router({ mergeParams: true });
 
-router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
+router.use(protect, restrictTo(["owner", "admin", "manager"]));
 
 router.route("/").get(sortDescending, getAll).post(checkRestriction, createOne);
 router.route("/upper/:slug").get(queryByUpperSlug, getAll);
@@ -29,6 +29,6 @@ router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
 router
   .route("/:id/delete")
-  .delete(restrictTo("roles", "admin"), checkDeletability, deleteOne);
+  .delete(restrictTo(["admin"]), checkDeletability, deleteOne);
 
 module.exports = router;

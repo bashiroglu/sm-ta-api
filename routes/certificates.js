@@ -22,6 +22,6 @@ router
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
 
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
 module.exports = router;

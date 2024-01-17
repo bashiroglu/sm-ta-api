@@ -17,10 +17,7 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 
 const router = express.Router();
 
-router.use(
-  protect,
-  restrictTo("roles", roles.OWNER, roles.ADMIN, roles.MANAGER)
-);
+router.use(protect, restrictTo([roles.OWNER, roles.ADMIN, roles.MANAGER]));
 
 router
   .route("/")
@@ -38,6 +35,6 @@ router.route("/:id/deactivate").get(deactivate, updateOne);
 
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
 module.exports = router;

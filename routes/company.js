@@ -12,10 +12,10 @@ const router = express.Router();
 router.route("/is-under-construction").get(checkConstruction);
 
 router.use(protect);
-router.use(restrictTo("roles", "owner"));
+router.use(restrictTo(["owner"]));
 router.route("/").get(getAll).post(createOne);
 
-router.use(restrictTo("roles", "owner", "admin"));
+router.use(restrictTo(["owner", "admin"]));
 router
   .route("/:id")
   .get(getOne)

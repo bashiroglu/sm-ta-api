@@ -31,7 +31,7 @@ router
   .patch(assignParamsId, updateMe, updateOne)
   .delete(assignParamsId, makeDeleted, updateOne);
 
-router.use(restrictTo("roles", "owner", "admin", "manager"));
+router.use(restrictTo(["owner", "admin", "manager"]));
 
 router
   .route("/role/:role")
@@ -87,6 +87,6 @@ router.route("/:id/deactivate").get(deactivateUser, updateOne);
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
 
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
 module.exports = router;

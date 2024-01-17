@@ -14,10 +14,7 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 
 const router = express.Router({ mergeParams: true });
 
-router.use(
-  protect,
-  restrictTo("roles", "owner", "admin", "manager", "teacher")
-);
+router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
 router
   .route("/")
   .get(populate([{ path: "teacher", select: "name surname" }]), getAll)
@@ -35,6 +32,6 @@ router
   .delete(makeDeleted, updateOne);
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
 module.exports = router;

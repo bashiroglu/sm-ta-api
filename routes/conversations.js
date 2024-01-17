@@ -39,10 +39,7 @@ router
 router.route("/").get(getAll);
 router.route("/:id").get(getOne);
 
-router.use(
-  protect,
-  restrictTo("roles", "owner", "admin", "manager", "teacher")
-);
+router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
 
 router.route("/").post(getCode(name), createOne);
 router.route("/:id").patch(checkRole, updateOne).delete(makeDeleted, updateOne);

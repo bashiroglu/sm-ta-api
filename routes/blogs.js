@@ -15,7 +15,7 @@ router.route("/").get(getAll);
 router.route("/:id").get(getOne);
 router.route("/:id/view").get(incrementViewCount, updateOne);
 
-router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
+router.use(protect, restrictTo(["owner", "admin", "manager"]));
 router.route("/").post(getCode("blog"), createOne);
 router
   .route("/:id")
@@ -25,6 +25,6 @@ router
 
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
 module.exports = router;

@@ -19,10 +19,10 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 
 const router = express.Router();
 
-router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
+router.use(protect, restrictTo(["owner", "admin", "manager"]));
 router.route("/").get(getAll).post(setCompany, createOne);
 
-router.use(restrictTo("roles", "owner", "admin"));
+router.use(restrictTo(["owner", "admin"]));
 
 router.route("/stats/student-count").get(getStatBranchesStudentCount, getAll);
 router.route("/stats/student-count/:id").get(getStatBranchStudentCount, getOne);
@@ -47,5 +47,5 @@ router.route("/:id/balance").get(getOnlyBlance, getOne);
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
 
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 module.exports = router;

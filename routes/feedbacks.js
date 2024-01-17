@@ -13,15 +13,15 @@ const router = express.Router();
 
 router.use(protect);
 
-router.use(restrictTo("roles", "owner", "admin", "manager", "teacher"));
+router.use(restrictTo(["owner", "admin", "manager", "teacher"]));
 router.route("/").post(getCode("feedback"), createOne);
 
 router.route("/:id").patch(updateOne).delete(makeDeleted, updateOne);
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
-router.use(restrictTo("roles", "owner", "admin", "manager", "teacher"));
+router.use(restrictTo(["owner", "admin", "manager", "teacher"]));
 router.route("/").get(restrictFeedbacks, getAll);
 router
   .route("/:id")

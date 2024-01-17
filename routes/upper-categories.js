@@ -12,7 +12,7 @@ const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router({ mergeParams: true });
 
-router.use(protect, restrictTo("roles", "owner", "admin", "manager"));
+router.use(protect, restrictTo(["owner", "admin", "manager"]));
 router
   .route("/")
   .get(populate({ path: "lowers" }), getAll)

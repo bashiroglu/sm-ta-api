@@ -16,7 +16,7 @@ const { getAll: getGroups, getOne: getGroup } = handlerFactory(GroupModel);
 
 const router = express.Router();
 
-router.use(protect, restrictTo("roles", "teacher"));
+router.use(protect, restrictTo(["teacher"]));
 
 router.route("/groups").get(directGroups, getGroups);
 router.route("/groups/:id").get(getGroup);

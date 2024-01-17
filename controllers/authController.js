@@ -228,11 +228,11 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
 
 /**
  * Use for permissions or roles restrictions
+ * @param  {array} items
  * @param {string} field
- * @param  {...string} items
  * @returns next()
  */
-exports.restrictTo = (field, ...items) => {
+exports.restrictTo = (items, field = "roles") => {
   return (req, res, next) =>
     // checks if there is intersection
     !hasCommon(items, req.user[field])

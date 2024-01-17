@@ -20,10 +20,7 @@ const router = express.Router();
 
 router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
-router.use(
-  protect,
-  restrictTo("roles", roles.OWNER, roles.ADMIN, roles.MANAGER)
-);
+router.use(protect, restrictTo([roles.OWNER, roles.ADMIN, roles.MANAGER]));
 router
   .route("/")
   .get(getAll)
@@ -32,7 +29,7 @@ router
 router
   .route("/:id")
   .get(
-    restrictTo("roles", roles.OWNER, roles.ADMIN, roles.MANAGER, roles.TEACHER),
+    restrictTo([roles.OWNER, roles.ADMIN, roles.MANAGER, roles.TEACHER]),
     checkRole,
     populate([
       { path: "createdBy", select: "name surname" },
@@ -49,6 +46,6 @@ router.route("/:id/students").post(createEnrollments, getOne);
 
 router.route("/:id/archive").get(archive, updateOne);
 router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo("roles", "admin"), deleteOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
 module.exports = router;

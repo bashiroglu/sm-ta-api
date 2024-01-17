@@ -10,10 +10,7 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 
 const router = express.Router();
 
-router.use(
-  protect,
-  restrictTo("roles", "owner", "admin", "manager", "teacher")
-);
+router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
 
 router.route("/").get(getAll).post(assignUser, createOne);
 router
