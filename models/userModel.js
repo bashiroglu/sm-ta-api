@@ -23,6 +23,18 @@ const schema = new mongoose.Schema(
     patronymic: {
       type: String,
     },
+    initial: {
+      type: String,
+      unique: true,
+      sparse: true,
+      validate: {
+        validator: function (val) {
+          if (this.roles.includes(roles.EMPLOYEE)) return val;
+          else true;
+        },
+        message: "",
+      },
+    },
     email: {
       type: String,
       // required: [true, "email is required"],

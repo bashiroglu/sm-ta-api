@@ -6,7 +6,7 @@ const Model = require("./../models/userModel");
 const GroupModel = require("../models/groupModel");
 const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
-const { filterObject } = require("../utils/helpers");
+const { filterObject, startTransSession } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
 const { sendSmsRequest } = require("../utils/sms");
 
@@ -63,25 +63,22 @@ const updateMe = catchAsync(async (req, res, next) => {
 
 const createUserByRole = catchAsync(async (req, res, next) => {
   const {
-    session,
-    body: { group },
+    body: { name, surname, patronymic },
     params: { role },
   } = req;
 
   const rolesArr = new Set([role]);
-  if (employeeRoles.values().includes(role)) rolesArr.add(roles.EMPLOYEE);
+  if (employeeRoles.values().includes(role)) {
+    rolesArr.add(roles.EMPLOYEE);
+    const n = name ? name.at(0) : "";
+    const s = surname ? surname.at(0) : "";
+    const p = patronymic ? patronymic.at(0) : "";
+    req.body.initial = `${n}${s}${p}`.toUpperCase();
+  }
   req.body.roles = [...rolesArr];
 
   const id = mongoose.Types.ObjectId();
   req.body._id = id;
-  if (group) {
-    const groupDoc = await GroupModel.findByIdAndUpdate(
-      group,
-      { $addToSet: { students: { student: id } } },
-      { new: true, session }
-    );
-    if (!groupDoc) return next(new AppError("group_not_found", 404));
-  }
   next();
 });
 
