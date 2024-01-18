@@ -14,7 +14,7 @@ const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router({ mergeParams: true });
 
-router.use(protect, restrictTo(["owner", "admin", "manager"]));
+router.use(protect, restrictTo(["admin", "manager"]));
 
 router.route("/").get(sortDescending, getAll).post(checkRestriction, createOne);
 router.route("/upper/:slug").get(queryByUpperSlug, getAll);

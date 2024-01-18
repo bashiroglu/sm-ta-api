@@ -89,6 +89,10 @@ schema.pre(/^find/, function (next) {
 
 schema.statics.q = ["title", "code"];
 
+schema.statics.codeOptions = {
+  field: collectionName,
+};
+
 schema.pre("save", async function (next) {
   if (!this.realDate) this.realDate = new Date();
 

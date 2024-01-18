@@ -6,24 +6,18 @@ const {
   createTransactionOnLessonCreate,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
-const getCode = require("../utils/getCode");
+
 const { populate, makeDeleted } = require("../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router({ mergeParams: true });
 
-router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
+router.use(protect, restrictTo(["admin", "manager", "teacher"]));
 router
   .route("/")
   .get(populate([{ path: "teacher", select: "name surname" }]), getAll)
-  .post(
-    getCode("lesson"),
-    prepareLesson,
-    getCode("transaction"),
-    createTransactionOnLessonCreate,
-    createOne
-  );
+  .post(prepareLesson, createTransactionOnLessonCreate, createOne);
 router
   .route("/:id")
   .get(populate({ path: "group", select: "name" }), getOne)

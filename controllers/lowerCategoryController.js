@@ -56,11 +56,9 @@ const checkDeletability = catchAsync(async (req, res, next) => {
   const lower = await Model.findById(req.params.id);
   if (!lower) return next(new AppError("doc_not_found", 404));
 
-  const notOwnerOrAdmin = !req.user.roles.some((role) =>
-    [roles.OWNER, roles.ADMIN].includes(role)
-  );
+  const notAdmin = !req.user.roles.some((role) => role === roles.ADMIN);
 
-  if (!lower.deletable || notOwnerOrAdmin)
+  if (!lower.deletable || notAdmin)
     return next(new AppError("immutable_field_delete", 400));
 
   next();

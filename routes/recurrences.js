@@ -11,7 +11,7 @@ const {
   checkBranch,
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
-const getCode = require("../utils/getCode");
+
 const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
@@ -39,12 +39,6 @@ router
   .delete(makeDeleted, updateOne);
 router
   .route("/:id/execute")
-  .post(
-    checkBranch,
-    getCode("transaction"),
-    executeRecurrence,
-    updateBalance,
-    createTransaction
-  );
+  .post(checkBranch, executeRecurrence, updateBalance, createTransaction);
 
 module.exports = router;

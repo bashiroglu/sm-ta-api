@@ -108,4 +108,8 @@ schema.pre("save", async function (next) {
   next();
 });
 
+schema.statics.codeOptions = {
+  field: collectionName,
+};
+
 module.exports = mongoose.model(collectionName, schema);

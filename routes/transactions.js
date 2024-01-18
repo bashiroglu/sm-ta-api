@@ -8,7 +8,6 @@ const {
 } = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { populate, makeDeleted } = require("../utils/helpers");
-const getCode = require("../utils/getCode");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
@@ -16,14 +15,14 @@ const router = express.Router();
 
 router.use(
   protect,
-  restrictTo(["owner", "admin", "manager"]),
+  restrictTo(["admin", "manager"]),
   restrictHiddenTransactions
 );
 
 router
   .route("/")
   .get(populate({ path: "createdBy", select: "name surname" }), getAll)
-  .post(checkBranch, getCode("transaction"), updateBalance, createOne);
+  .post(checkBranch, updateBalance, createOne);
 router
   .route("/:id")
   .get(

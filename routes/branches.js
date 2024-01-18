@@ -18,10 +18,10 @@ const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
-router.use(protect, restrictTo(["owner", "admin", "manager"]));
+router.use(protect, restrictTo(["admin", "manager"]));
 router.route("/").get(getAll).post(setCompany, createOne);
 
-router.use(restrictTo(["owner", "admin"]));
+router.use(restrictTo(["admin"]));
 
 router.route("/stats/student-count").get(getStatBranchesStudentCount, getAll);
 router.route("/stats/student-count/:id").get(getStatBranchStudentCount, getOne);

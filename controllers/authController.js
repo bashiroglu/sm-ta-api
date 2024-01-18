@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
@@ -7,7 +8,11 @@ const CompanyModel = require("../models/companyModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Email = require("../utils/email");
-const { restrictPerSubdomain, hasCommon } = require("../utils/helpers");
+const {
+  restrictPerSubdomain,
+  hasCommon,
+  getCode,
+} = require("../utils/helpers");
 
 const signToken = (id) => {
   let JWT_SECRET;
@@ -53,16 +58,22 @@ exports.signup = catchAsync(async (req, res, next) => {
       dateOfBirth,
       password,
       passwordConfirm,
-      code,
     },
-    session,
   } = req;
 
-  const roles = process.env.OWNER_EMAIL === email ? ["owner"] : undefined;
-  const active = process.env.OWNER_EMAIL === email || undefined;
-  let newUser;
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  newUser = await UserModel.create(
+  let roles, code, active;
+  if (process.env.ADMIN_EMAIL === email) {
+    roles = ["admin"];
+    active = true;
+    code = "ADMIN_CODE";
+  } else {
+    code = await getCode(UserModel, session);
+  }
+
+  const newUser = await UserModel.create(
     [
       {
         roles,

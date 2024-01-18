@@ -54,4 +54,8 @@ schema.pre(/^find/, function (next) {
 
 schema.statics.q = ["title", "subtitle", "body"];
 
+schema.statics.codeOptions = {
+  field: collectionName,
+};
+
 module.exports = mongoose.model(collectionName, schema);

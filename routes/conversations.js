@@ -1,6 +1,5 @@
 const express = require("express");
-const name = "conversation";
-const Model = require(`../models/${name}Model`);
+const Model = require("../models/conversationModel");
 const handlerFactory = require("./helpers/handlerFactory");
 const {
   registerUser,
@@ -15,7 +14,6 @@ const {
   signup,
 } = require("../controllers/authController");
 const { makeDeleted } = require("../utils/helpers");
-const getCode = require("../utils/getCode");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
@@ -27,20 +25,14 @@ router.use(checkRole);
 
 router
   .route("/:id/register")
-  .patch(
-    setPassword,
-    getCode("user", { modifier: "" }),
-    signup,
-    registerUser,
-    updateOne
-  );
+  .patch(setPassword, signup, registerUser, updateOne);
 
 router.route("/").get(getAll);
 router.route("/:id").get(getOne);
 
-router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
+router.use(protect, restrictTo(["admin", "manager", "teacher"]));
 
-router.route("/").post(getCode(name), createOne);
+router.route("/").post(createOne);
 router.route("/:id").patch(checkRole, updateOne).delete(makeDeleted, updateOne);
 
 router

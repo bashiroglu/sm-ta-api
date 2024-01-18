@@ -2,66 +2,23 @@ const mongoose = require("mongoose");
 const catchAsync = require("../../utils/catchAsync");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
+const { getCode } = require("../../utils/helpers");
 
 module.exports = (Model) => {
   return {
-    deleteOne: catchAsync(async (req, res, next) => {
-      const doc = await Model.findByIdAndDelete(req.params.id);
-      req.doc = doc;
-      if (!doc) return next(new AppError("doc_not_found", 404));
-
-      let session = req.session;
-      if (!session) {
-        session = await mongoose.startSession();
-        session.startTransaction();
-        req.session = session;
-      }
-
-      req.status = 204;
-      req.obj = { data: null };
-      next();
-    }),
-
-    updateOne: catchAsync(async (req, res, next) => {
-      let {
-        params: { id },
-        body,
-        query: reqQuery,
-        deleted,
-        arrayFilters,
-        filterObj,
-        session,
-      } = req;
-
-      if (!session) {
-        session = await mongoose.startSession();
-        session.startTransaction();
-        req.session = session;
-      }
-
-      let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](
-        filterObj || id,
-        body,
-        {
-          new: true,
-          runValidators: true,
-          arrayFilters,
-        }
-      ).session(session);
-
-      const features = new APIFeatures(query, reqQuery).limitFields();
-
-      const doc = await features.query;
-
-      if (!doc)
-        return next(new AppError("No document found with that ID", 404));
-
-      req.obj = { data: deleted ? null : doc };
-      next();
-    }),
-
     createOne: catchAsync(async (req, res, next) => {
       let { session, doc, body } = req;
+      const { codeOptions } = Model.schema.statics;
+      if (codeOptions) {
+        if (!session) {
+          session = await mongoose.startSession();
+          session.startTransaction();
+        }
+        const code = await getCode(Model, session);
+        if (!code) return next(new AppError("company_not_found", 404));
+        req.body.code = code;
+      }
+
       req.body.createdBy = req.user.id;
 
       if (!doc)
@@ -132,6 +89,61 @@ module.exports = (Model) => {
         results: result.length,
         data: result,
       };
+      next();
+    }),
+
+    updateOne: catchAsync(async (req, res, next) => {
+      let {
+        params: { id },
+        body,
+        query: reqQuery,
+        deleted,
+        arrayFilters,
+        filterObj,
+        session,
+      } = req;
+
+      if (!session) {
+        session = await mongoose.startSession();
+        session.startTransaction();
+        req.session = session;
+      }
+
+      let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](
+        filterObj || id,
+        body,
+        {
+          new: true,
+          runValidators: true,
+          arrayFilters,
+        }
+      ).session(session);
+
+      const features = new APIFeatures(query, reqQuery).limitFields();
+
+      const doc = await features.query;
+
+      if (!doc)
+        return next(new AppError("No document found with that ID", 404));
+
+      req.obj = { data: deleted ? null : doc };
+      next();
+    }),
+
+    deleteOne: catchAsync(async (req, res, next) => {
+      const doc = await Model.findByIdAndDelete(req.params.id);
+      req.doc = doc;
+      if (!doc) return next(new AppError("doc_not_found", 404));
+
+      let session = req.session;
+      if (!session) {
+        session = await mongoose.startSession();
+        session.startTransaction();
+        req.session = session;
+      }
+
+      req.status = 204;
+      req.obj = { data: null };
       next();
     }),
   };

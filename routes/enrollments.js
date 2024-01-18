@@ -15,7 +15,7 @@ const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
-router.use(protect, restrictTo([roles.OWNER, roles.ADMIN, roles.MANAGER]));
+router.use(protect, restrictTo([roles.ADMIN, roles.MANAGER]));
 
 router
   .route("/")

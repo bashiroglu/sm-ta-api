@@ -253,4 +253,9 @@ schema.virtual("branches", {
   localField: "_id",
 });
 
+schema.statics.codeOptions = {
+  field: collectionName,
+  modifier: "",
+};
+
 module.exports = mongoose.model(collectionName, schema);

@@ -14,7 +14,7 @@ const {
   aliasTinyStudent,
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
-const getCode = require("../utils/getCode");
+
 const { populate, makeDeleted } = require("../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
@@ -30,17 +30,12 @@ router
   .patch(assignParamsId, updateMe, updateOne)
   .delete(assignParamsId, makeDeleted, updateOne);
 
-router.use(restrictTo(["owner", "admin", "manager"]));
+router.use(restrictTo(["admin", "manager"]));
 
 router
   .route("/role/:role")
   .get(getAllByRole, getAll)
-  .post(
-    getCode("user", { modifier: "" }),
-    createUserByRole,
-    setPassword,
-    createOne
-  );
+  .post(createUserByRole, setPassword, createOne);
 
 router.route("/role/student/tiny").get(aliasTinyStudent, getAll);
 router.route("/role/student/participation").get(
@@ -60,10 +55,7 @@ router.route("/role/student/:id/participation").get(
   getOne
 );
 
-router
-  .route("/")
-  .get(getAll)
-  .post(getCode("user", { modifier: "" }), setPassword, createOne);
+router.route("/").get(getAll).post(setPassword, createOne);
 
 router
   .route("/:id")

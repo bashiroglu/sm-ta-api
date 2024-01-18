@@ -84,4 +84,8 @@ schema.pre(/^find/, function (next) {
 
 schema.statics.q = ["topic", "code"];
 
+schema.statics.codeOptions = {
+  field: collectionName,
+};
+
 module.exports = mongoose.model(collectionName, schema);

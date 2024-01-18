@@ -7,6 +7,7 @@ const BranchModel = require("../models/branchModel");
 const GroupModel = require("../models/groupModel");
 const LowerCategory = require("../models/lowerCategoryModel");
 const { roles } = require("../utils/constants/enums");
+const { getCode } = require("../utils/helpers");
 
 const updateBalance = catchAsync(async (req, res, next) => {
   let {
@@ -83,10 +84,9 @@ const checkBranch = catchAsync(async (req, res, next) => {
     req.recurrence = recurrence;
   }
 
-  const isOwner = userRoles.includes(roles.OWNER);
   const isAdmin = userRoles.includes(roles.ADMIN);
 
-  if (!(isOwner || isAdmin)) {
+  if (!isAdmin) {
     const isManager = userRoles.includes(roles.MANAGER);
     if (!isManager) return next(new AppError("not_authorized", 401));
     const branchIds = branches?.map((b) => b.id);
@@ -107,12 +107,8 @@ const restrictHiddenTransactions = catchAsync(async (req, res, next) => {
 });
 
 const createTransactionOnLessonCreate = catchAsync(async (req, res, next) => {
-  const {
-    transactionBody,
-    lessonBody,
-    body: { code },
-    session,
-  } = req;
+  const { transactionBody, lessonBody, session } = req;
+  const code = await getCode(Model, session);
   await Model.create([{ code, ...transactionBody }], { session });
 
   req.body = lessonBody;

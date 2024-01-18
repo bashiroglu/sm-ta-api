@@ -7,7 +7,7 @@ const { getAll: getContacts } = handlerFactory(Model);
 
 const router = express.Router();
 
-router.use(protect, restrictTo(["admin", "manager", "owner"]));
+router.use(protect, restrictTo(["admin", "manager"]));
 
 router.route("/").get(getContacts);
 

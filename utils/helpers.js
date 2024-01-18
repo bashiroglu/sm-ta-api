@@ -1,6 +1,7 @@
 const fs = require("fs");
 const cron = require("node-cron");
 
+const CompanyModel = require("../models/companyModel");
 const LogModel = require("../models/logModel");
 const catchAsync = require("./catchAsync");
 const mongoose = require("mongoose");
@@ -149,6 +150,30 @@ const sendRes = catchAsync(async (req, res, next) => {
   });
 });
 
+const getCode = async (Model, session) => {
+  let { field, modifier, digitCount } = Model.schema.statics.codeOptions;
+  field = field.toLowerCase();
+
+  const COMPANY_ID = process.env.COMPANY_ID;
+  if (!COMPANY_ID) return;
+
+  const company = await CompanyModel.findByIdAndUpdate(
+    COMPANY_ID,
+    { $inc: { [field]: 1 } },
+    { session }
+  );
+
+  if (!company) return;
+
+  const codeCount = company[field];
+
+  const code = `${company.code}${modifier ?? field.toUpperCase()}${"0".repeat(
+    digitCount - `${codeCount}`.length
+  )}${codeCount + 1}`;
+
+  return code;
+};
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
@@ -167,4 +192,5 @@ module.exports = {
   activate,
   deactivate,
   sendRes,
+  getCode,
 };

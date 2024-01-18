@@ -8,7 +8,7 @@ const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
-router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
+router.use(protect, restrictTo(["admin", "manager", "teacher"]));
 
 router.route("/").get(getAll).post(createOne);
 router
