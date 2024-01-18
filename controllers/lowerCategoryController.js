@@ -1,5 +1,5 @@
 const catchAsync = require("../utils/catchAsync");
-const Model = require("../models/lowerCategoryModel");
+const LowerCategoryModel = require("../models/lowerCategoryModel");
 const UpperCategoryModel = require("../models/upperCategoryModel");
 const { roles } = require("../utils/constants/enums");
 const AppError = require("../utils/appError");
@@ -57,7 +57,7 @@ const checkDeletability = catchAsync(async (req, res, next) => {
   if (!lower) return next(new AppError("doc_not_found", 404));
 
   const notOwnerOrAdmin = !req.user.roles.some((role) =>
-    [roles.OWNER, roles.ADMIN].includes(role)
+    [roles.OWNER, roles.ADMIN].includes(role),
   );
 
   if (!lower.deletable || notOwnerOrAdmin)

@@ -26,7 +26,6 @@ const schema = new mongoose.Schema(
 
     name: String,
     price: Number,
-
     deleted: Boolean,
     archived: Boolean,
     createdBy: {
@@ -38,7 +37,7 @@ const schema = new mongoose.Schema(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 schema.pre(/^find/, function (next) {
