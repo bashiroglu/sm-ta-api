@@ -178,7 +178,7 @@ const schema = new mongoose.Schema(
 
 schema.virtual("teacherGroups", {
   ref: "Group",
-  foreignField: "teachers",
+  foreignField: "teacher",
   localField: "_id",
 });
 
@@ -235,8 +235,8 @@ schema.virtual("fullName").get(function () {
   return this.name + " " + this.surname;
 });
 
-schema.virtual("groups", {
-  ref: "Student",
+schema.virtual("enrollments", {
+  ref: "Enrollment",
   foreignField: "student",
   localField: "_id",
 });

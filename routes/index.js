@@ -3,6 +3,7 @@ const { archive, sendRes } = require("../utils/helpers");
 const { modules } = require("../utils/constants/modules");
 const handlerFactory = require("./helpers/handlerFactory");
 const { restrictTo } = require("../controllers/authController");
+const { checkMembership } = require("../controllers/userController");
 
 const mainRouter = express.Router();
 
@@ -17,7 +18,9 @@ modules.forEach((module) => {
     router.route("/:id/unarchive").patch(archive, updateOne);
 
     if (!["upperCategory", "lowerCategory"].includes(module.model))
-      router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+      router
+        .route("/:id/delete")
+        .delete(restrictTo(["admin"]), checkMembership, deleteOne);
   }
   router.use(sendRes);
 

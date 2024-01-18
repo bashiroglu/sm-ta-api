@@ -96,6 +96,13 @@ module.exports = (Model) => {
         session,
       } = req;
 
+      // this code prevents update deleted field not via makedeleted middleware
+      if (
+        deleted in body &&
+        body.makeDeleted !== process.env.MAKE_DELETED_SECRET
+      )
+        body = {};
+
       session = await startTransSession(req);
 
       let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](

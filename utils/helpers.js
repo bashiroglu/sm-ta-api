@@ -90,7 +90,10 @@ const archive = catchAsync(async (req, res, next) => {
 });
 
 const makeDeleted = catchAsync(async (req, res, next) => {
-  req.body = { deleted: true };
+  req.body = {
+    deleted: true,
+    makeDeleted: process.env.MAKE_DELETED_SECRET,
+  };
   req.deleted = true;
   next();
 });

@@ -12,6 +12,7 @@ const {
   deactivateUser,
   scheduleBirthdayNotifications,
   aliasTinyStudent,
+  checkMembership,
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 
@@ -61,7 +62,7 @@ router
   .route("/:id")
   .get(populate({ path: "positions", select: "title id" }), getOne)
   .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+  .delete(checkMembership, makeDeleted, updateOne);
 
 router.route("/:id/tags").get(setReqBody, getOne).patch(setReqBody, updateOne);
 router
@@ -70,6 +71,8 @@ router
   .patch(setReqBody, updateOne);
 
 router.route("/:id/activate").patch(activateUser, updateOne);
-router.route("/:id/deactivate").patch(deactivateUser, updateOne);
+router
+  .route("/:id/deactivate")
+  .patch(checkMembership, deactivateUser, updateOne);
 
 module.exports = router;

@@ -94,7 +94,7 @@ const aliasTinyStudent = catchAsync(async (req, res, next) => {
   req.query.fields = "name surname patronymic code";
   req.query.roles = "student";
   req.popOptions = {
-    path: "groups",
+    path: "enrollments",
     match: { status: "active" },
     select: "group",
     populate: {
@@ -144,6 +144,25 @@ const deactivateUser = catchAsync(async (req, res, next) => {
   next();
 });
 
+const checkMembership = catchAsync(async (req, res, next) => {
+  if (!req.baseUrl.endsWith("users")) next();
+  const user = await Model.findById(req.params.id).populate([
+    { path: "teacherGroups" },
+    { path: "branches" },
+    { path: "enrollments", match: { status: "active" } },
+  ]);
+  const { roles: userRoles, teacherGroups, branches, enrollments } = user;
+  if (userRoles.includes(roles.TEACHER) && teacherGroups?.length)
+    return next(new AppError("Teacher has group membership", 400));
+
+  if (userRoles.includes(roles.MANAGER) && branches?.length)
+    return next(new AppError("User is manager of a branch", 400));
+
+  if (userRoles.includes(roles.STUDENT) && enrollments?.length)
+    return next(new AppError("Student has active group enrollment", 400));
+  next();
+});
+
 module.exports = {
   scheduleBirthdayNotifications,
   assignParamsId,
@@ -156,4 +175,5 @@ module.exports = {
   activateUser,
   deactivateUser,
   aliasTinyStudent,
+  checkMembership,
 };
