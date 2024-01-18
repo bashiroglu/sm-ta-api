@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const catchAsync = require("../../utils/catchAsync");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
@@ -6,7 +7,15 @@ module.exports = (Model) => {
   return {
     deleteOne: catchAsync(async (req, res, next) => {
       const doc = await Model.findByIdAndDelete(req.params.id);
+      req.doc = doc;
       if (!doc) return next(new AppError("doc_not_found", 404));
+
+      let session = req.session;
+      if (!session) {
+        session = await mongoose.startSession();
+        session.startTransaction();
+        req.session = session;
+      }
 
       req.status = 204;
       req.obj = { data: null };
@@ -15,34 +24,37 @@ module.exports = (Model) => {
 
     updateOne: catchAsync(async (req, res, next) => {
       let {
-        doc,
         params: { id },
         body,
         query: reqQuery,
         deleted,
         arrayFilters,
         filterObj,
+        session,
       } = req;
 
-      if (!doc) {
-        let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](
-          filterObj || id,
-          body,
-          {
-            new: true,
-            runValidators: true,
-            arrayFilters,
-          }
-        );
-
-        const features = new APIFeatures(query, reqQuery).limitFields();
-
-        doc = await features.query;
-
-        if (!doc) {
-          return next(new AppError("No document found with that ID", 404));
-        }
+      if (!session) {
+        session = await mongoose.startSession();
+        session.startTransaction();
+        req.session = session;
       }
+
+      let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](
+        filterObj || id,
+        body,
+        {
+          new: true,
+          runValidators: true,
+          arrayFilters,
+        }
+      ).session(session);
+
+      const features = new APIFeatures(query, reqQuery).limitFields();
+
+      const doc = await features.query;
+
+      if (!doc)
+        return next(new AppError("No document found with that ID", 404));
 
       req.obj = { data: deleted ? null : doc };
       next();
@@ -58,11 +70,6 @@ module.exports = (Model) => {
           session ? { session } : null
         );
 
-      if (session) {
-        await session.commitTransaction();
-        session.endSession();
-      }
-
       if (doc?.length > 0) doc = doc.at(0);
 
       req.status = 201;
@@ -71,30 +78,32 @@ module.exports = (Model) => {
     }),
 
     getOne: catchAsync(async (req, res, next) => {
-      if (!req.doc) {
-        let query = Model.findById(req.params.id);
+      const {
+        popOptions,
+        query: reqQuery,
+        pipeline,
+        params: { id },
+      } = req;
 
-        if (req.popOptions) query = query.populate(req.popOptions);
-        const features = new APIFeatures(query, req.query)
-          .filter()
-          .limitFields();
-        req.doc = await features.query;
-        if (!req.doc) return next(new AppError("doc_not_found", 404));
-      }
+      let query = pipeline ? pipeline : Model.findById(id);
 
-      req.obj = { data: req.doc };
+      if (popOptions) query = query.populate(popOptions);
+      const features = new APIFeatures(query, reqQuery).filter().limitFields();
+      const doc = await features.query;
+      if (!doc) return next(new AppError("doc_not_found", 404));
+
+      req.obj = { data: doc };
       next();
     }),
 
     getAll: catchAsync(async (req, res, next) => {
       // 1. Extract request parameters
-      const { popOptions, query: requestQuery, pipeline } = req;
+      const { popOptions, query: reqQuery, pipeline } = req;
 
-      if (requestQuery.archived === undefined)
-        requestQuery.archived = { $ne: true };
-      if (requestQuery.archived === null) requestQuery.archived = undefined;
-      if (requestQuery.archived === false) requestQuery.archived = false;
-      if (requestQuery.archived === true) requestQuery.archived = true;
+      if (reqQuery.archived === undefined) reqQuery.archived = { $ne: true };
+      if (reqQuery.archived === null) reqQuery.archived = undefined;
+      if (reqQuery.archived === false) reqQuery.archived = false;
+      if (reqQuery.archived === true) reqQuery.archived = true;
 
       // 2. Build the initial query
       let query = pipeline ? pipeline : Model.find();
@@ -103,7 +112,7 @@ module.exports = (Model) => {
       if (popOptions) query = query.populate(popOptions);
 
       // 4. Create APIFeatures instance for query filtering, sorting, and field limiting
-      const features = new APIFeatures(query, requestQuery)
+      const features = new APIFeatures(query, reqQuery)
         .filter()
         .sort()
         .limitFields();
@@ -118,7 +127,7 @@ module.exports = (Model) => {
       const result = await paginatedFeatures.query;
 
       // 8. Send the response
-      res.obj = {
+      req.obj = {
         total: total.length,
         results: result.length,
         data: result,

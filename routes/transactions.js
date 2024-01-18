@@ -23,8 +23,8 @@ router.use(
 
 router
   .route("/")
-  .get(populate({ path: "createdBy", select: "name surname" }), getAll, sendRes)
-  .post(checkBranch, getCode("transaction"), updateBalance, createOne, sendRes);
+  .get(populate({ path: "createdBy", select: "name surname" }), getAll)
+  .post(checkBranch, getCode("transaction"), updateBalance, createOne);
 router
   .route("/:id")
   .get(
@@ -35,11 +35,12 @@ router
     ]),
     getOne
   )
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;

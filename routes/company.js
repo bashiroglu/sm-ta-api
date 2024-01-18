@@ -9,18 +9,19 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
   handlerFactory(Model);
 const router = express.Router();
 
-router.route("/is-under-construction").get(checkConstruction, sendRes);
+router.route("/is-under-construction").get(checkConstruction);
 
 router.use(protect);
 router.use(restrictTo(["owner"]));
-router.route("/").get(getAll, sendRes).post(createOne, sendRes);
+router.route("/").get(getAll).post(createOne);
 
 router.use(restrictTo(["owner", "admin"]));
 router
   .route("/:id")
-  .get(getOne, sendRes)
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
-router.route("/:id/delete").delete(deleteOne, sendRes);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
+router.use(sendRes);
 module.exports = router;

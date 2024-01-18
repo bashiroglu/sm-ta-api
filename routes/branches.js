@@ -20,36 +20,33 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 const router = express.Router();
 
 router.use(protect, restrictTo(["owner", "admin", "manager"]));
-router.route("/").get(getAll, sendRes).post(setCompany, createOne, sendRes);
+router.route("/").get(getAll).post(setCompany, createOne);
 
 router.use(restrictTo(["owner", "admin"]));
 
-router
-  .route("/stats/student-count")
-  .get(getStatBranchesStudentCount, getAll, sendRes);
-router
-  .route("/stats/student-count/:id")
-  .get(getStatBranchStudentCount, getOne, sendRes);
+router.route("/stats/student-count").get(getStatBranchesStudentCount, getAll);
+router.route("/stats/student-count/:id").get(getStatBranchStudentCount, getOne);
 router
   .route("/stats/group-student-count")
-  .get(getStatBranchesGroupStudentCount, getAll, sendRes);
+  .get(getStatBranchesGroupStudentCount, getAll);
 router
   .route("/stats/student-count-by-months")
-  .get(getStatBranchesStudentCountByMonths, getAll, sendRes);
-router.route("/stats/balance").get(getStatBranchesBalance, getAll, sendRes);
+  .get(getStatBranchesStudentCountByMonths, getAll);
+router.route("/stats/balance").get(getStatBranchesBalance, getAll);
 router
   .route("/stats/income-by-months")
-  .get(getStatBranchesIncomeByMonth, getAll, sendRes);
+  .get(getStatBranchesIncomeByMonth, getAll);
 
 router
   .route("/:id")
-  .get(getOne, sendRes)
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
-router.route("/:id/balance").get(getOnlyBlance, getOne, sendRes);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
+router.route("/:id/balance").get(getOnlyBlance, getOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
 
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+router.use(sendRes);
 module.exports = router;

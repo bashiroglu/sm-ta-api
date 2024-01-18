@@ -11,21 +11,18 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route("/").get(getAll, sendRes).post(createOne, sendRes);
+router.route("/").get(getAll).post(createOne);
 
 router
   .route("/:id")
-  .get(
-    populate({ path: "createdBy", select: "name surname fullName" }),
-    getOne,
-    sendRes
-  )
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, deleteOne, sendRes);
+  .get(populate({ path: "createdBy", select: "name surname fullName" }), getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, deleteOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
 
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;

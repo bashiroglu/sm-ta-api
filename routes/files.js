@@ -12,6 +12,7 @@ const { sendRes } = require("../utils/helpers");
 const router = express.Router();
 
 router.use(protect);
-router.route("/").post(uploadFile, upload, sendRes).delete(remove, sendRes);
+router.route("/").post(uploadFile, upload).delete(remove);
 
+router.use(sendRes);
 module.exports = router;

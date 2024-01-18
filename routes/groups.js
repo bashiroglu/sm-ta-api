@@ -23,8 +23,8 @@ router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 router.use(protect, restrictTo([roles.OWNER, roles.ADMIN, roles.MANAGER]));
 router
   .route("/")
-  .get(getAll, sendRes)
-  .post(getCode("group"), createEnrollments, createOne, sendRes);
+  .get(getAll)
+  .post(getCode("group"), createEnrollments, createOne);
 
 router
   .route("/:id")
@@ -39,13 +39,14 @@ router
     ]),
     getOne
   )
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/students").post(createEnrollments, getOne, sendRes);
+router.route("/:id/students").post(createEnrollments, getOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;

@@ -36,24 +36,22 @@ router
     updateOne
   );
 
-router.route("/").get(getAll, sendRes);
-router.route("/:id").get(getOne, sendRes);
+router.route("/").get(getAll);
+router.route("/:id").get(getOne);
 
 router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
 
-router.route("/").post(getCode(name), createOne, sendRes);
-router
-  .route("/:id")
-  .patch(checkRole, updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
+router.route("/").post(getCode(name), createOne);
+router.route("/:id").patch(checkRole, updateOne).delete(makeDeleted, updateOne);
 
 router
   .route("/:id/register")
-  .patch(registerUser, updateOne, sendRes)
-  .delete(unregisterUser, updateOne, sendRes);
+  .patch(registerUser, updateOne)
+  .delete(unregisterUser, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(deleteOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(deleteOne);
 
+router.use(sendRes);
 module.exports = router;

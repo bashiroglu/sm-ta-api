@@ -1,6 +1,7 @@
 const fs = require("fs");
 const cron = require("node-cron");
 
+const LogModel = require("../models/logModel");
 const catchAsync = require("./catchAsync");
 const mongoose = require("mongoose");
 const AppError = require("./appError");
@@ -112,7 +113,15 @@ const deactivate = catchAsync(async (req, res, next) => {
 });
 
 const sendRes = catchAsync(async (req, res, next) => {
-  const { status = 200, obj } = req;
+  const { session, status = 200, obj, doc } = req;
+
+  // await LogModel.create([{}], { session });
+
+  if (session) {
+    await session.commitTransaction();
+    session.endSession();
+  }
+
   res.status(status).json({
     status: "success",
     ...obj,

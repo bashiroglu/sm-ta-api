@@ -14,18 +14,15 @@ const router = express.Router();
 router.use(protect);
 
 router.use(restrictTo(["owner", "admin", "manager", "teacher"]));
-router.route("/").post(getCode("feedback"), createOne, sendRes);
+router.route("/").post(getCode("feedback"), createOne);
 
-router
-  .route("/:id")
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id").patch(updateOne).delete(makeDeleted, updateOne);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
 router.use(restrictTo(["owner", "admin", "manager", "teacher"]));
-router.route("/").get(restrictFeedbacks, getAll, sendRes);
+router.route("/").get(restrictFeedbacks, getAll);
 router
   .route("/:id")
   .get(
@@ -34,4 +31,5 @@ router
     getOne
   );
 
+router.use(sendRes);
 module.exports = router;

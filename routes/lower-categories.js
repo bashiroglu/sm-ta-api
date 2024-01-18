@@ -17,21 +17,19 @@ const router = express.Router({ mergeParams: true });
 
 router.use(protect, restrictTo(["owner", "admin", "manager"]));
 
-router
-  .route("/")
-  .get(sortDescending, getAll, sendRes)
-  .post(checkRestriction, createOne, sendRes);
-router.route("/upper/:slug").get(queryByUpperSlug, getAll, sendRes);
+router.route("/").get(sortDescending, getAll).post(checkRestriction, createOne);
+router.route("/upper/:slug").get(queryByUpperSlug, getAll);
 router
   .route("/:id")
-  .get(getOne, sendRes)
-  .patch(updateOne, sendRes)
-  .delete(checkDeletability, makeDeleted, updateOne, sendRes);
+  .get(getOne)
+  .patch(updateOne)
+  .delete(checkDeletability, makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
 router
   .route("/:id/delete")
-  .delete(restrictTo(["admin"]), checkDeletability, deleteOne, sendRes);
+  .delete(restrictTo(["admin"]), checkDeletability, deleteOne);
 
+router.use(sendRes);
 module.exports = router;

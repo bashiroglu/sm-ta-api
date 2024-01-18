@@ -11,15 +11,16 @@ const router = express.Router();
 
 router.use(protect);
 
-router.route("/").get(getAll, sendRes).post(createOne, sendRes);
+router.route("/").get(getAll).post(createOne);
 router
   .route("/:id")
-  .get(populate({ path: "branch", select: "name -managers" }), getOne, sendRes)
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
+  .get(populate({ path: "branch", select: "name -managers" }), getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;

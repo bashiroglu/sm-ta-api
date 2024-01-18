@@ -24,10 +24,7 @@ scheduleRecurrenceNotifications();
 
 router.use(protect);
 
-router
-  .route("/")
-  .get(populate("executionCount"), getAll, sendRes)
-  .post(createOne, sendRes);
+router.route("/").get(populate("executionCount"), getAll).post(createOne);
 
 router
   .route("/:id")
@@ -39,8 +36,8 @@ router
     ]),
     getOne
   )
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 router
   .route("/:id/execute")
   .post(
@@ -51,8 +48,9 @@ router
     createTransaction
   );
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;

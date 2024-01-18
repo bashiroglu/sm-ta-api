@@ -17,7 +17,7 @@ const router = express.Router({ mergeParams: true });
 router.use(protect, restrictTo(["owner", "admin", "manager", "teacher"]));
 router
   .route("/")
-  .get(populate([{ path: "teacher", select: "name surname" }]), getAll, sendRes)
+  .get(populate([{ path: "teacher", select: "name surname" }]), getAll)
   .post(
     getCode("lesson"),
     prepareLesson,
@@ -27,11 +27,12 @@ router
   );
 router
   .route("/:id")
-  .get(populate({ path: "group", select: "name" }), getOne, sendRes)
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+  .get(populate({ path: "group", select: "name" }), getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;

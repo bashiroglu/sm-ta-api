@@ -11,20 +11,21 @@ const { getAll, createOne, getOne, updateOne, deleteOne } =
 
 const router = express.Router();
 
-router.route("/").get(getAll, sendRes);
-router.route("/:id").get(getOne, sendRes);
-router.route("/:id/view").get(incrementViewCount, updateOne, sendRes);
+router.route("/").get(getAll);
+router.route("/:id").get(getOne);
+router.route("/:id/view").get(incrementViewCount, updateOne);
 
 router.use(protect, restrictTo(["owner", "admin", "manager"]));
-router.route("/").post(getCode("blog"), createOne, sendRes);
+router.route("/").post(getCode("blog"), createOne);
 router
   .route("/:id")
 
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;

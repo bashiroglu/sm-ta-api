@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.use(protect, restrictTo(["admin", "manager", "owner"]));
 
-router.route("/").get(getContacts, sendRes);
+router.route("/").get(getContacts);
 
+router.use(sendRes);
 module.exports = router;

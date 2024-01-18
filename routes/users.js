@@ -27,15 +27,15 @@ scheduleBirthdayNotifications();
 router.use(protect);
 router
   .route("/me")
-  .get(assignParamsId, getOne, sendRes)
-  .patch(assignParamsId, updateMe, updateOne, sendRes)
-  .delete(assignParamsId, makeDeleted, updateOne, sendRes);
+  .get(assignParamsId, getOne)
+  .patch(assignParamsId, updateMe, updateOne)
+  .delete(assignParamsId, makeDeleted, updateOne);
 
 router.use(restrictTo(["owner", "admin", "manager"]));
 
 router
   .route("/role/:role")
-  .get(getAllByRole, getAll, sendRes)
+  .get(getAllByRole, getAll)
   .post(
     getCode("user", { modifier: "" }),
     createUserByRole,
@@ -43,7 +43,7 @@ router
     createOne
   );
 
-router.route("/role/student/tiny").get(aliasTinyStudent, getAll, sendRes);
+router.route("/role/student/tiny").get(aliasTinyStudent, getAll);
 router.route("/role/student/participation").get(
   getAllByRole,
   populate([
@@ -63,30 +63,31 @@ router.route("/role/student/:id/participation").get(
 
 router
   .route("/")
-  .get(getAll, sendRes)
-  .post(getCode("user", { modifier: "" }), setPassword, createOne, sendRes);
+  .get(getAll)
+  .post(getCode("user", { modifier: "" }), setPassword, createOne);
 
 router
   .route("/:id")
-  .get(populate({ path: "positions", select: "title id" }), getOne, sendRes)
-  .patch(updateOne, sendRes)
-  .delete(makeDeleted, updateOne, sendRes);
+  .get(populate({ path: "positions", select: "title id" }), getOne)
+  .patch(updateOne)
+  .delete(makeDeleted, updateOne);
 
 router
   .route("/:id/tags")
-  .get(setReqBody, updateOne, sendRes)
-  .patch(setReqBody, updateOne, sendRes);
+  .get(setReqBody, updateOne)
+  .patch(setReqBody, updateOne);
 router
   .route("/:id/permissions")
-  .get(setReqBody, getOne, sendRes)
-  .patch(setReqBody, updateOne, sendRes);
+  .get(setReqBody, getOne)
+  .patch(setReqBody, updateOne);
 
-router.route("/:id/activate").get(activateUser, updateOne, sendRes);
-router.route("/:id/deactivate").get(deactivateUser, updateOne, sendRes);
+router.route("/:id/activate").get(activateUser, updateOne);
+router.route("/:id/deactivate").get(deactivateUser, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne, sendRes);
-router.route("/:id/unarchive").get(archive, updateOne, sendRes);
+router.route("/:id/archive").get(archive, updateOne);
+router.route("/:id/unarchive").get(archive, updateOne);
 
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne, sendRes);
+router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
 
+router.use(sendRes);
 module.exports = router;
