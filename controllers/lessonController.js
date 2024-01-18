@@ -1,16 +1,19 @@
+const mongoose = require("mongoose");
 const catchAsync = require("../utils/catchAsync");
 const GroupModel = require("../models/groupModel");
 const EnrollmentModel = require("../models/enrollmentModel");
 const UserModel = require("../models/userModel");
+const Model = require("../models/lessonModel");
 const AppError = require("../utils/appError");
+const { startTransSession, getCode } = require("../utils/helpers");
 
 const prepareLesson = catchAsync(async (req, res, next) => {
   const {
-    session,
     params: { id },
     body: { absent, present, isExtra },
     user: { id: userId },
   } = req;
+  const session = await startTransSession(req);
 
   if (isExtra) return next();
 
@@ -27,22 +30,24 @@ const prepareLesson = catchAsync(async (req, res, next) => {
   const { program } = group;
   const enrollments = await EnrollmentModel.find({
     group: id,
-    status: "active",
   }).session(session);
   if (!enrollments.length)
     return next(new AppError("enrollments_not_faund", 404));
 
   const paidStudents = [];
 
-  enrollments.forEach(async (studentObj) => {
-    const { lessonCount, permissionCount, status, student } = studentObj;
+  const _id = mongoose.Types.ObjectId();
+
+  enrollments.forEach(async (enrollment) => {
+    const { lessonCount, permissionCount, status, student } = enrollment;
+
     const isActive = status === "active";
     const isPresent = present.includes(String(student));
     const isAbsent = absent.includes(String(student));
     const hasPermission = permissionCount;
     if (isActive) {
       if (isPresent || !hasPermission) {
-        if (lessonCount) studentObj.lessonCount -= 1;
+        if (lessonCount) enrollment.lessonCount -= 1;
         if (lessonCount === 1 && program.monthly) {
           // TODO: send sms
           console.warn(
@@ -59,28 +64,36 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
       }
       if (isAbsent) {
         if (!hasPermission) paidStudents.push(student);
-        studentObj.permissionCount = 0;
+        enrollment.permissionCount = 0;
       }
-      await studentObj.save({ session });
     }
+    enrollment.history = [
+      ...enrollment.history,
+      {
+        lesson: _id,
+        status: isActive ? "active" : "inactive",
+        lessonCount: enrollment.lessonCount,
+        permissionCount: enrollment.permissionCount,
+      },
+    ];
+    await enrollment.save({ session });
   });
 
-  const teacherProgram = group.teacher.earnings.find(
+  const teacherProg = group.teacher.earnings.find(
     (earning) => String(earning.program) === String(program.id)
   );
 
-  if (!teacherProgram)
-    return next(new AppError("teacher_program_not_found", 404));
-
-  const totalIncome = teacherProgram.amount * paidStudents.length;
-
+  if (!teacherProg) return next(new AppError("teacher_program_not_found", 404));
+  const totalIncome = teacherProg.amount * paidStudents.length;
   const teacher = await UserModel.findByIdAndUpdate(String(group.teacher.id), {
     $inc: { balance: totalIncome },
   }).session(session);
   if (!teacher) return next(new AppError("doc_not_found", 404));
 
+  const code = await getCode(Model, session);
+
   req.transactionBody = {
-    title: req.body.code,
+    title: code,
     amount: totalIncome,
     description: "",
     category: process.env.LESSON_CREATE_CATEGORY,
@@ -93,7 +106,7 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
     paidStudents,
   };
 
-  req.lessonBody = { ...req.body, studentState: enrollments };
+  req.lessonBody = { ...req.body, _id, code };
 
   next();
 });

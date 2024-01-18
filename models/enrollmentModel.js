@@ -24,6 +24,18 @@ const schema = new mongoose.Schema(
       default: "active",
     },
 
+    history: [
+      {
+        lesson: {
+          type: mongoose.Schema.ObjectId,
+          ref: "Lesson",
+        },
+        lessonCount: Number,
+        permissionCount: Number,
+        status: String,
+      },
+    ],
+
     deleted: Boolean,
     archived: Boolean,
     createdBy: {

@@ -12,6 +12,7 @@ const {
   restrictPerSubdomain,
   hasCommon,
   getCode,
+  startTransSession,
 } = require("../utils/helpers");
 
 const signToken = (id) => {
@@ -61,8 +62,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     },
   } = req;
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const session = await startTransSession(req);
 
   let roles, code, active;
   if (process.env.ADMIN_EMAIL === email) {
@@ -153,7 +153,6 @@ exports.logout = (req, res) => {
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
-
   if (
     req.headers.authorization &&
     req.headers.authorization?.startsWith("Bearer")

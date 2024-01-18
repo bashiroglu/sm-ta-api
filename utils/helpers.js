@@ -151,7 +151,8 @@ const sendRes = catchAsync(async (req, res, next) => {
 });
 
 const getCode = async (Model, session) => {
-  let { field, modifier, digitCount } = Model.schema.statics.codeOptions;
+  // TODO: Fix for multiple document creation
+  let { field, modifier, digitCount = 4 } = Model.schema.statics.codeOptions;
   field = field.toLowerCase();
 
   const COMPANY_ID = process.env.COMPANY_ID;
@@ -174,6 +175,16 @@ const getCode = async (Model, session) => {
   return code;
 };
 
+const startTransSession = async (req) => {
+  let { session } = req;
+  if (session) return session;
+
+  session = await mongoose.startSession();
+  session.startTransaction();
+  if (req) req.session = session;
+  return session;
+};
+
 module.exports = {
   getDirFileNames,
   getFirstOfNextMonth,
@@ -193,4 +204,5 @@ module.exports = {
   deactivate,
   sendRes,
   getCode,
+  startTransSession,
 };

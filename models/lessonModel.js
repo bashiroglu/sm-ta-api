@@ -30,24 +30,6 @@ const schema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    studentState: [
-      {
-        student: {
-          type: mongoose.Schema.ObjectId,
-          ref: "User",
-        },
-        lessonCount: Number,
-        permissionCount: {
-          type: Number,
-          default: 1,
-        },
-        status: {
-          type: String,
-          enum: ["active", "inactive"],
-          default: "active",
-        },
-      },
-    ],
 
     // TODO: In future versions topics also can be gotten from a Topic Module.
     topic: {

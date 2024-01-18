@@ -66,7 +66,7 @@ const schema = new mongoose.Schema(
 );
 
 schema.virtual("enrollments", {
-  ref: "Enrolment",
+  ref: "Enrollment",
   foreignField: "group",
   localField: "_id",
 });

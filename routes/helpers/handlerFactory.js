@@ -1,19 +1,15 @@
-const mongoose = require("mongoose");
 const catchAsync = require("../../utils/catchAsync");
 const AppError = require("../../utils/appError");
 const APIFeatures = require("../../utils/apiFeatures");
-const { getCode } = require("../../utils/helpers");
+const { getCode, startTransSession } = require("../../utils/helpers");
 
 module.exports = (Model) => {
   return {
     createOne: catchAsync(async (req, res, next) => {
-      let { session, doc, body } = req;
+      let { session, body, docCount } = req;
       const { codeOptions } = Model.schema.statics;
-      if (codeOptions) {
-        if (!session) {
-          session = await mongoose.startSession();
-          session.startTransaction();
-        }
+      if (codeOptions && !body.code) {
+        session = await startTransSession(req);
         const code = await getCode(Model, session);
         if (!code) return next(new AppError("company_not_found", 404));
         req.body.code = code;
@@ -21,16 +17,13 @@ module.exports = (Model) => {
 
       req.body.createdBy = req.user.id;
 
-      if (!doc)
-        doc = await Model.create(
-          session ? [body] : body,
-          session ? { session } : null
-        );
-
-      if (doc?.length > 0) doc = doc.at(0);
+      const doc = await Model.create(
+        docCount || !session ? body : [body],
+        session ? { session } : null
+      );
 
       req.status = 201;
-      req.obj = { data: doc };
+      req.obj = { data: docCount ? doc : session ? doc.at(0) : doc };
       next();
     }),
 
@@ -103,11 +96,7 @@ module.exports = (Model) => {
         session,
       } = req;
 
-      if (!session) {
-        session = await mongoose.startSession();
-        session.startTransaction();
-        req.session = session;
-      }
+      session = await startTransSession(req);
 
       let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](
         filterObj || id,
@@ -131,16 +120,12 @@ module.exports = (Model) => {
     }),
 
     deleteOne: catchAsync(async (req, res, next) => {
+      let session = req.session;
+      session = await startTransSession(req);
+
       const doc = await Model.findByIdAndDelete(req.params.id);
       req.doc = doc;
       if (!doc) return next(new AppError("doc_not_found", 404));
-
-      let session = req.session;
-      if (!session) {
-        session = await mongoose.startSession();
-        session.startTransaction();
-        req.session = session;
-      }
 
       req.status = 204;
       req.obj = { data: null };
