@@ -23,6 +23,14 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    groupType: {
+      type: String,
+      enum: ["individual", "group"],
+    },
+    lessonType: {
+      type: String,
+      enum: ["online", "traditional"],
+    },
 
     name: String,
     price: Number,
@@ -37,7 +45,7 @@ const schema = new mongoose.Schema(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 schema.pre(/^find/, function (next) {

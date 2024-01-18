@@ -30,6 +30,25 @@ const schema = new mongoose.Schema(
       default: false,
     },
 
+    website: String,
+    phoneNumbers: [
+      {
+        type: String,
+        unique: true,
+        sparse: true,
+      },
+    ],
+    socialMediaProfiles: {
+      type: {
+        facebook: String,
+        instagram: String,
+        linkedin: String,
+        telegram: String,
+        twitter: String,
+      },
+    },
+    address: String,
+
     active: Boolean,
     deleted: Boolean,
     archived: Boolean,

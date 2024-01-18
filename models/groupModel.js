@@ -11,6 +11,11 @@ const schema = new mongoose.Schema(
       unique: true,
     },
 
+    detailCode: {
+      type: String,
+      unique: true,
+    },
+
     branch: {
       type: mongoose.Schema.ObjectId,
       ref: "Branch",
@@ -43,12 +48,26 @@ const schema = new mongoose.Schema(
         message: "invalid_weekdays",
       },
     },
+    startTime: {
+      type: Number,
+      min: 0,
+      max: 1439,
+    },
+    endTime: {
+      type: Number,
+      min: 0,
+      max: 1439,
+    },
     status: {
       type: String,
       enum: {
-        values: ["active", "deactive"],
+        values: ["due", "active", "archive"],
         message: "enum_group_status",
       },
+    },
+    level: {
+      type: mongoose.Schema.ObjectId,
+      ref: "LowerCategory",
     },
 
     deleted: Boolean,

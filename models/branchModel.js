@@ -24,6 +24,7 @@ const schema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    monthlyTarget: Number,
 
     deleted: Boolean,
     archived: Boolean,
