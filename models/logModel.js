@@ -5,18 +5,12 @@ const collectionName = "Log";
 const schema = new mongoose.Schema(
   {
     oldDoc: {
-      type: String,
-      required: true,
+      type: Object,
     },
-    collection: {
-      type: String,
-      required: true,
+    body: {
+      type: Object,
     },
-    endpoint: {
-      type: String,
-      required: true,
-    },
-
+    originalUrl: String,
     deleted: Boolean,
     archived: Boolean,
     createdBy: {

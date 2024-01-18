@@ -80,10 +80,11 @@ const restrictPerSubdomain = (user, req) =>
 
 const archive = catchAsync(async (req, res, next) => {
   const field = req.url.split("/").at(-1);
-  if (!["archive", "unarchive"].includes(field) || !value)
+  if (!["archive", "unarchive"].includes(field))
     return next(new AppError("dont_use_this_endpoint", 400));
 
-  req.body = { archive: field === "archive" };
+  req.body = { archived: field === "archive" };
+  req.query.fields = "archived";
   next();
 });
 
@@ -113,9 +114,29 @@ const deactivate = catchAsync(async (req, res, next) => {
 });
 
 const sendRes = catchAsync(async (req, res, next) => {
-  const { session, status = 200, obj, doc } = req;
+  const {
+    session,
+    status = 200,
+    obj,
+    doc,
+    user,
+    originalUrl,
+    method,
+    body,
+  } = req;
 
-  // await LogModel.create([{}], { session });
+  if (["PATCH", "PUT", "DELETE"].includes(method))
+    await LogModel.create(
+      [
+        {
+          oldDoc: doc,
+          body,
+          originalUrl,
+          createdBy: user.id,
+        },
+      ],
+      { session }
+    );
 
   if (session) {
     await session.commitTransaction();

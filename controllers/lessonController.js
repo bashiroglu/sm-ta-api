@@ -72,7 +72,6 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
     return next(new AppError("teacher_program_not_found", 404));
 
   const totalIncome = teacherProgram.amount * paidStudents.length;
-  console.log("😀😀😀", totalIncome, group.teacher.id, "😀😀😀");
 
   const teacher = await UserModel.findByIdAndUpdate(String(group.teacher.id), {
     $inc: { balance: totalIncome },
@@ -87,7 +86,6 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
     isIncome: false,
     realDate: new Date(),
     paymentMethod: "online",
-    hidden: false,
     branch: group.branch,
     relatedTo: teacherId,
     internal: true,

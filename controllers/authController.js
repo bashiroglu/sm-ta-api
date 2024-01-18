@@ -80,8 +80,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     ],
     { session }
   );
-  await session.commitTransaction();
-  session.endSession();
 
   // TODO: Fix below (It will depend on desision):
   if (process.env.NODE_ENV.trim() === "production") {
@@ -129,6 +127,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   req.user = user;
   req.statusCode = 200;
+
   next();
 });
 
@@ -254,7 +253,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       await new Email(user, resetURL).sendPasswordReset();
     console.log(resetURL);
 
-    res.obj = { message: "Token sent to email!" };
+    req.obj = { message: "Token sent to email!" };
     next();
   } catch (error) {
     user.paswordResetToken = undefined;

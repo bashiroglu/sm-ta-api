@@ -5,7 +5,7 @@ const { roles } = require("../utils/constants/enums");
 const AppError = require("../utils/appError");
 
 const queryByUpperSlug = catchAsync(async (req, res, next) => {
-  req.pipeline = LowerCategoryModel.aggregate([
+  req.pipeline = Model.aggregate([
     {
       $match: {
         deleted: { $ne: true },
@@ -46,29 +46,14 @@ const queryByUpperSlug = catchAsync(async (req, res, next) => {
   next();
 });
 
-const queryByUpperSlug2 = catchAsync(async (req, res, next) => {
-  req.doc = await LowerCategoryModel.find({ deleted: { $ne: true } })
-    .populate({
-      path: "upperCategory",
-      match: {
-        deleted: { $ne: true },
-        slug: req.params.slug,
-      },
-      select: "title slug",
-    })
-    .select("title description priority upperCategory")
-    .sort({ priority: -1 });
-
-  next();
-});
-
 const sortDescending = catchAsync(async (req, res, next) => {
   req.query.sort = "-priority";
   next();
 });
 
+// TODO: Use this if needed
 const checkDeletability = catchAsync(async (req, res, next) => {
-  const lower = await LowerCategoryModel.findById(req.params.id);
+  const lower = await Model.findById(req.params.id);
   if (!lower) return next(new AppError("doc_not_found", 404));
 
   const notOwnerOrAdmin = !req.user.roles.some((role) =>
@@ -90,7 +75,6 @@ const checkRestriction = catchAsync(async (req, res, next) => {
 
 module.exports = {
   queryByUpperSlug,
-  queryByUpperSlug2,
   sortDescending,
   checkDeletability,
   checkRestriction,

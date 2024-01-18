@@ -55,7 +55,7 @@ const getStatBranchesStudentCount = catchAsync(async (req, res, next) => {
 });
 
 const getStatBranchStudentCount = catchAsync(async (req, res, next) => {
-  req.doc = await Model.aggregate([
+  req.pipeline = await Model.aggregate([
     // TODO: Apply following match (deleted: { $ne: true }) for all required places
     {
       $match: {
@@ -93,12 +93,6 @@ const getStatBranchStudentCount = catchAsync(async (req, res, next) => {
       },
     },
   ]);
-
-  if (!req.doc.length) {
-    return next(new AppError("doc_not_found", 404));
-  }
-
-  req.doc = req.doc?.at(0);
 
   next();
 });
