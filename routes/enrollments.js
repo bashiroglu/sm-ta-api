@@ -2,19 +2,16 @@ const express = require("express");
 const Model = require("../models/enrollmentModel");
 const handlerFactory = require("./helpers/handlerFactory");
 const {
-  archive,
   makeDeleted,
   populate,
   activate,
   deactivate,
-  sendRes,
 } = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
 const { roles } = require("../utils/constants/enums");
 const { prepareEnrollment } = require("../controllers/enrollmentController");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  handlerFactory(Model);
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
@@ -31,12 +28,7 @@ router
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
 
-router.route("/:id/activate").get(activate, updateOne);
-router.route("/:id/deactivate").get(deactivate, updateOne);
+router.route("/:id/activate").patch(activate, updateOne);
+router.route("/:id/deactivate").patch(deactivate, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
-
-router.use(sendRes);
 module.exports = router;

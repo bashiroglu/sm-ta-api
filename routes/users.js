@@ -15,10 +15,9 @@ const {
 } = require("./../controllers/userController");
 const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
-const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
+const { populate, makeDeleted } = require("../utils/helpers");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  handlerFactory(Model);
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
@@ -72,22 +71,13 @@ router
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
 
-router
-  .route("/:id/tags")
-  .get(setReqBody, updateOne)
-  .patch(setReqBody, updateOne);
+router.route("/:id/tags").get(setReqBody, getOne).patch(setReqBody, updateOne);
 router
   .route("/:id/permissions")
   .get(setReqBody, getOne)
   .patch(setReqBody, updateOne);
 
-router.route("/:id/activate").get(activateUser, updateOne);
-router.route("/:id/deactivate").get(deactivateUser, updateOne);
+router.route("/:id/activate").patch(activateUser, updateOne);
+router.route("/:id/deactivate").patch(deactivateUser, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
-
-router.use(sendRes);
 module.exports = router;

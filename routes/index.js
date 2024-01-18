@@ -1,14 +1,27 @@
 const express = require("express");
-const { getDirFileNames } = require("../utils/helpers");
+const { archive, sendRes } = require("../utils/helpers");
+const { modules } = require("../utils/constants/modules");
+const handlerFactory = require("./helpers/handlerFactory");
+const { restrictTo } = require("../controllers/authController");
 
-const router = express.Router();
+const mainRouter = express.Router();
 
-const routes = getDirFileNames("./routes");
+modules.forEach((module) => {
+  const router = require(`./${module.route}`);
 
-routes.forEach((name) => {
-  if (["index.js", "helpers"].includes(name)) return;
-  name = name.replace(".js", "");
-  router.use(`/${name}`, require(`./${name}`));
+  if (module.model) {
+    const Model = require(`../models/${module.model}Model`);
+    const { updateOne, deleteOne } = handlerFactory(Model);
+
+    router.route("/:id/archive").patch(archive, updateOne);
+    router.route("/:id/unarchive").patch(archive, updateOne);
+
+    if (!["upperCategory", "lowerCategory"].includes(module.model))
+      router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
+  }
+  router.use(sendRes);
+
+  mainRouter.use(`/${module.route}`, router);
 });
 
-module.exports = router;
+module.exports = mainRouter;

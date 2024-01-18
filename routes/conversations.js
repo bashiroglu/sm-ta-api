@@ -14,11 +14,10 @@ const {
   restrictTo,
   signup,
 } = require("../controllers/authController");
-const { archive, makeDeleted, sendRes } = require("../utils/helpers");
+const { makeDeleted } = require("../utils/helpers");
 const getCode = require("../utils/getCode");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  handlerFactory(Model);
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 scheduleConversationNotifications();
 
@@ -49,9 +48,4 @@ router
   .patch(registerUser, updateOne)
   .delete(unregisterUser, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(deleteOne);
-
-router.use(sendRes);
 module.exports = router;

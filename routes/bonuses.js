@@ -3,12 +3,10 @@ const express = require("express");
 const Model = require("../models/bonusModel");
 
 const handlerFactory = require("./helpers/handlerFactory");
-const { checkBonus } = require("../controllers/bonusController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive, makeDeleted, sendRes } = require("../utils/helpers");
+const { makeDeleted } = require("../utils/helpers");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  handlerFactory(Model);
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
@@ -21,9 +19,4 @@ router
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(deleteOne);
-
-router.use(sendRes);
 module.exports = router;

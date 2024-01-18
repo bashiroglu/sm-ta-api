@@ -12,7 +12,6 @@ const {
   getCurrentUser,
   updatePassword,
 } = require("../controllers/authController");
-const { sendRes } = require("../utils/helpers");
 
 const router = express.Router();
 
@@ -28,10 +27,9 @@ router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword, createTokenAndSignIn);
 
 // With router.use(protect) wrong
-router.use(protect);
-router.get("/logout", logout);
-router.get("/get-user", getCurrentUser);
-router.patch("/update-password", updatePassword, createTokenAndSignIn);
 
-router.use(sendRes);
+router.get("/logout", protect, logout);
+router.get("/get-user", protect, getCurrentUser);
+router.patch("/update-password", protect, updatePassword, createTokenAndSignIn);
+
 module.exports = router;

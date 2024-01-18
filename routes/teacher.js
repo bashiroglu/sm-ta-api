@@ -10,7 +10,6 @@ const {
   directLessons,
 } = require("../controllers/teacherController");
 const lessonRouter = require("./lessons");
-const { sendRes } = require("../utils/helpers");
 
 const { getAll: getUsers, getOne: getUser } = handlerFactory(Model);
 const { getAll: getGroups, getOne: getGroup } = handlerFactory(GroupModel);
@@ -25,8 +24,7 @@ router.route("/groups/:id").get(getGroup);
 router.use("/groups/:id/lessons", directLessons, lessonRouter);
 router.route("/students").get(getStudents, getUsers);
 router.route("/students/:id").get(getStudent, getUser);
-router.use(sendRes);
+
 module.exports = router;
 
-router.use(sendRes);
 module.exports = router;

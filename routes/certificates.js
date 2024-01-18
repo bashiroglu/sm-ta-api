@@ -1,11 +1,10 @@
 const express = require("express");
 const Model = require("../models/bookModel");
 const handlerFactory = require("./helpers/handlerFactory");
-const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
+const { populate, makeDeleted } = require("../utils/helpers");
 const { protect, restrictTo } = require("../controllers/authController");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  handlerFactory(Model);
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
@@ -17,12 +16,6 @@ router
   .route("/:id")
   .get(populate({ path: "createdBy", select: "name surname fullName" }), getOne)
   .patch(updateOne)
-  .delete(makeDeleted, deleteOne);
+  .delete(makeDeleted, updateOne);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
-
-router.use(sendRes);
 module.exports = router;

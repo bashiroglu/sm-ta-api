@@ -14,8 +14,7 @@ const { protect, restrictTo } = require("../controllers/authController");
 const getCode = require("../utils/getCode");
 const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  handlerFactory(Model);
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 const { createOne: createTransaction } = handlerFactory(TransactionModel);
 
 const router = express.Router();
@@ -48,9 +47,4 @@ router
     createTransaction
   );
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
-
-router.use(sendRes);
 module.exports = router;

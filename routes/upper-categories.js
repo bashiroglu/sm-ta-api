@@ -3,7 +3,7 @@ const Model = require("../models/upperCategoryModel");
 const handlerFactory = require("./helpers/handlerFactory");
 
 const { protect, restrictTo } = require("../controllers/authController");
-const { populate, archive, sendRes } = require("../utils/helpers");
+const { populate } = require("../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
@@ -18,8 +18,4 @@ router.route("/lowers").post(createOne);
 
 router.route("/:id").get(getOne).patch(updateOne);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-
-router.use(sendRes);
 module.exports = router;

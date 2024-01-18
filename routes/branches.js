@@ -12,10 +12,9 @@ const {
   getStatBranchesIncomeByMonth,
 } = require("./../controllers/branchController");
 const { protect, restrictTo } = require("../controllers/authController");
-const { archive, makeDeleted, sendRes } = require("../utils/helpers");
+const { makeDeleted } = require("../utils/helpers");
 
-const { getAll, createOne, getOne, updateOne, deleteOne } =
-  handlerFactory(Model);
+const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
@@ -44,9 +43,4 @@ router
   .delete(makeDeleted, updateOne);
 router.route("/:id/balance").get(getOnlyBlance, getOne);
 
-router.route("/:id/archive").get(archive, updateOne);
-router.route("/:id/unarchive").get(archive, updateOne);
-
-router.route("/:id/delete").delete(restrictTo(["admin"]), deleteOne);
-router.use(sendRes);
 module.exports = router;
