@@ -20,16 +20,17 @@ const updateBalance = catchAsync(async (req, res, next) => {
       relatedTo,
       lessonCount,
       permissionCount,
+      notifyWithSms,
     },
     session,
   } = req;
 
-  const lower = await LowerCategory.findByIdAndUpdate(
-    category,
-    { $inc: { priority: 1 } },
-    { session }
-  );
+  const lower = await LowerCategory.findByIdAndUpdate(category, {
+    $inc: { priority: 1 },
+  }).session(session);
   if (!lower) return next(new AppError("category_not_found", 404));
+
+  if (internal) return next();
 
   if (category === process.env.STUDENT_PAYMENT_CATEGORY_ID) {
     const {
@@ -48,12 +49,12 @@ const updateBalance = catchAsync(async (req, res, next) => {
         $inc: { lessonCount: lessonCount || progLessonCount },
         permissionCount: permissionCount || progPermissionCount,
       }
-    );
+    ).session(session);
 
     if (!enrollment) return next(new AppError("student_not_found", 404));
+    // TODO: Apply notify student abount payment
+    if (notifyWithSms) console.warn("Your payment has been fulfilled");
   }
-
-  if (internal) return next();
 
   amount = amount * (isIncome || -1);
   const branch = await BranchModel.findByIdAndUpdate(
