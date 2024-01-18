@@ -107,7 +107,7 @@ schema.post("save", async function (doc) {
   const popdoc = await doc
     .populate({ path: "createdBy", select: "name surname email" })
     .execPopulate();
-  console.log("notify teacher and all students", popdoc);
+  console.warn("notify teacher and all students", popdoc);
   doc.createdBy = doc.createdBy.id;
 });
 
@@ -131,7 +131,6 @@ schema.post("findOneAndUpdate", async function (doc) {
       if (participant) {
         breake;
         // TODO: notify participant
-        console.log(participant);
       }
     }
     await doc.save();
@@ -145,7 +144,6 @@ schema.post("findOneAndUpdate", async function (doc) {
       sendNotification,
       getPeriod(d.date)
     );
-  console.log(schema.statics.jobs);
 });
 
 schema.post("deleteOne", function (doc) {

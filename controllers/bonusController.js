@@ -5,7 +5,6 @@ const AppError = require("../utils/appError");
 
 const checkBonus = catchAsync(async (req, res, next) => {
   const { url } = req;
-  console.log(url);
   const { recipients } = await Model.findOne({ endpoint: url });
 
   if (!recipients) return next(new AppError("doc_not_found", 404));
@@ -13,8 +12,6 @@ const checkBonus = catchAsync(async (req, res, next) => {
   const userIds = recipients.map((r) => r.user);
 
   const users = await UserModel.find({ $in: { _id: userIds } });
-
-  console.log(users);
 
   next();
 });

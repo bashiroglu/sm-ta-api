@@ -23,7 +23,7 @@ const scheduleBirthdayNotifications = () => {
       });
 
       usersWithTomorrowBirthday.forEach((user) => {
-        console.log(`Sending notification to user: ${user.name}`);
+        console.warn(`Sending notification to user: ${user.name}`);
       });
     },
     { timezone: "Asia/Baku" }

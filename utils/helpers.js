@@ -54,7 +54,7 @@ const populate = (popOptions) =>
 const isAggregate = (that) => that.query instanceof mongoose.Aggregate;
 
 const sendNotification = (doc) => {
-  console.log(
+  console.warn(
     "Task executed at:",
     new Date(),
     doc.title

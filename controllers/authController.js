@@ -251,7 +251,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     if (process.env.NODE_ENV.trim() === "production")
       await new Email(user, resetURL).sendPasswordReset();
-    console.log(resetURL);
+    console.warn(resetURL);
 
     req.obj = { message: "Token sent to email!" };
     next();

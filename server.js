@@ -24,17 +24,17 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("connected to DB");
+    console.warn("connected to DB");
   });
 
 const port = process.env.PORT || 3000;
 
 const server = app.listen(port, () => {
-  console.log("sm-api-ta runs");
+  console.warn("sm-api-ta runs");
 });
 
 // bot.start();
-// console.log("Bot is ready to accept requests...");
+// console.warn("Bot is ready to accept requests...");
 
 process.on("unhandledRejection", (err) => {
   console.error("uncaughtException", "\n", err);

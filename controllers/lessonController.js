@@ -29,7 +29,8 @@ const prepareLesson = catchAsync(async (req, res, next) => {
     group: id,
     status: "active",
   }).session(session);
-  if (!enrollments.length) return next(new AppError("students_not_faund", 404));
+  if (!enrollments.length)
+    return next(new AppError("enrollments_not_faund", 404));
 
   const paidStudents = [];
 
@@ -44,7 +45,7 @@ const prepareLesson = catchAsync(async (req, res, next) => {
         if (lessonCount) studentObj.lessonCount -= 1;
         if (lessonCount === 1 && program.monthly) {
           // TODO: send sms
-          console.log(
+          console.warn(
             `Salam, deyerli telebemiz!
 
 Balansinizda cemi 1 ders qalib.
