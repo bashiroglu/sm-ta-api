@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const selectVariations = require("../utils/constants/selectVariations");
 const collectionName = "Branch";
-
+console.log(selectVariations);
 const schema = new mongoose.Schema(
   {
     company: {
@@ -36,13 +37,13 @@ const schema = new mongoose.Schema(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } }).populate({
     path: "managers",
-    select: "name surname fullname",
+    select: selectVariations.user.xs,
   });
   next();
 });
