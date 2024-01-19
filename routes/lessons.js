@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/lessonModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const { prepareLesson } = require("../controllers/lessonController");
 const {
   createTransactionOnLessonCreate,

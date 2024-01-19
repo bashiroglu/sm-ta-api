@@ -1,7 +1,7 @@
 const express = require("express");
 const Model = require("../models/groupModel");
 
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const {
   crudGroupLessons,
   checkRole,

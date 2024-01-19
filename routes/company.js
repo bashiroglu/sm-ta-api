@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/companyModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const { checkConstruction } = require("../controllers/companyController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { makeDeleted } = require("../utils/helpers");

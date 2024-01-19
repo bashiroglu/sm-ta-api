@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/blogModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const { incrementViewCount } = require("../controllers/blogController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { makeDeleted } = require("../utils/helpers");

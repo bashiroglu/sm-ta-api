@@ -1,7 +1,7 @@
-const catchAsync = require("../../utils/catchAsync");
-const AppError = require("../../utils/appError");
-const APIFeatures = require("../../utils/apiFeatures");
-const { getCode, startTransSession } = require("../../utils/helpers");
+const catchAsync = require("./catchAsync");
+const AppError = require("./appError");
+const APIFeatures = require("./apiFeatures");
+const { getCode, startTransSession } = require("./helpers");
 
 module.exports = (Model) => {
   return {

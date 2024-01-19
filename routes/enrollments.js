@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/enrollmentModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const {
   makeDeleted,
   populate,

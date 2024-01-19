@@ -1,7 +1,7 @@
 const express = require("express");
 const { archive, sendRes } = require("../utils/helpers");
 const { modules } = require("../utils/constants/modules");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const { restrictTo } = require("../controllers/authController");
 const { checkMembership } = require("../controllers/userController");
 

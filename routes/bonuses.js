@@ -2,7 +2,7 @@ const express = require("express");
 
 const Model = require("../models/bonusModel");
 
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const { protect, restrictTo } = require("../controllers/authController");
 const { makeDeleted } = require("../utils/helpers");
 

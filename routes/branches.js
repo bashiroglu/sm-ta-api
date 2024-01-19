@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/branchModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const {
   setCompany,
   getOnlyBlance,

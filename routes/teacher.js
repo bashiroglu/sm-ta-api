@@ -1,7 +1,7 @@
 const express = require("express");
 const { protect, restrictTo } = require("../controllers/authController");
 const Model = require("../models/userModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const GroupModel = require("../models/groupModel");
 const {
   getStudent,

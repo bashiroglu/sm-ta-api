@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/feedbackModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const { restrictFeedbacks } = require("../controllers/feedbackController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { populate, makeDeleted } = require("../utils/helpers");

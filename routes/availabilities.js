@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/availabilityModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 const { assignUser } = require("../controllers/availabilityController");
 const { protect, restrictTo } = require("../controllers/authController");
 const { makeDeleted } = require("../utils/helpers");

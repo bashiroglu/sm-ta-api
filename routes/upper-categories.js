@@ -1,6 +1,6 @@
 const express = require("express");
 const Model = require("../models/upperCategoryModel");
-const handlerFactory = require("./helpers/handlerFactory");
+const handlerFactory = require("../utils/handlerFactory");
 
 const { protect, restrictTo } = require("../controllers/authController");
 const { populate } = require("../utils/helpers");
