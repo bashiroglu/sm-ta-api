@@ -53,6 +53,7 @@ const sortDescending = catchAsync(async (req, res, next) => {
 
 // TODO: Use this if needed
 const checkDeletability = catchAsync(async (req, res, next) => {
+  if (!req.baseUrl.endsWith("lower-categories")) next();
   const lower = await Model.findById(req.params.id);
   if (!lower) return next(new AppError("doc_not_found", 404));
 

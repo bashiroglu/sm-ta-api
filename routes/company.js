@@ -12,8 +12,6 @@ router.route("/is-under-construction").get(checkConstruction);
 
 router.use(protect, restrictTo(["admin"]));
 router.route("/").get(getAll).post(createOne);
-
-router.use(restrictTo(["admin"]));
 router
   .route("/:id")
   .get(getOne)

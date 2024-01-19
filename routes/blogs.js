@@ -15,10 +15,6 @@ router.route("/:id/view").get(incrementViewCount, updateOne);
 
 router.use(protect, restrictTo(["admin", "manager"]));
 router.route("/").post(createOne);
-router
-  .route("/:id")
-
-  .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+router.route("/:id").patch(updateOne).delete(makeDeleted, updateOne);
 
 module.exports = router;

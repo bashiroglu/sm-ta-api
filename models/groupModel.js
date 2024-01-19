@@ -11,11 +11,6 @@ const schema = new mongoose.Schema(
       unique: true,
     },
 
-    detailCode: {
-      type: String,
-      unique: true,
-    },
-
     branch: {
       type: mongoose.Schema.ObjectId,
       ref: "Branch",
@@ -68,6 +63,10 @@ const schema = new mongoose.Schema(
     level: {
       type: mongoose.Schema.ObjectId,
       ref: "LowerCategory",
+    },
+    detailCode: {
+      type: String,
+      unique: true,
     },
 
     deleted: Boolean,
