@@ -20,7 +20,7 @@ const prepareLesson = catchAsync(async (req, res, next) => {
   const teacherId = req.body.teacherId || userId;
 
   const group = await GroupModel.findById(id)
-    .populate(["teacher", "program"])
+    .populate(["teacher", "program", "branch"])
     .session(session);
 
   if (!group) return next(new AppError("group_not_found", 404));
@@ -104,6 +104,10 @@ Davam etmeyeceksinizse, sistemin borc hesablamamasi ucun bizi melumatlandirmagin
     relatedTo: teacherId,
     internal: true,
     paidStudents,
+    balanceBefore: group.branch.balance,
+    balanceAfter: group.branch.balance,
+    relatedToBalanceAfter: teacher.balance - totalIncome,
+    relatedToBalanceBefore: teacher.balance,
   };
 
   req.lessonBody = { ...req.body, _id, code };

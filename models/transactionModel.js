@@ -30,6 +30,8 @@ const schema = new mongoose.Schema(
     },
     balanceAfter: Number,
     balanceBefore: Number,
+    relatedToBalanceAfter: Number,
+    relatedToBalanceBefore: Number,
     realDate: Date,
     paymentMethod: {
       type: String,
