@@ -1,6 +1,7 @@
 const express = require("express");
-const Model = require("../models/userModel");
-const handlerFactory = require("../utils/handlerFactory");
+const Model = require("../../models/userModel");
+const handlerFactory = require("../../utils/handlerFactory");
+
 const {
   createUserByRole,
   getAllByRole,
@@ -13,10 +14,10 @@ const {
   scheduleBirthdayNotifications,
   aliasTinyStudent,
   checkMembership,
-} = require("./../controllers/userController");
-const { protect, restrictTo } = require("../controllers/authController");
+} = require("../../controllers/userController");
+const { protect, restrictTo } = require("../../controllers/authController");
 
-const { populate, makeDeleted } = require("../utils/helpers");
+const { populate, makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

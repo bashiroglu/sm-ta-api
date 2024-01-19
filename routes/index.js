@@ -8,7 +8,7 @@ const { checkMembership } = require("../controllers/userController");
 const mainRouter = express.Router();
 
 modules.forEach((module) => {
-  const router = require(`./${module.route}`);
+  const router = require(`./routers/${module.route}`);
 
   if (module.model) {
     const Model = require(`../models/${module.model}Model`);

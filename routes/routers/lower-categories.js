@@ -1,14 +1,14 @@
 const express = require("express");
-const Model = require("../models/lowerCategoryModel");
-const handlerFactory = require("../utils/handlerFactory");
+const Model = require("../../models/lowerCategoryModel");
+const handlerFactory = require("../../utils/handlerFactory");
 const {
   queryByUpperSlug,
   sortDescending,
   checkDeletability,
   checkRestriction,
-} = require("../controllers/lowerCategoryController");
-const { protect, restrictTo } = require("../controllers/authController");
-const { makeDeleted } = require("../utils/helpers");
+} = require("../../controllers/lowerCategoryController");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

@@ -1,18 +1,18 @@
 const express = require("express");
-const Model = require("../models/recurrenceModel");
-const handlerFactory = require("../utils/handlerFactory");
-const TransactionModel = require("../models/transactionModel");
+const Model = require("../../models/recurrenceModel");
+const handlerFactory = require("../../utils/handlerFactory");
+const TransactionModel = require("../../models/transactionModel");
 const {
   executeRecurrence,
   scheduleRecurrenceNotifications,
-} = require("../controllers/recurrenceController");
+} = require("../../controllers/recurrenceController");
 const {
   updateBalance,
   checkBranch,
-} = require("../controllers/transactionController");
-const { protect, restrictTo } = require("../controllers/authController");
+} = require("../../controllers/transactionController");
+const { protect, restrictTo } = require("../../controllers/authController");
 
-const { populate, archive, makeDeleted, sendRes } = require("../utils/helpers");
+const { populate, makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 const { createOne: createTransaction } = handlerFactory(TransactionModel);

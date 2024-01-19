@@ -108,10 +108,12 @@ const setDefaultLang = (lang) =>
     if (!req.headers["accept-language"]) req.headers["accept-language"] = lang;
     next();
   });
+
 const activate = catchAsync(async (req, res, next) => {
   req.body = { status: "active" };
   next();
 });
+
 const deactivate = catchAsync(async (req, res, next) => {
   req.body = { status: "inactive" };
   next();

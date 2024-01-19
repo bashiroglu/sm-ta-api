@@ -1,14 +1,15 @@
 const express = require("express");
-const { protect, restrictTo } = require("../controllers/authController");
-const Model = require("../models/userModel");
-const handlerFactory = require("../utils/handlerFactory");
-const GroupModel = require("../models/groupModel");
+const Model = require("../../models/userModel");
+const GroupModel = require("../../models/groupModel");
+const handlerFactory = require("../../utils/handlerFactory");
+
+const { protect, restrictTo } = require("../../controllers/authController");
 const {
   getStudent,
   getStudents,
   directGroups,
   directLessons,
-} = require("../controllers/teacherController");
+} = require("../../controllers/teacherController");
 const lessonRouter = require("./lessons");
 
 const { getAll: getUsers, getOne: getUser } = handlerFactory(Model);

@@ -1,14 +1,14 @@
 const express = require("express");
-const Model = require("../models/roomModel");
-const handlerFactory = require("../utils/handlerFactory");
-const { populate, makeDeleted } = require("../utils/helpers");
-const { protect, restrictTo } = require("../controllers/authController");
+const Model = require("../../models/roomModel");
+const handlerFactory = require("../../utils/handlerFactory");
+const { populate, makeDeleted } = require("../../utils/helpers");
+const { protect, restrictTo } = require("../../controllers/authController");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
 const router = express.Router();
 
-router.use(protect);
+router.use(protect, restrictTo(["admin", "manager"]));
 
 router.route("/").get(getAll).post(createOne);
 router

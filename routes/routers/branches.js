@@ -1,6 +1,6 @@
 const express = require("express");
-const Model = require("../models/branchModel");
-const handlerFactory = require("../utils/handlerFactory");
+const Model = require("../../models/branchModel");
+const handlerFactory = require("../../utils/handlerFactory");
 const {
   setCompany,
   getOnlyBlance,
@@ -10,9 +10,9 @@ const {
   getStatBranchesStudentCountByMonths,
   getStatBranchesBalance,
   getStatBranchesIncomeByMonth,
-} = require("./../controllers/branchController");
-const { protect, restrictTo } = require("../controllers/authController");
-const { makeDeleted } = require("../utils/helpers");
+} = require("../../controllers/branchController");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

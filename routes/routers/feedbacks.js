@@ -1,9 +1,9 @@
 const express = require("express");
-const Model = require("../models/feedbackModel");
-const handlerFactory = require("../utils/handlerFactory");
-const { restrictFeedbacks } = require("../controllers/feedbackController");
-const { protect, restrictTo } = require("../controllers/authController");
-const { populate, makeDeleted } = require("../utils/helpers");
+const Model = require("../../models/feedbackModel");
+const handlerFactory = require("../../utils/handlerFactory");
+const { restrictFeedbacks } = require("../../controllers/feedbackController");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { populate, makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

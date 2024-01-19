@@ -1,13 +1,13 @@
 const express = require("express");
-const Model = require("../models/lessonModel");
-const handlerFactory = require("../utils/handlerFactory");
-const { prepareLesson } = require("../controllers/lessonController");
+const Model = require("../../models/lessonModel");
+const handlerFactory = require("../../utils/handlerFactory");
+const { prepareLesson } = require("../../controllers/lessonController");
 const {
   createTransactionOnLessonCreate,
-} = require("../controllers/transactionController");
-const { protect, restrictTo } = require("../controllers/authController");
+} = require("../../controllers/transactionController");
+const { protect, restrictTo } = require("../../controllers/authController");
 
-const { populate, makeDeleted } = require("../utils/helpers");
+const { populate, makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

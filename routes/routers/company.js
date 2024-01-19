@@ -1,9 +1,9 @@
 const express = require("express");
-const Model = require("../models/companyModel");
-const handlerFactory = require("../utils/handlerFactory");
-const { checkConstruction } = require("../controllers/companyController");
-const { protect, restrictTo } = require("../controllers/authController");
-const { makeDeleted } = require("../utils/helpers");
+const Model = require("../../models/companyModel");
+const handlerFactory = require("../../utils/handlerFactory");
+const { checkConstruction } = require("../../controllers/companyController");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 const router = express.Router();

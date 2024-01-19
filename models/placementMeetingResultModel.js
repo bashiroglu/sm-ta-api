@@ -68,7 +68,7 @@ const schema = new mongoose.Schema(
 );
 
 schema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } }).populate("referalUser");
+  this.find({ deleted: { $ne: true } }).populate("referalUser");
   next();
 });
 

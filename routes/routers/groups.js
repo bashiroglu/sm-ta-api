@@ -1,17 +1,17 @@
 const express = require("express");
-const Model = require("../models/groupModel");
+const Model = require("../../models/groupModel");
+const handlerFactory = require("../../utils/handlerFactory");
 
-const handlerFactory = require("../utils/handlerFactory");
 const {
   crudGroupLessons,
   checkRole,
-} = require("../controllers/groupController");
-const { createEnrollments } = require("../controllers/enrollmentController");
-const { protect, restrictTo } = require("../controllers/authController");
+} = require("../../controllers/groupController");
+const { createEnrollments } = require("../../controllers/enrollmentController");
+const { protect, restrictTo } = require("../../controllers/authController");
 const lessonRouter = require("./lessons");
-const { populate, makeDeleted } = require("../utils/helpers");
+const { populate, makeDeleted } = require("../../utils/helpers");
 
-const { roles } = require("../utils/constants/enums");
+const { roles } = require("../../utils/constants/enums");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

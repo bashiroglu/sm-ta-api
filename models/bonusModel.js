@@ -35,7 +35,7 @@ const schema = new mongoose.Schema(
 );
 
 schema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

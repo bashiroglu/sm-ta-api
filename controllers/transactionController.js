@@ -28,6 +28,7 @@ const updateBalance = catchAsync(async (req, res, next) => {
   const lower = await LowerCategory.findByIdAndUpdate(category, {
     $inc: { priority: 1 },
   }).session(session);
+
   if (!lower) return next(new AppError("category_not_found", 404));
 
   if (internal) return next();

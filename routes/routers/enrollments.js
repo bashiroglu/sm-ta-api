@@ -1,15 +1,15 @@
 const express = require("express");
-const Model = require("../models/enrollmentModel");
-const handlerFactory = require("../utils/handlerFactory");
+const Model = require("../../models/enrollmentModel");
+const handlerFactory = require("../../utils/handlerFactory");
 const {
   makeDeleted,
   populate,
   activate,
   deactivate,
-} = require("../utils/helpers");
-const { protect, restrictTo } = require("../controllers/authController");
-const { roles } = require("../utils/constants/enums");
-const { prepareEnrollment } = require("../controllers/enrollmentController");
+} = require("../../utils/helpers");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { roles } = require("../../utils/constants/enums");
+const { prepareEnrollment } = require("../../controllers/enrollmentController");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

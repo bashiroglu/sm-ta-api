@@ -1,19 +1,19 @@
 const express = require("express");
-const Model = require("../models/conversationModel");
-const handlerFactory = require("../utils/handlerFactory");
+const Model = require("../../models/conversationModel");
+const handlerFactory = require("../../utils/handlerFactory");
 const {
   registerUser,
   unregisterUser,
   scheduleConversationNotifications,
   checkRole,
-} = require("../controllers/conversationController");
-const { setPassword } = require("../controllers/userController");
+} = require("../../controllers/conversationController");
+const { setPassword } = require("../../controllers/userController");
 const {
   protect,
   restrictTo,
   signup,
-} = require("../controllers/authController");
-const { makeDeleted } = require("../utils/helpers");
+} = require("../../controllers/authController");
+const { makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

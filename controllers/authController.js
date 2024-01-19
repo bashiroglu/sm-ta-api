@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
@@ -43,6 +42,7 @@ exports.createTokenAndSignIn = catchAsync(async (req, res, next) => {
 
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined;
+
   req.status = statusCode;
   req.obj = { token, user };
   next();
@@ -97,6 +97,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     const url = `${req.protocol}://${req.get("host")}/me`;
     await new Email(newUser, url).sendWelcome();
   }
+
   req.user = newUser;
   req.statusCode = 201;
   next();
@@ -138,11 +139,10 @@ exports.login = catchAsync(async (req, res, next) => {
 
   req.user = user;
   req.statusCode = 200;
-
   next();
 });
 
-exports.logout = (req, res) => {
+exports.logout = (req, res, next) => {
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
@@ -232,12 +232,6 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
   next();
 });
 
-/**
- * Use for permissions or roles restrictions
- * @param  {array} items
- * @param {string} field
- * @returns next()
- */
 exports.restrictTo = (items, field = "roles") => {
   return (req, res, next) =>
     // checks if there is intersection
@@ -291,6 +285,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.paswordResetToken = undefined;
   user.paswordResetTokenExpires = undefined;
   await user.save();
+
   req.statusCode = 200;
   req.user = user;
   next();
@@ -304,8 +299,8 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
-
   await user.save();
+
   req.statusCode = 200;
   req.user = user;
   next();

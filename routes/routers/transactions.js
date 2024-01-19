@@ -1,13 +1,13 @@
 const express = require("express");
-const Model = require("../models/transactionModel");
-const handlerFactory = require("../utils/handlerFactory");
+const Model = require("../../models/transactionModel");
+const handlerFactory = require("../../utils/handlerFactory");
 const {
   updateBalance,
   checkBranch,
   restrictHiddenTransactions,
-} = require("../controllers/transactionController");
-const { protect, restrictTo } = require("../controllers/authController");
-const { populate, makeDeleted } = require("../utils/helpers");
+} = require("../../controllers/transactionController");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { populate, makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

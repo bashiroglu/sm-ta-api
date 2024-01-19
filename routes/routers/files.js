@@ -1,12 +1,17 @@
 const express = require("express");
 
-const { protect } = require("../controllers/authController");
+const { protect } = require("../../controllers/authController");
 const {
+  // Cloudinary
   uploadFile,
   upload,
   remove,
-  // } = require("../controllers/fileController_gc");
-} = require("../controllers/fileController");
+
+  // Goofle Cloud
+  uploadFileGc,
+  uploadGc,
+  removeGc,
+} = require("../../controllers/fileController");
 
 const router = express.Router();
 

@@ -1,8 +1,8 @@
 const express = require("express");
-const Model = require("../models/homeworkModel");
-const handlerFactory = require("../utils/handlerFactory");
-const { protect, restrictTo } = require("../controllers/authController");
-const { makeDeleted } = require("../utils/helpers");
+const Model = require("../../models/homeworkModel");
+const handlerFactory = require("../../utils/handlerFactory");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 

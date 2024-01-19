@@ -1,9 +1,9 @@
 const express = require("express");
-const Model = require("../models/upperCategoryModel");
-const handlerFactory = require("../utils/handlerFactory");
+const Model = require("../../models/upperCategoryModel");
+const handlerFactory = require("../../utils/handlerFactory");
 
-const { protect, restrictTo } = require("../controllers/authController");
-const { populate } = require("../utils/helpers");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { populate } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
@@ -14,7 +14,6 @@ router
   .route("/")
   .get(populate({ path: "lowers" }), getAll)
   .post(createOne);
-router.route("/lowers").post(createOne);
 
 router.route("/:id").get(getOne).patch(updateOne);
 

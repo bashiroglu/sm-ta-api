@@ -53,7 +53,7 @@ const schema = new mongoose.Schema(
 schema.index({ student: 1, group: 1 }, { unique: true });
 
 schema.pre(/^find/, function (next) {
-  this.find({ archived: { $ne: true } });
+  this.find({ deleted: { $ne: true } });
   next();
 });
 
