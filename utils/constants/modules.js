@@ -60,4 +60,9 @@ exports.modules = [
   },
   { route: "users", model: "user", collectionName: "User" },
   { route: "enrollments", model: "enrollment", collectionName: "Enrollment" },
+  {
+    route: "notifications",
+    model: "notification",
+    collectionName: "Notification",
+  },
 ];
