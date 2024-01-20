@@ -38,7 +38,7 @@ module.exports = (Model) => {
       let query = pipeline ? pipeline : Model.findById(id);
 
       if (popOptions) query = query.populate(popOptions);
-      const features = new APIFeatures(query, reqQuery).filter().limitFields();
+      const features = new APIFeatures(query, reqQuery).limitFields();
       const doc = await features.query;
       if (!doc) return next(new AppError("doc_not_found", 404));
 
