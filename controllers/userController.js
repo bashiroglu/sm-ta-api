@@ -160,6 +160,41 @@ const checkMembership = catchAsync(async (req, res, next) => {
   next();
 });
 
+const checkMe = (req, res, next) => {
+  const isMe = req.originalUrl.endsWith("users/me");
+  const {
+    body,
+    method,
+    user: { id, roles },
+  } = req;
+  if (!isMe) {
+    return hasCommon(["admin", "manager"], roles)
+      ? next()
+      : next(new AppError("not_authorized", 403));
+  }
+  const { password, passwordConfirm } = body;
+  req.params.id = id;
+  if (method === "PATCH") {
+    if (password || passwordConfirm)
+      return next(new AppError("not_for_password_update", 400));
+
+    req.body = filterObject(
+      ...body,
+      "name",
+      "email",
+      "surname",
+      "patronymic",
+      "phoneNumbers",
+      "dateOfBirth",
+      "profileImage"
+    );
+  }
+  if (method === "GET") {
+    req.popOptions = { path: "guardian", select: "name surname code" };
+  }
+  next();
+};
+
 module.exports = {
   scheduleBirthdayNotifications,
   assignParamsId,
@@ -173,4 +208,5 @@ module.exports = {
   deactivateUser,
   aliasTinyStudent,
   checkMembership,
+  checkMe,
 };

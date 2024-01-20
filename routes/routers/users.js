@@ -5,8 +5,6 @@ const handlerFactory = require("../../utils/handlerFactory");
 const {
   createUserByRole,
   getAllByRole,
-  assignParamsId,
-  updateMe,
   setPassword,
   setReqBody,
   activateUser,
@@ -14,6 +12,7 @@ const {
   scheduleBirthdayNotifications,
   aliasTinyStudent,
   checkMembership,
+  checkMe,
 } = require("../../controllers/userController");
 const { protect, restrictTo } = require("../../controllers/authController");
 
@@ -26,11 +25,17 @@ const router = express.Router();
 scheduleBirthdayNotifications();
 
 router.use(protect);
+
 router
-  .route("/me")
-  .get(assignParamsId, getOne)
-  .patch(assignParamsId, updateMe, updateOne)
-  .delete(assignParamsId, makeDeleted, updateOne);
+  .route("/")
+  .get(restrictTo(["admin", "manager"]), getAll)
+  .post(restrictTo(["admin", "manager"]), setPassword, createOne);
+
+router
+  .route("/:id")
+  .get(populate({ path: "positions", select: "title id" }), checkMe, getOne)
+  .patch(checkMe, updateOne)
+  .delete(checkMe, checkMembership, makeDeleted, updateOne);
 
 router.use(restrictTo(["admin", "manager"]));
 
@@ -56,14 +61,6 @@ router.route("/role/student/:id/participation").get(
   ]),
   getOne
 );
-
-router.route("/").get(getAll).post(setPassword, createOne);
-
-router
-  .route("/:id")
-  .get(populate({ path: "positions", select: "title id" }), getOne)
-  .patch(updateOne)
-  .delete(checkMembership, makeDeleted, updateOne);
 
 router.route("/:id/tags").get(setReqBody, getOne).patch(setReqBody, updateOne);
 router
