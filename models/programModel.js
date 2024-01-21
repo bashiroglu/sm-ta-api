@@ -4,11 +4,12 @@ const collectionName = "Program";
 
 const schema = new mongoose.Schema(
   {
-    title: { type: String },
-    description: { type: String },
-    predictedPayment: {
-      type: Number,
+    detailCode: {
+      type: String,
+      unique: true,
     },
+    name: { type: String },
+    description: { type: String },
     lessonCount: {
       type: Number,
     },
@@ -31,9 +32,8 @@ const schema = new mongoose.Schema(
       type: String,
       enum: ["online", "traditional"],
     },
-
-    name: String,
     price: Number,
+
     deleted: Boolean,
     archived: Boolean,
     createdBy: {

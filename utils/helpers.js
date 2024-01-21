@@ -98,16 +98,10 @@ const makeDeleted = catchAsync(async (req, res, next) => {
   next();
 });
 
-const hasCommon = (array1, array2) =>
+const haveCommon = (array1, array2) =>
   array1.filter((el) => array2.includes(el)).length;
 
 const getPeriod = (date) => `0 10 ${date.getDate()} ${date.getMonth() + 1} *`;
-
-const setDefaultLang = (lang) =>
-  catchAsync(async (req, res, next) => {
-    if (!req.headers["accept-language"]) req.headers["accept-language"] = lang;
-    next();
-  });
 
 const activate = catchAsync(async (req, res, next) => {
   req.body = { status: "active" };
@@ -202,9 +196,8 @@ module.exports = {
   restrictPerSubdomain,
   archive,
   makeDeleted,
-  hasCommon,
+  haveCommon,
   getPeriod,
-  setDefaultLang,
   activate,
   deactivate,
   sendRes,

@@ -23,7 +23,6 @@ i18next
   });
 
 const AppError = require("./utils/appError");
-const { setDefaultLang } = require("./utils/helpers");
 
 const app = express();
 app.use(middleware.handle(i18next));
@@ -53,12 +52,14 @@ app.use((req, res, next) => {
     "Origin, X-Requested-With, Content-Type, Accept,authorization "
   );
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+
+  req.headers["accept-language"] = req.headers["accept-language"] || "en";
   next();
 });
 // app.use(express.json());
 app.use(bodyParser.json({ limit: "5mb" }));
 
-app.use("/api/v1", setDefaultLang("en"), routes);
+app.use("/api/v1", routes);
 
 app.all("*", (req, res, next) => {
   const errorMessage = req.t("route_not_found", {

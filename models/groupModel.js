@@ -21,8 +21,9 @@ const schema = new mongoose.Schema(
       ref: "Program",
       required: [true, "required_branch"],
     },
-    name: {
+    detailCode: {
       type: String,
+      unique: true,
     },
     teacher: {
       type: mongoose.Schema.ObjectId,
@@ -63,10 +64,6 @@ const schema = new mongoose.Schema(
     level: {
       type: mongoose.Schema.ObjectId,
       ref: "LowerCategory",
-    },
-    detailCode: {
-      type: String,
-      unique: true,
     },
 
     deleted: Boolean,

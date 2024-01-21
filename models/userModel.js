@@ -155,15 +155,6 @@ const schema = new mongoose.Schema(
 
     // Groups of degree programs (ixtisas qrupu)
     groupDP: Number,
-    schoolAdmittionYear: {
-      type: Number,
-      required: [
-        function () {
-          return this.roles?.includes(roles.STUDENT);
-        },
-        "required_admittion_year",
-      ],
-    },
 
     active: {
       type: Boolean,

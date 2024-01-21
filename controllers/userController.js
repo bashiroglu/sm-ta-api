@@ -3,10 +3,13 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 
 const Model = require("./../models/userModel");
-const GroupModel = require("../models/groupModel");
 const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
-const { filterObject, startTransSession } = require("../utils/helpers");
+const {
+  filterObject,
+  startTransSession,
+  haveCommon,
+} = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
 const { sendSmsRequest } = require("../utils/sms");
 
@@ -115,18 +118,14 @@ const excludeFields = catchAsync(async (req, res, next) => {
 });
 
 const setReqBody = catchAsync(async (req, res, next) => {
-  const {
-    body: { url },
-    body,
-    method,
-  } = req;
-  const field = url.split("/").at(-1);
+  const { originalUrl, body, method } = req;
+  const field = originalUrl.split("/").at(-1);
   const value = body[field];
 
   if (!["tags", "permissions"].includes(field) || !value)
     return next(new AppError("dont_use_this_endpoint", 400));
 
-  req.body = method === "PATCH" ? { [field]: body[field] } : undefined;
+  req.body = method === "PATCH" ? { [field]: value } : undefined;
   req.query.fields = field;
   next();
 });
@@ -167,31 +166,30 @@ const checkMe = (req, res, next) => {
     method,
     user: { id, roles },
   } = req;
-  if (!isMe) {
-    return hasCommon(["admin", "manager"], roles)
-      ? next()
-      : next(new AppError("not_authorized", 403));
-  }
-  const { password, passwordConfirm } = body;
-  req.params.id = id;
-  if (method === "PATCH") {
-    if (password || passwordConfirm)
-      return next(new AppError("not_for_password_update", 400));
 
-    req.body = filterObject(
-      ...body,
-      "name",
-      "email",
-      "surname",
-      "patronymic",
-      "phoneNumbers",
-      "dateOfBirth",
-      "profileImage"
-    );
+  if (isMe) {
+    const { password, passwordConfirm } = body;
+    req.params.id = id;
+    if (method === "PATCH") {
+      if (password || passwordConfirm)
+        return next(new AppError("not_for_password_update", 400));
+      req.body = filterObject(
+        ...body,
+        "name",
+        "email",
+        "surname",
+        "patronymic",
+        "phoneNumbers",
+        "dateOfBirth",
+        "profileImage"
+      );
+    }
+    if (method === "GET")
+      req.popOptions = { path: "guardian", select: "name surname code" };
+  } else if (haveCommon(["admin", "manager"], roles)) {
+    return next(new AppError("not_authorized", 403));
   }
-  if (method === "GET") {
-    req.popOptions = { path: "guardian", select: "name surname code" };
-  }
+
   next();
 };
 

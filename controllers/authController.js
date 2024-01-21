@@ -9,7 +9,7 @@ const AppError = require("../utils/appError");
 const Email = require("../utils/email");
 const {
   restrictPerSubdomain,
-  hasCommon,
+  haveCommon,
   getCode,
   startTransSession,
 } = require("../utils/helpers");
@@ -235,7 +235,7 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
 exports.restrictTo = (items, field = "roles") => {
   return (req, res, next) =>
     // checks if there is intersection
-    !hasCommon(items, req.user[field])
+    !haveCommon(items, req.user[field])
       ? next(new AppError("not_authorized", 403))
       : next();
 };
