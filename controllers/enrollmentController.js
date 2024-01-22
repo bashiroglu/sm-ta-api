@@ -5,10 +5,7 @@ const ProgramModel = require("../models/programModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { notify } = require("../utils/helpers");
-const {
-  studentPaymentText,
-  oneLessonRemainedText,
-} = require("../utils/contents");
+const { studentPaymentText } = require("../utils/contents");
 
 const createEnrollments = catchAsync(async (req, res, next) => {
   let {

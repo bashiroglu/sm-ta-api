@@ -22,6 +22,8 @@ module.exports = (Model) => {
         session ? { session } : null
       );
 
+      if (!doc) return next(new AppError("cannot be created", 400));
+
       req.status = 201;
       req.obj = { data: docCount ? doc : session ? doc.at(0) : doc };
       next();

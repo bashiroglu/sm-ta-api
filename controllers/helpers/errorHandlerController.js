@@ -66,6 +66,7 @@ const sendErrorDev = (err, req, res) => {
 };
 
 module.exports = async (err, req, res, next) => {
+  console.error(err.stack);
   const { session } = req;
   if (session) {
     await session.abortTransaction();
@@ -80,8 +81,6 @@ module.exports = async (err, req, res, next) => {
   ) {
     let error = { ...err };
     error.message = err.message;
-
-    console.error(error.message);
 
     if (err.name === "CastError") error = handleCastError(error, req);
     if (err.name === "ValidationError")

@@ -44,10 +44,8 @@ exports.upload = catchAsync(async (req, res, next) => {
 
   const { public_id, url } = result;
 
-  res.status(200).json({
-    status: "success",
-    data: { public_id, url },
-  });
+  req.obj = { public_id, url };
+  next();
 });
 
 exports.remove = catchAsync(async (req, res, next) => {
@@ -55,10 +53,8 @@ exports.remove = catchAsync(async (req, res, next) => {
 
   if (data.result !== "ok") return next(new AppError("try_again", 400));
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
+  req.obj = null;
+  next();
 });
 
 // ================ GOOGLE CLOUD ====================
@@ -89,11 +85,14 @@ exports.uploadFileGc = upload.single("file");
 
 exports.uploadGc = catchAsync(async (req, res, next) => {
   const { filename: public_id, linkUrl: url } = req.file;
-  res.status(200).json({ status: "success", data: { public_id, url } });
+  req.obj = { public_id, url };
+  next();
 });
 
 exports.removeGc = catchAsync(async (req, res, next) => {
   const [data] = await bucket.file(req.body.fileId).delete();
   if (data.statusCode !== 204) return next(new AppError("try_again", 400));
-  res.status(204).json({ status: "success", data: null });
+
+  req.obj = null;
+  next();
 });

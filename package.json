@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "NODE_ENV=development nodemon server.js",
+    "debug": "DEBUG=express:* & nodemon server.js",
+    "debug-w": "SET DEBUG=express:* & nodemon server.js",
     "prod": "NODE_ENV=production nodemon server.js",
     "dev-w": "SET NODE_ENV=development & nodemon server.js",
     "start:prod-w": "SET NODE_ENV=production & nodemon server.js",

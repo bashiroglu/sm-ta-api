@@ -95,24 +95,25 @@ schema.statics.studentsPopOpts = {
   path: "enrollments",
   select: "student lessonCount permissionCount",
   populate: { path: "student", select: "id name surname code email" },
+  match: { status: "active" },
   transform: ({
+    _id,
     student: { id, name, surname, code, email },
     lessonCount,
     permissionCount,
+    status,
   }) => ({
     id,
     name,
     surname,
     code,
     email,
+    enrollment: _id,
     lessonCount,
     permissionCount,
+    status,
   }),
 };
-
-schema.post("save", async function (doc) {
-  await doc.populate(schema.statics.studentsPopOpts).execPopulate();
-});
 
 schema.statics.q = ["name"];
 
@@ -121,6 +122,10 @@ schema.pre("save", async function (next) {
   if (!room) return next(new AppError("room_not_found", 404));
 
   next();
+});
+
+schema.post("save", async function (doc) {
+  await doc.populate(schema.statics.studentsPopOpts).execPopulate();
 });
 
 schema.statics.codeOptions = {

@@ -19,7 +19,10 @@ router.use(protect, restrictTo([roles.ADMIN, roles.MANAGER]));
 
 router
   .route("/")
-  .get(populate([{ path: "group" }, { path: "student" }]), getAll)
+  .get(
+    populate([{ path: "group", populate: "program" }, { path: "student" }]),
+    getAll
+  )
   .post(prepareEnrollment, createOne);
 
 router
