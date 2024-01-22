@@ -1,8 +1,7 @@
-const mongoose = require("mongoose");
-
 const { sendNotification, scheduleTask } = require("./../utils/helpers");
 const Model = require("../models/recurrenceModel");
 const catchAsync = require("../utils/catchAsync");
+const AppError = require("../utils/appError");
 
 const executeRecurrence = catchAsync(async (req, res, next) => {
   let {
@@ -65,8 +64,16 @@ const stopScheduleNotificationsOnDelete = catchAsync(async (req, res, next) => {
   next();
 });
 
+const setReqRecurrence = catchAsync(async (req, res, next) => {
+  let recurrence = await Model.findById(req.params.id);
+  if (!recurrence) return next(new AppError("doc_not_found", 404));
+  req.recurrence = recurrence;
+  next();
+});
+
 module.exports = {
   executeRecurrence,
   scheduleRecurrenceNotifications,
   stopScheduleNotificationsOnDelete,
+  setReqRecurrence,
 };

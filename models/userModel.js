@@ -153,9 +153,6 @@ const schema = new mongoose.Schema(
       },
     ],
 
-    // Groups of degree programs (ixtisas qrupu)
-    groupDP: Number,
-
     active: {
       type: Boolean,
       default: true,

@@ -64,6 +64,24 @@ schema.pre(/^find/, function (next) {
   next();
 });
 
+// schema.pre("save", function (next) {
+//   this.savedIsNew = this.isNew;
+//   next();
+// });
+
+// schema.post("save", function (doc) {
+//   if (this.savedIsNew) {
+//     // if (lessonCount === 1 && program.monthly) {
+//     //   const result = await notify({
+//     //     via: "sms",
+//     //     to: student?.phoneNumbers?.at(-1),
+//     //     content: oneLessonRemainedText,
+//     //   });
+//     //   if (!result) return { error: true, message: "notification_failed" };
+//     // }
+//   }
+// });
+
 schema.statics.q = ["topic", "code"];
 
 schema.statics.codeOptions = {

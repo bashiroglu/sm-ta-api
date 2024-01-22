@@ -2,12 +2,12 @@ const express = require("express");
 const Model = require("../../models/transactionModel");
 const handlerFactory = require("../../utils/handlerFactory");
 const {
-  updateBalance,
-  checkBranch,
+  prepareTransaction,
   restrictHiddenTransactions,
 } = require("../../controllers/transactionController");
 const { protect, restrictTo } = require("../../controllers/authController");
 const { populate, makeDeleted } = require("../../utils/helpers");
+const { checkBranch } = require("../../controllers/branchController");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
@@ -22,7 +22,7 @@ router.use(
 router
   .route("/")
   .get(populate({ path: "createdBy", select: "name surname" }), getAll)
-  .post(checkBranch, updateBalance, createOne);
+  .post(checkBranch, prepareTransaction, createOne);
 router
   .route("/:id")
   .get(

@@ -11,6 +11,10 @@ const schema = new mongoose.Schema(
       unique: true,
     },
 
+    detailCode: {
+      type: String,
+      unique: true,
+    },
     branch: {
       type: mongoose.Schema.ObjectId,
       ref: "Branch",
@@ -20,10 +24,6 @@ const schema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Program",
       required: [true, "required_branch"],
-    },
-    detailCode: {
-      type: String,
-      unique: true,
     },
     teacher: {
       type: mongoose.Schema.ObjectId,

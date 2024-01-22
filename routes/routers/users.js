@@ -31,6 +31,7 @@ router
   .get(restrictTo(["admin", "manager"]), getAll)
   .post(restrictTo(["admin", "manager"]), setPassword, createOne);
 
+// role restriction of this endpoint is in checkMe function
 router
   .route("/:id")
   .get(populate({ path: "positions", select: "title id" }), checkMe, getOne)

@@ -72,9 +72,21 @@ const checkRestriction = catchAsync(async (req, res, next) => {
   next();
 });
 
+const incrementPriority = async (req) => {
+  let {
+    body: { category },
+    session,
+  } = req;
+
+  return await Model.findByIdAndUpdate(category, {
+    $inc: { priority: 1 },
+  }).session(session);
+};
+
 module.exports = {
   queryByUpperSlug,
   sortDescending,
   checkDeletability,
   checkRestriction,
+  incrementPriority,
 };

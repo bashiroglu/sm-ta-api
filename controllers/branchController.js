@@ -4,6 +4,7 @@ const TransactionModel = require("../models/transactionModel");
 const catchAsync = require("../utils/catchAsync");
 const mongoose = require("mongoose");
 const AppError = require("../utils/appError");
+const { roles } = require("../utils/constants/enums");
 
 const setCompany = catchAsync(async (req, res, next) => {
   req.body.company = process.env.COMPANY_ID;
@@ -361,6 +362,42 @@ const getStatBranchesIncomeByMonth = catchAsync(async (req, res, next) => {
   next();
 });
 
+const updateBalance = async (req) => {
+  let {
+    body: { amount, branch, isIncome },
+    session,
+  } = req;
+
+  amount = amount * (isIncome || -1);
+  const { balance } = await Model.findByIdAndUpdate(
+    branch,
+    { $inc: { balance: amount } },
+    { session }
+  );
+
+  if (!(balance >= 0)) return;
+  req.body.amount = amount;
+  req.body.balanceBefore = balance;
+  req.body.balanceAfter = balance + amount;
+  return balance;
+};
+
+const checkBranch = (req, res, next) => {
+  let {
+    body,
+    user: { roles: userRoles, branches },
+  } = req;
+  const branch = `${req.recurrence?.branch}` || body?.branch;
+  const isAdmin = userRoles.includes(roles.ADMIN);
+  if (!isAdmin) {
+    const notManager = !userRoles.includes(roles.MANAGER);
+    const notOwnBranch = !branches?.map((b) => b.id).includes(branch);
+    if (notManager || notOwnBranch)
+      return next(new AppError("not_authorized", 401));
+  }
+  next();
+};
+
 module.exports = {
   setCompany,
   getOnlyBlance,
@@ -370,4 +407,6 @@ module.exports = {
   getStatBranchesStudentCountByMonths,
   getStatBranchesBalance,
   getStatBranchesIncomeByMonth,
+  updateBalance,
+  checkBranch,
 };

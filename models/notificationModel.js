@@ -7,6 +7,11 @@ const schema = new mongoose.Schema(
     from: String,
     to: String,
     content: String,
+    type: {
+      type: String,
+      enum: ["sms", "telegram", "email", "push"],
+    },
+    result: Object,
 
     deleted: Boolean,
     archived: Boolean,

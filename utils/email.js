@@ -2,10 +2,9 @@ const nodemailer = require("nodemailer");
 const htmlToText = require("html-to-text");
 
 module.exports = class Email {
-  constructor(user, url) {
+  constructor(user) {
     this.to = user.email;
     this.firstName = user.name;
-    this.url = url;
     this.from = `${process.env.COMPANY_NAME} <${process.env.EMAIL_FROM}>`;
   }
 
@@ -31,35 +30,15 @@ module.exports = class Email {
   }
 
   // Send the actual email
-  async send(template, subject) {
-    // TODO: Add html tempalate renderer
-
-    // const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
-    //   firstName: this.firstName,
-    //   url: this.url,
-    //   subject,
-    // });
-
-    // 2) Define email options
+  async send(content, subject) {
     const mailOptions = {
       from: this.from,
       to: this.to,
       subject,
       text: this.url,
-      // html,
-      // text: htmlToText.fromString(html),
     };
 
-    // 3) Create a transport and send email
     await this.newTransport().sendMail(mailOptions);
-  }
-
-  async sendWelcome() {
-    // TODO: Create welcome html tempalate
-    await this.send(
-      "welcome",
-      `Welcome to the ${process.env.COMPANY_NAME} Family!`
-    );
   }
 
   async sendPasswordReset() {

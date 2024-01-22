@@ -160,19 +160,17 @@ const checkMembership = catchAsync(async (req, res, next) => {
 });
 
 const checkMe = (req, res, next) => {
-  const isMe = req.originalUrl.endsWith("users/me");
-  const {
-    body,
-    method,
-    user: { id, roles },
-  } = req;
+  const { body, method, user, originalUrl } = req;
+  const { password, passwordConfirm } = body;
+  if (password || passwordConfirm)
+    return next(new AppError("not_for_password_update", 400));
+
+  const isMe = originalUrl.endsWith("users/me");
+  const { id, roles } = user;
 
   if (isMe) {
-    const { password, passwordConfirm } = body;
     req.params.id = id;
     if (method === "PATCH") {
-      if (password || passwordConfirm)
-        return next(new AppError("not_for_password_update", 400));
       req.body = filterObject(
         ...body,
         "name",
@@ -186,9 +184,8 @@ const checkMe = (req, res, next) => {
     }
     if (method === "GET")
       req.popOptions = { path: "guardian", select: "name surname code" };
-  } else if (haveCommon(["admin", "manager"], roles)) {
+  } else if (!haveCommon(["admin", "manager"], roles))
     return next(new AppError("not_authorized", 403));
-  }
 
   next();
 };
