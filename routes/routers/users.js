@@ -13,10 +13,12 @@ const {
   aliasTinyStudent,
   checkMembership,
   checkMe,
+  getErnings,
 } = require("../../controllers/userController");
 const { protect, restrictTo } = require("../../controllers/authController");
 
 const { populate, makeDeleted } = require("../../utils/helpers");
+const { getProgreamNames } = require("../../controllers/programController");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
@@ -62,6 +64,9 @@ router.route("/role/student/:id/participation").get(
   ]),
   getOne
 );
+router
+  .route("/role/teacher/earnings-owerview")
+  .get(getErnings, getAll, getProgreamNames);
 
 router.route("/:id/tags").get(setReqBody, getOne).patch(setReqBody, updateOne);
 router

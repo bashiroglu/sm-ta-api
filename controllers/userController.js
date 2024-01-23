@@ -197,6 +197,13 @@ const handleSalary = async (req) => {
   return true;
 };
 
+const getErnings = catchAsync(async (req, res, next) => {
+  req.query.roles = "teacher";
+  req.query.fields = "initial earnings";
+  req.popOptions = { path: "earnings.program", select: "amount" };
+  next();
+});
+
 module.exports = {
   scheduleBirthdayNotifications,
   assignParamsId,
@@ -212,4 +219,5 @@ module.exports = {
   checkMembership,
   checkMe,
   handleSalary,
+  getErnings,
 };
