@@ -4,6 +4,7 @@ const { modules } = require("../utils/constants/modules");
 const handlerFactory = require("../utils/handlerFactory");
 const { restrictTo } = require("../controllers/authController");
 const { checkMembership } = require("../controllers/userController");
+const { checkManagerExists } = require("../controllers/branchController");
 
 const mainRouter = express.Router();
 
@@ -20,7 +21,12 @@ modules.forEach((module) => {
     if (!["upperCategory", "lowerCategory", "log"].includes(module.model))
       router
         .route("/:id/delete")
-        .delete(restrictTo(["admin"]), checkMembership, deleteOne);
+        .delete(
+          restrictTo(["admin"]),
+          checkManagerExists,
+          checkMembership,
+          deleteOne
+        );
   }
   router.use(sendRes);
 

@@ -398,6 +398,15 @@ const checkBranch = (req, res, next) => {
   next();
 };
 
+const checkManagerExists = catchAsync(async (req, res, next) => {
+  if (!req.baseUrl.endsWith("branches")) return next();
+  const branch = await Model.findById(req.params.id);
+  if (!branch) return next(new AppError("doc_not_found", 404));
+  if (branch.managers?.length)
+    return next(new AppError("branch_has_manager", 400));
+  next();
+});
+
 module.exports = {
   setCompany,
   getOnlyBlance,
@@ -409,4 +418,5 @@ module.exports = {
   getStatBranchesIncomeByMonth,
   updateBalance,
   checkBranch,
+  checkManagerExists,
 };

@@ -10,6 +10,7 @@ const {
   getStatBranchesStudentCountByMonths,
   getStatBranchesBalance,
   getStatBranchesIncomeByMonth,
+  checkManagerExists,
 } = require("../../controllers/branchController");
 const { protect, restrictTo } = require("../../controllers/authController");
 const { makeDeleted } = require("../../utils/helpers");
@@ -40,7 +41,7 @@ router
   .route("/:id")
   .get(getOne)
   .patch(updateOne)
-  .delete(makeDeleted, updateOne);
+  .delete(checkManagerExists, makeDeleted, updateOne);
 router.route("/:id/balance").get(getOnlyBlance, getOne);
 
 module.exports = router;
