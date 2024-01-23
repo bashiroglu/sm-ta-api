@@ -28,6 +28,7 @@ exports.modules = [
   { route: "hwtasks", model: "hwtask", collectionName: "Hwtask" },
   { route: "inventories", model: "inventory", collectionName: "Inventory" },
   { route: "lessons", model: "lesson", collectionName: "Lesson" },
+  { route: "logs", model: "log", collectionName: "Log" },
   {
     route: "lower-categories",
     model: "lowerCategory",

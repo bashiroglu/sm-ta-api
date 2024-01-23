@@ -1,0 +1,10 @@
+const express = require("express");
+const Model = require("../../models/logModel");
+const handlerFactory = require("../../utils/handlerFactory");
+const { protect, restrictTo } = require("../../controllers/authController");
+const { getAll, getOne } = handlerFactory(Model);
+const router = express.Router();
+router.use(protect, restrictTo(["admin"]));
+router.route("/").get(getAll);
+router.route("/:id").get(getOne);
+module.exports = router;

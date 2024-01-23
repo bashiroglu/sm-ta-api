@@ -17,7 +17,7 @@ modules.forEach((module) => {
     router.route("/:id/archive").patch(archive, updateOne);
     router.route("/:id/unarchive").patch(archive, updateOne);
 
-    if (!["upperCategory", "lowerCategory"].includes(module.model))
+    if (!["upperCategory", "lowerCategory", "log"].includes(module.model))
       router
         .route("/:id/delete")
         .delete(restrictTo(["admin"]), checkMembership, deleteOne);
