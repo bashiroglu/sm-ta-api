@@ -44,7 +44,7 @@ exports.createTokenAndSignIn = catchAsync(async (req, res, next) => {
   user.password = undefined;
 
   req.status = statusCode;
-  req.obj = { token, user };
+  req.resObj = { token, user };
   next();
 });
 
@@ -234,7 +234,7 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
   if (user.changedPasswordAfter(decoded.iat))
     return next(new AppError("password_changed_recent", 401));
 
-  req.obj = { user };
+  req.resObj = { user };
   next();
 });
 
@@ -263,7 +263,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       await new Email(user, resetURL).sendPasswordReset();
     console.warn(resetURL);
 
-    req.obj = { message: "Token sent to email!" };
+    req.resObj = { message: "Token sent to email!" };
     next();
   } catch (error) {
     user.paswordResetToken = undefined;

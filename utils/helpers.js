@@ -121,7 +121,7 @@ const sendRes = catchAsync(async (req, res, next) => {
   const {
     session,
     status = 200,
-    obj,
+    resObj,
     doc,
     user,
     originalUrl,
@@ -149,7 +149,7 @@ const sendRes = catchAsync(async (req, res, next) => {
 
   res.status(status).json({
     status: "success",
-    ...obj,
+    ...resObj,
   });
 });
 

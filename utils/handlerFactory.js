@@ -25,7 +25,7 @@ module.exports = (Model) => {
       if (!doc) return next(new AppError("cannot be created", 400));
 
       req.status = 201;
-      req.obj = { data: docCount ? doc : session ? doc.at(0) : doc };
+      req.resObj = { data: docCount ? doc : session ? doc.at(0) : doc };
       next();
     }),
 
@@ -44,7 +44,7 @@ module.exports = (Model) => {
       const doc = await features.query;
       if (!doc) return next(new AppError("doc_not_found", 404));
 
-      req.obj = { data: doc };
+      req.resObj = { data: doc };
       next();
     }),
 
@@ -79,7 +79,7 @@ module.exports = (Model) => {
       const result = await paginatedFeatures.query;
 
       // 8. Send the response
-      req.obj = {
+      req.resObj = {
         total: total.length,
         results: result.length,
         data: result,
@@ -124,7 +124,7 @@ module.exports = (Model) => {
       if (!doc)
         return next(new AppError("No document found with that ID", 404));
 
-      req.obj = { data: deleted ? null : doc };
+      req.resObj = { data: deleted ? null : doc };
       next();
     }),
 
@@ -137,7 +137,7 @@ module.exports = (Model) => {
       if (!doc) return next(new AppError("doc_not_found", 404));
 
       req.status = 204;
-      req.obj = { data: null };
+      req.resObj = { data: null };
       next();
     }),
   };
