@@ -1,27 +1,15 @@
 const mongoose = require("mongoose");
 
-const collectionName = "Hwtask";
+const collectionName = "Exercise";
 
 const schema = new mongoose.Schema(
   {
-    homework: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Homework",
-      required: [true, "Homework must belong to lesson"],
+    title: String,
+    type: {
+      type: String,
+      enum: ["essay"],
     },
-    finishDate: {
-      type: Date,
-      default: Date.now,
-    },
-    isFinished: {
-      type: Boolean,
-      default: false,
-    },
-    questionTitles: [
-      {
-        type: String,
-      },
-    ],
+    content: String,
 
     deleted: Boolean,
     archived: Boolean,

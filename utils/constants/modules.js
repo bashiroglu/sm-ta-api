@@ -25,7 +25,7 @@ exports.modules = [
   { route: "files" },
   { route: "groups", model: "group", collectionName: "Group" },
   { route: "homeworks", model: "homework", collectionName: "Homework" },
-  { route: "hwtasks", model: "hwtask", collectionName: "Hwtask" },
+  { route: "tasks", model: "task", collectionName: "Task" },
   { route: "inventories", model: "inventory", collectionName: "Inventory" },
   { route: "lessons", model: "lesson", collectionName: "Lesson" },
   { route: "logs", model: "log", collectionName: "Log" },

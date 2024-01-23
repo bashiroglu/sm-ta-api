@@ -1,5 +1,5 @@
 const express = require("express");
-const Model = require("../../models/hwtaskModel");
+const Model = require("../../models/taskModel");
 const handlerFactory = require("../../utils/handlerFactory");
 const { protect, restrictTo } = require("../../controllers/authController");
 const { makeDeleted } = require("../../utils/helpers");
