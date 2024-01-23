@@ -9,4 +9,9 @@ const checkConstruction = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports = { checkConstruction };
+const aliasSetId = (req, res, next) => {
+  req.params.id = process.env.COMPANY_ID;
+  next();
+};
+
+module.exports = { checkConstruction, aliasSetId };
