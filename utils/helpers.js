@@ -3,7 +3,7 @@ const cron = require("node-cron");
 
 const CompanyModel = require("../models/companyModel");
 const LogModel = require("../models/logModel");
-const Notification = require("../models/notificationModel");
+const NotificationModel = require("../models/notificationModel");
 const catchAsync = require("./catchAsync");
 const mongoose = require("mongoose");
 const AppError = require("./appError");
@@ -188,7 +188,9 @@ const startTransSession = async (req) => {
   return session;
 };
 
-const notify = async ({ via, to, content } = {}) => {
+const notify = async (obj) => {
+  if (!obj) return;
+  const { via, to, content } = obj;
   let result = true;
   if (process.env.NODE_ENV.trim() === "production") {
     if (via === "sms") result = await sendSmsRequest(to, content);
@@ -197,10 +199,10 @@ const notify = async ({ via, to, content } = {}) => {
     // if (via === "telegram") result = await bot.api.sendMessage(to, content);
     // if (via === "push") result = ;
 
-    if (result) await Notification.create({ via, to, content, result });
+    if (result) await NotificationModel.create([{ via, to, content, result }]);
   }
 
-  return result;
+  console.log(obj);
 };
 
 module.exports = {

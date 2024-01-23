@@ -3,6 +3,7 @@ const {
   getPeriod,
   scheduleTask,
   sendNotification,
+  notify,
 } = require("../utils/helpers");
 
 const collectionName = "Conversation";
@@ -104,11 +105,15 @@ schema.pre(/^find/, function (next) {
 
 schema.post("save", async function (doc) {
   // TODO: send sms
-  const popdoc = await doc
+  await doc
     .populate({ path: "createdBy", select: "name surname email" })
     .execPopulate();
-  console.warn("notify teacher and all students", popdoc);
-  doc.createdBy = doc.createdBy.id;
+  const obj = {
+    via: "sms",
+    to: doc?.phoneNumbers.at(-1),
+    content: "you have registered",
+  };
+  await notify(obj);
 });
 
 schema.statics.jobs = {};

@@ -53,7 +53,7 @@ const sortDescending = catchAsync(async (req, res, next) => {
 
 // TODO: Use this if needed
 const checkDeletability = catchAsync(async (req, res, next) => {
-  if (!req.baseUrl.endsWith("lower-categories")) next();
+  if (!req.baseUrl.endsWith("lower-categories")) return next();
   const lower = await Model.findById(req.params.id);
   if (!lower) return next(new AppError("doc_not_found", 404));
 
@@ -77,10 +77,11 @@ const incrementPriority = async (req) => {
     body: { category },
     session,
   } = req;
-
-  return await Model.findByIdAndUpdate(category, {
+  const lower = await Model.findByIdAndUpdate(category, {
     $inc: { priority: 1 },
   }).session(session);
+  if (!lower) return { message: "lower_category_not_found" };
+  return lower;
 };
 
 module.exports = {
