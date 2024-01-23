@@ -4,8 +4,6 @@ const GroupModel = require("../models/groupModel");
 const ProgramModel = require("../models/programModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
-const { notify } = require("../utils/helpers");
-const { studentPaymentText } = require("../utils/contents");
 
 const createEnrollments = catchAsync(async (req, res, next) => {
   let {
@@ -52,95 +50,26 @@ const prepareEnrollment = catchAsync(async (req, res, next) => {
 
 const handleStudentPayment = async (req) => {
   let {
-    body: {
-      category,
-      relatedTo,
-      lessonCount,
-      permissionCount,
-      smsNotification,
-      amount,
-    },
+    body: { relatedTo, lessonCount, permissionCount, group },
     session,
   } = req;
-
-  if (category !== process.env.STUDENT_PAYMENT_CATEGORY_ID) return true;
-
-  const filter = { student: relatedTo, group: groupId };
+  const filter = { student: relatedTo, group };
   const popOptions = ["student", { path: "group", populate: "program" }];
-  const doc = await Model.findOne(filter).populate(popOptions);
-  if (!doc) return;
+  const enrollment = await Model.findOne(filter).populate(popOptions);
+  if (!enrollment) return { message: "enrollment_not_found" };
 
-  doc.lessonCount += lessonCount || doc.group.program.lessonCount;
-  doc.permissionCount = permissionCount || doc.group.program.permissionCount;
-  doc.save(session);
+  const { lessonCount: progLessonCount, permissionCount: progPermissionCount } =
+    enrollment.group.program;
 
-  if (smsNotification) {
-    const content = studentPaymentText(amount);
-    const result = await notify({
-      via: "sms",
-      to: doc.student?.phoneNumbers?.at(-1),
-      content,
-      session,
-    });
-
-    if (!result) next(new AppError("notification_failed", 400));
-  }
-
-  console.warn("Your payment has been fulfilled");
-  return doc;
-};
-
-const adjustEnrollments = async (req, group, lesson, session) => {
-  const {
-    body: { absent, present },
-  } = req;
-  const { id: groupId } = group;
-
-  const enrollments = await Model.find({ group: groupId })
-    .populate(["student", { path: "group", populate: "program" }])
-    .session(session);
-
-  if (!enrollments.length)
-    return { error: true, message: "enrollment_not_found" };
-
-  const paidStudents = [];
-
-  enrollments.forEach(async (enrollment) => {
-    const { lessonCount, permissionCount, status, student } = enrollment;
-
-    const isActive = status === "active";
-    const isPresent = present.includes(String(student.id));
-    const isAbsent = absent.includes(String(student.id));
-    const hasPermission = permissionCount;
-
-    if (isActive) {
-      if (isPresent || !hasPermission) {
-        if (lessonCount) enrollment.lessonCount -= 1;
-        paidStudents.push(student);
-      }
-      if (isAbsent) {
-        if (!hasPermission) paidStudents.push(student);
-        enrollment.permissionCount = 0;
-      }
-    }
-    enrollment.history = [
-      ...enrollment.history,
-      {
-        lesson,
-        status: isActive ? "active" : "inactive",
-        lessonCount: enrollment.lessonCount,
-        permissionCount: enrollment.permissionCount,
-      },
-    ];
-    await enrollment.save({ session });
-  });
-
-  return { paidStudents };
+  enrollment.lessonCount += lessonCount || progLessonCount;
+  enrollment.permissionCount = permissionCount || progPermissionCount;
+  enrollment.save(session);
+  req.body.branch = enrollment.group.branch;
+  return enrollment;
 };
 
 module.exports = {
   createEnrollments,
   prepareEnrollment,
   handleStudentPayment,
-  adjustEnrollments,
 };

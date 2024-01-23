@@ -364,22 +364,23 @@ const getStatBranchesIncomeByMonth = catchAsync(async (req, res, next) => {
 
 const updateBalance = async (req) => {
   let {
-    body: { amount, branch, isIncome },
+    body: { amount, branch: branchId, isIncome },
     session,
   } = req;
 
   amount = amount * (isIncome || -1);
-  const { balance } = await Model.findByIdAndUpdate(
-    branch,
+  const branch = await Model.findByIdAndUpdate(
+    branchId,
     { $inc: { balance: amount } },
     { session }
   );
 
-  if (!(balance >= 0)) return;
+  if (!branch) return { message: "branch_not_hound" };
+
   req.body.amount = amount;
-  req.body.balanceBefore = balance;
-  req.body.balanceAfter = balance + amount;
-  return balance;
+  req.body.balanceBefore = branch.balance;
+  req.body.balanceAfter = branch.balance + amount;
+  return branch;
 };
 
 const checkBranch = (req, res, next) => {

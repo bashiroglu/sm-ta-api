@@ -4,35 +4,62 @@ const GroupModel = require("../models/groupModel");
 const Model = require("../models/lessonModel");
 const AppError = require("../utils/appError");
 const { startTransSession, getCode } = require("../utils/helpers");
-const { adjustEnrollments } = require("./enrollmentController");
 
 const prepareLesson = catchAsync(async (req, res, next) => {
   const session = await startTransSession(req);
+  const { isExtra, absent, present, group: groupId } = req.body;
 
-  if (req.body.isExtra) return next();
-
+  if (isExtra) return next();
   const teacherId = req.body.teacher || req.user.id;
 
-  const group = await GroupModel.findById(req.body.group)
-    .populate(["teacher", "program", "branch"])
+  const group = await GroupModel.findById(groupId)
+    .populate([
+      "teacher",
+      "program",
+      "branch",
+      {
+        path: "enrollments",
+        populate: ["student", { path: "group", populate: "program" }],
+      },
+    ])
     .session(session);
   if (!group) return next(new AppError("group_not_found", 404));
 
-  const { teacher, program } = group;
+  const { teacher, program, enrollments } = group;
+
   if (!teacher) return next(new AppError("teacher_not_found", 404));
   if (!program) return next(new AppError("program_not_found", 404));
-
+  if (!enrollments?.length)
+    return next(new AppError("enrollment_not_found", 404));
   if (String(teacher.id) !== String(teacherId))
     return next(new AppError("group_teacher_is_other_user", 404));
 
   const _id = mongoose.Types.ObjectId();
-  const { error, paidStudents } = await adjustEnrollments(
-    req,
-    group,
-    _id,
-    session
-  );
-  if (error) return next(new AppError(result.message, 404));
+  let paidStudents = [];
+
+  enrollments.forEach(async (enrollment) => {
+    const { permissionCount, status, student } = enrollment;
+    if (status === "active") {
+      const isPresent = present.includes(student.id);
+      const isAbsent = absent.includes(student.id);
+      const hasPermission = !!permissionCount;
+      if (isPresent || (isAbsent && !hasPermission)) {
+        enrollment.lessonCount -= 1;
+        paidStudents.push(student.id);
+      }
+      if (isAbsent && hasPermission) enrollment.permissionCount = 0;
+    }
+    enrollment.history = [
+      ...enrollment.history,
+      {
+        lesson: _id,
+        status,
+        lessonCount: enrollment.lessonCount,
+        permissionCount: enrollment.permissionCount,
+      },
+    ];
+    enrollment.save({ session });
+  });
 
   const teacherProg = teacher.earnings.find(
     (e) => String(e.program) === String(program.id)
@@ -48,7 +75,7 @@ const prepareLesson = catchAsync(async (req, res, next) => {
     title: code,
     amount: totalIncome,
     description: "",
-    category: process.env.LESSON_CREATE_CATEGORY,
+    category: process.env.LESSON_CREATE_CATEGORY_ID,
     isIncome: false,
     realDate: new Date(),
     paymentMethod: "online",

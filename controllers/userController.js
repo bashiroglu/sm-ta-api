@@ -5,13 +5,9 @@ const moment = require("moment");
 const Model = require("./../models/userModel");
 const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
-const {
-  filterObject,
-  startTransSession,
-  haveCommon,
-} = require("../utils/helpers");
+const { filterObject, haveCommon, notify } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
-const { sendSmsRequest } = require("../utils/sms");
+const BranchModel = require("../models/branchModel");
 
 const scheduleBirthdayNotifications = () => {
   cron.schedule(
@@ -141,7 +137,7 @@ const deactivateUser = catchAsync(async (req, res, next) => {
 });
 
 const checkMembership = catchAsync(async (req, res, next) => {
-  if (!req.baseUrl.endsWith("users")) next();
+  if (!req.baseUrl.endsWith("users")) return next();
   const user = await Model.findById(req.params.id).populate([
     { path: "teacherGroups" },
     { path: "branches" },
@@ -190,6 +186,17 @@ const checkMe = (req, res, next) => {
   next();
 };
 
+const handleSalary = async (req) => {
+  let {
+    body: { relatedTo, amount },
+    session,
+  } = req;
+  const body = { $inc: { balance: amount } };
+  const user = await Model.findByIdAndUpdate(relatedTo, body).session(session);
+  if (!user) return { message: "user_not_found" };
+  return true;
+};
+
 module.exports = {
   scheduleBirthdayNotifications,
   assignParamsId,
@@ -204,4 +211,5 @@ module.exports = {
   aliasTinyStudent,
   checkMembership,
   checkMe,
+  handleSalary,
 };

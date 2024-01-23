@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { studentPaymentText, salaryText } = require("../utils/contents");
+const { notify } = require("../utils/helpers");
 
 const collectionName = "Transaction";
 
@@ -99,6 +101,38 @@ schema.pre("save", async function (next) {
   if (!this.realDate) this.realDate = new Date();
 
   next();
+});
+
+schema.statics.smsNotification = true;
+
+schema.post("save", async function (doc) {
+  await doc.populate("relatedTo").execPopulate();
+
+  const {
+    relatedTo: { phoneNumbers },
+    amount,
+    category,
+  } = doc;
+
+  let obj;
+
+  const strCategory = `${category}`;
+
+  if (strCategory === process.env.STUDENT_PAYMENT_CATEGORY_ID)
+    obj = {
+      via: "sms",
+      to: phoneNumbers?.at(-1),
+      content: studentPaymentText(amount),
+    };
+  if (strCategory === process.env.SALARY_CATEGORY_ID)
+    obj = {
+      via: "email",
+      to: phoneNumbers?.at(-1),
+      content: salaryText(amount),
+    };
+
+  if (!schema.statics.smsNotification && obj.via === "sms") return;
+  await notify(obj);
 });
 
 module.exports = mongoose.model(collectionName, schema);
