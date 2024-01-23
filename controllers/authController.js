@@ -32,7 +32,7 @@ exports.createTokenAndSignIn = catchAsync(async (req, res, next) => {
 
   const cookieOptions = {
     expires: new Date(
-      Date.now() + process.env.COOKIE_EXPIRE_TIME * 24 * 60 * 60 * 1000,
+      Date.now() + process.env.COOKIE_EXPIRE_TIME * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   };
@@ -89,7 +89,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         code,
       },
     ],
-    { session },
+    { session }
   );
 
   // TODO: Fix below (It will depend on desision):
@@ -218,8 +218,7 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
     JWT_SECRET = process.env.JWT_SECRET;
   }
   const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
-
-  const user = await UserModel.findById(decoded.id).populate(
+  const user = await UserModel.findById(decoded.id).populate([
     {
       path: "branches",
       select: "-managers code name",
@@ -228,7 +227,8 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
       path: "permissions",
       select: "slug",
     },
-  );
+  ]);
+
   if (!user) return next(new AppError("token_user_not_exist", 401));
 
   if (user.changedPasswordAfter(decoded.iat))
@@ -256,7 +256,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   try {
     const resetURL = `${req.protocol}://${req.get(
-      "host",
+      "host"
     )}/api/v1/users/resetPassword/${resetToken}`;
 
     if (process.env.NODE_ENV.trim() === "production")
