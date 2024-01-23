@@ -56,11 +56,7 @@ const schema = new mongoose.Schema(
 );
 
 schema.pre(/^find/, function (next) {
-  this.find({ deleted: { $ne: true } }).populate({
-    path: "absent",
-    select: "name surname",
-  });
-
+  this.find({ deleted: { $ne: true } });
   next();
 });
 

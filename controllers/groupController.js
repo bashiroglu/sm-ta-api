@@ -15,7 +15,15 @@ const checkRole = catchAsync(async (req, res, next) => {
   next();
 });
 
+const aliasSetQuery = (req, res, next) => {
+  req.query.group = req.params.id;
+  req.query.fields = "student history group";
+  req.popOptions = { path: "student", select: "name surname patronymic" };
+  next();
+};
+
 module.exports = {
   crudGroupLessons,
   checkRole,
+  aliasSetQuery,
 };

@@ -84,6 +84,7 @@ module.exports = (Model) => {
         results: result.length,
         data: result,
       };
+
       next();
     }),
 

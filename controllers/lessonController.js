@@ -38,7 +38,7 @@ const prepareLesson = catchAsync(async (req, res, next) => {
   let paidStudents = [];
 
   enrollments.forEach(async (enrollment) => {
-    const { permissionCount, status, student } = enrollment;
+    let { permissionCount, status, student } = enrollment;
     if (status === "active") {
       const isPresent = present.includes(student.id);
       const isAbsent = absent.includes(student.id);
@@ -46,8 +46,12 @@ const prepareLesson = catchAsync(async (req, res, next) => {
       if (isPresent || (isAbsent && !hasPermission)) {
         enrollment.lessonCount -= 1;
         paidStudents.push(student.id);
+        status = isPresent ? "present" : "absent";
       }
-      if (isAbsent && hasPermission) enrollment.permissionCount = 0;
+      if (isAbsent && hasPermission) {
+        status = "permission";
+        enrollment.permissionCount = 0;
+      }
     }
     enrollment.history = [
       ...enrollment.history,
@@ -94,4 +98,15 @@ const prepareLesson = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports = { prepareLesson };
+const getGroupLessons = catchAsync(async (req, res, next) => {
+  const lessons = await Model.find({ group: req.params.id }).select(
+    "id createdAt topic teacher"
+  );
+  req.resObj.lessons = lessons;
+  req.resObj.students = req.resObj.data;
+  delete req.resObj.data;
+
+  next();
+});
+
+module.exports = { prepareLesson, getGroupLessons };
