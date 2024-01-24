@@ -29,7 +29,18 @@ router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
 router.use(protect, restrictTo([roles.ADMIN, roles.MANAGER]));
 
-router.route("/").get(getAll).post(createEnrollments, createOne);
+router
+  .route("/")
+  .get(
+    populate([
+      { path: "teacher", select: "name surname code email" },
+      Model.schema.statics.studentsPopOpts,
+      { path: "room", select: "name number" },
+      { path: "program", select: "name" },
+    ]),
+    getAll,
+  )
+  .post(createEnrollments, createOne);
 
 router
   .route("/:id")
