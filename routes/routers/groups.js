@@ -18,6 +18,8 @@ const {
 const lessonRouter = require("./lessons");
 const { populate, makeDeleted } = require("../../utils/helpers");
 
+const { getGroupLessons } = require("../../controllers/lessonController");
+
 const { roles } = require("../../utils/constants/enums");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
