@@ -8,9 +8,13 @@ const {
   checkRole,
   aliasSetQuery,
 } = require("../../controllers/groupController");
-const { createEnrollments } = require("../../controllers/enrollmentController");
-const { getGroupLessons } = require("../../controllers/lessonController");
-const { protect, restrictTo } = require("../../controllers/authController");
+const {
+  createEnrollments,
+} = require("../../controllers/enrollmentController");
+const {
+  protect,
+  restrictTo,
+} = require("../../controllers/authController");
 const lessonRouter = require("./lessons");
 const { populate, makeDeleted } = require("../../utils/helpers");
 
@@ -24,6 +28,7 @@ const router = express.Router();
 router.use("/:groupId/lessons", crudGroupLessons, lessonRouter);
 
 router.use(protect, restrictTo([roles.ADMIN, roles.MANAGER]));
+
 router.route("/").get(getAll).post(createEnrollments, createOne);
 
 router
@@ -36,8 +41,11 @@ router
       Model.schema.statics.studentsPopOpts,
       { path: "teacher", select: "name surname code email" },
       { path: "room", select: "name number" },
+      { path: "branch", select: "name" },
+      { path: "program", select: "name" },
+      { path: "level", select: "name" },
     ]),
-    getOne
+    getOne,
   )
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
