@@ -8,15 +8,19 @@ const {
   checkRole,
   aliasSetQuery,
 } = require("../../controllers/groupController");
-const { createEnrollments } = require("../../controllers/enrollmentController");
-const { protect, restrictTo } = require("../../controllers/authController");
+const {
+  createEnrollments,
+} = require("../../controllers/enrollmentController");
+const {
+  protect,
+  restrictTo,
+} = require("../../controllers/authController");
 const lessonRouter = require("./lessons");
 const { populate, makeDeleted } = require("../../utils/helpers");
 
 const { getGroupLessons } = require("../../controllers/lessonController");
 
 const { roles } = require("../../utils/constants/enums");
-const { getGroupLessons } = require("../../controllers/lessonController");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 const { getAll: getEnrollments } = handlerFactory(EnrollmentModel);
@@ -36,7 +40,7 @@ router
       { path: "room", select: "name number" },
       { path: "program", select: "name" },
     ]),
-    getAll
+    getAll,
   )
   .post(createEnrollments, createOne);
 
@@ -54,7 +58,7 @@ router
       { path: "program", select: "name" },
       { path: "level", select: "name" },
     ]),
-    getOne
+    getOne,
   )
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
