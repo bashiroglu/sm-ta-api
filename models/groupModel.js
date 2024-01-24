@@ -96,23 +96,21 @@ schema.statics.studentsPopOpts = {
   select: "student lessonCount permissionCount",
   populate: { path: "student", select: "id name surname code email" },
   match: { status: "active" },
-  transform: ({
-    _id,
-    student: { id, name, surname, code, email },
-    lessonCount,
-    permissionCount,
-    status,
-  }) => ({
-    id,
-    name,
-    surname,
-    code,
-    email,
-    enrollment: _id,
-    lessonCount,
-    permissionCount,
-    status,
-  }),
+  transform: ({ _id, student, lessonCount, permissionCount, status }) => {
+    if (!student) return null;
+    const { id, name, surname, code, email } = student;
+    return {
+      id,
+      name,
+      surname,
+      code,
+      email,
+      enrollment: _id,
+      lessonCount,
+      permissionCount,
+      status,
+    };
+  },
 };
 
 schema.statics.q = ["name"];
