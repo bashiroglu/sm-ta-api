@@ -5,9 +5,8 @@ const moment = require("moment");
 const Model = require("./../models/userModel");
 const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
-const { filterObject, haveCommon, notify } = require("../utils/helpers");
+const { filterObject, haveCommon } = require("../utils/helpers");
 const { employeeRoles, roles } = require("../utils/constants/enums");
-const BranchModel = require("../models/branchModel");
 
 const scheduleBirthdayNotifications = () => {
   cron.schedule(
