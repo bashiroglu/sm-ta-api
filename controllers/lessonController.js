@@ -89,11 +89,11 @@ const prepareLesson = catchAsync(async (req, res, next) => {
 
   if (isExtra) return next();
 
-  const teacherProg = teacher.earnings?.find(
-    (e) => `${e.program}` === `${program.id}`
-  );
+  const { earnings } = teacher;
+  if (!earnings || !earnings.length)
+    return next(new AppError("earnings_not_found", 404));
+  const teacherProg = earnings?.find((e) => `${e.program}` === `${program.id}`);
   if (!teacherProg) return next(new AppError("teacher_program_not_found", 404));
-
   const totalIncome = teacherProg.amount * paidStudents.length;
   teacher.balance += totalIncome;
   await teacher.save({ session, validateBeforeSave: false });
