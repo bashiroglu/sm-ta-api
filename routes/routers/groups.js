@@ -13,6 +13,8 @@ const { protect, restrictTo } = require("../../controllers/authController");
 const lessonRouter = require("./lessons");
 const { populate, makeDeleted } = require("../../utils/helpers");
 
+const { getGroupLessons } = require("../../controllers/lessonController");
+
 const { roles } = require("../../utils/constants/enums");
 const { getGroupLessons } = require("../../controllers/lessonController");
 
