@@ -35,6 +35,8 @@ const schema = new mongoose.Schema(
         lessonCount: Number,
         permissionCount: Number,
         status: String,
+        latency: Number,
+        isExtra: Boolean,
       },
     ],
 

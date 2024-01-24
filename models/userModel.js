@@ -241,12 +241,6 @@ schema.virtual("enrollments", {
   localField: "_id",
 });
 
-schema.virtual("absents", {
-  ref: "Lesson",
-  foreignField: "absent",
-  localField: "_id",
-});
-
 schema.virtual("branches", {
   ref: "Branch",
   foreignField: "managers",

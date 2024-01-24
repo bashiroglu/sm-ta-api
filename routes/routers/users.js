@@ -48,22 +48,6 @@ router
   .post(createUserByRole, setPassword, createOne);
 
 router.route("/role/student/tiny").get(aliasTinyStudent, getAll);
-router.route("/role/student/participation").get(
-  getAllByRole,
-  populate([
-    { path: "absents", select: "group" },
-    { path: "presents", select: "_id group" },
-  ]),
-  getAll
-);
-
-router.route("/role/student/:id/participation").get(
-  populate([
-    { path: "absents", select: "group" },
-    { path: "presents", select: "_id group" },
-  ]),
-  getOne
-);
 router
   .route("/role/teacher/earnings-owerview")
   .get(getErnings, getAll, getProgreamNames);

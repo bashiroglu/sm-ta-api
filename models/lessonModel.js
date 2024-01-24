@@ -18,16 +18,14 @@ const schema = new mongoose.Schema(
       ref: "User",
       required: [true, "required_teacher"],
     },
-    present: [
+    participations: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-      },
-    ],
-    absent: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
+        student: {
+          type: mongoose.Schema.ObjectId,
+          ref: "User",
+        },
+        absent: Boolean,
+        latency: Number,
       },
     ],
 
