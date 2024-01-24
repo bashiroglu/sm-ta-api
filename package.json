@@ -14,6 +14,7 @@
     "push": "git push && git push heroku-dev",
     "pushp": "git push && git push heroku-dev && git push heroku-prod",
     "update-envs": "npm run update-env-vars-script.js",
+    "logs": "heroku logs --remote heroku-dev --tail",
     "test": "cross-env NODE_ENV=test mocha --exit"
   },
   "author": "Abdulla Bashiroghlu",

@@ -87,7 +87,7 @@ const prepareLesson = catchAsync(async (req, res, next) => {
   const code = await getCode(Model, session);
   req.lessonBody = { ...req.body, _id, code };
 
-  if (!isExtra) return next();
+  if (isExtra) return next();
 
   const teacherProg = teacher.earnings?.find(
     (e) => `${e.program}` === `${program.id}`
