@@ -11,15 +11,12 @@ const schema = new mongoose.Schema(
       ref: "Lesson",
       required: [true, "Homework must belong to lesson"],
     },
-    exercises: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "Exercise",
-      },
-    ],
-
-    percentage: { type: Number, default: 0 },
-    isLocked: { type: Boolean, default: false },
+    student: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: [true, "Homework must belong to student"],
+    },
+    percentage: Number,
 
     deleted: Boolean,
     archived: Boolean,

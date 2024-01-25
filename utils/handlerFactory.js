@@ -25,7 +25,7 @@ module.exports = (Model) => {
       if (!doc) return next(new AppError("cannot be created", 400));
 
       req.status = 201;
-      req.resObj = { data: docCount ? doc : session ? doc.at(0) : doc };
+      req.resObj = { data: docCount || !session ? doc : doc.at(0) };
       next();
     }),
 
@@ -95,33 +95,29 @@ module.exports = (Model) => {
         query: reqQuery,
         deleted,
         arrayFilters,
-        filterObj,
         session,
       } = req;
 
-      // this code prevents update deleted field not via makedeleted middleware
-      if (
-        deleted in body &&
-        body.makeDeleted !== process.env.MAKE_DELETED_SECRET
-      )
-        body = {};
+      if (id.constructor === String) id = { _id: id };
+
+      // this code prevents update deleted
+      // field not via makedeleted middleware
+      if (deleted in body) {
+        if (body.makeDeleted === process.env.MAKE_DELETED_SECRET) body = {};
+        else return next(new AppError("dont_use_this_endpoint", 404));
+      }
 
       session = await startTransSession(req);
-
-      let query = Model[filterObj ? "findOneAndUpdate" : "findByIdAndUpdate"](
-        filterObj || id,
-        body,
-        {
-          new: true,
-          runValidators: true,
-          arrayFilters,
-        }
-      ).session(session);
+      let query = Model.findOneAndUpdate(id, body, {
+        new: true,
+        runValidators: true,
+        arrayFilters,
+      });
+      if (session) query.session(session);
 
       const features = new APIFeatures(query, reqQuery).limitFields();
 
       const doc = await features.query;
-
       if (!doc)
         return next(new AppError("No document found with that ID", 404));
 

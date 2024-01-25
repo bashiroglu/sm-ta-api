@@ -70,18 +70,20 @@ const sendNotification = (doc) => {
 const scheduleTask = (document, task, period) =>
   cron.schedule(period || document.periodicity, task.bind(null, document));
 
-const restrictPerSubdomain = (user, req) =>
+const restrictPerSubdomain = (user, req) => {
+  if (process.env.NODE_ENV.trim() !== "production") return false;
   // TODO: fix these urls
-  user.roles.includes("student")
+  return user.roles.includes("student")
     ? ![
         process.env.STUDENT_SUBDOMAIN,
         process.env.NODE_ENV === "development" && process.env.LOCALHOST,
       ].includes(req.get("origin"))
     : user.roles.includes("teacher") &&
-      [
-        process.env.TEACHER_SUBDOMAIN,
-        process.env.NODE_ENV === "development" && process.env.LOCALHOST,
-      ].includes(req.get("origin"));
+        [
+          process.env.TEACHER_SUBDOMAIN,
+          process.env.NODE_ENV === "development" && process.env.LOCALHOST,
+        ].includes(req.get("origin"));
+};
 
 const archive = catchAsync(async (req, res, next) => {
   const field = req.url.split("/").at(-1);
@@ -181,7 +183,6 @@ const getCode = async (Model, session) => {
 const startTransSession = async (req) => {
   let { session } = req;
   if (session) return session;
-
   session = await mongoose.startSession();
   session.startTransaction();
   if (req) req.session = session;

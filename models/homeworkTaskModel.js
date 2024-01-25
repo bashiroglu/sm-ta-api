@@ -1,24 +1,21 @@
 const mongoose = require("mongoose");
+const AppError = require("../utils/appError");
 
-const collectionName = "Exercise";
+const collectionName = "HomeworkTask";
 
 const schema = new mongoose.Schema(
   {
-    exerciseCatalog: {
+    homework: {
       type: mongoose.Schema.ObjectId,
-      ref: "ExerciseCatalog",
+      ref: "Homework",
     },
-    title: String,
+    exercise: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Exercise",
+    },
     percentage: Number,
-    link: String,
-    description: String,
-    type: {
-      type: String,
-      enum: ["essay", "book"],
-      requred: true,
-    },
-    content: String,
-    correct: String,
+    startedAt: Date,
+    endedAt: Date,
 
     deleted: Boolean,
     archived: Boolean,
@@ -38,5 +35,9 @@ schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
 });
+
+schema.statics.codeOptions = {
+  field: collectionName,
+};
 
 module.exports = mongoose.model(collectionName, schema);

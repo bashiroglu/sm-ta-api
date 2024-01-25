@@ -33,6 +33,18 @@ const schema = new mongoose.Schema(
     topic: {
       type: String,
     },
+
+    exercises: [
+      {
+        exercise: {
+          type: mongoose.Schema.ObjectId,
+          ref: "Exercise",
+        },
+        percentage: {
+          type: Number,
+        },
+      },
+    ],
     room: {
       type: mongoose.Schema.ObjectId,
       ref: "Room",

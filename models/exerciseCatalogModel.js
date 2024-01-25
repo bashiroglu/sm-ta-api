@@ -1,24 +1,21 @@
 const mongoose = require("mongoose");
 
-const collectionName = "Exercise";
+const collectionName = "ExerciseCatalog";
 
 const schema = new mongoose.Schema(
   {
-    exerciseCatalog: {
+    unit: {
       type: mongoose.Schema.ObjectId,
-      ref: "ExerciseCatalog",
+      ref: "LowerCategory",
     },
-    title: String,
-    percentage: Number,
-    link: String,
-    description: String,
-    type: {
-      type: String,
-      enum: ["essay", "book"],
-      requred: true,
+    section: {
+      type: mongoose.Schema.ObjectId,
+      ref: "LowerCategory",
     },
-    content: String,
-    correct: String,
+    level: {
+      type: mongoose.Schema.ObjectId,
+      ref: "LowerCategory",
+    },
 
     deleted: Boolean,
     archived: Boolean,

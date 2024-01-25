@@ -1,7 +1,10 @@
 const express = require("express");
 const Model = require("../../models/lessonModel");
 const handlerFactory = require("../../utils/handlerFactory");
-const { prepareLesson } = require("../../controllers/lessonController");
+const {
+  prepareLesson,
+  addHomeworks,
+} = require("../../controllers/lessonController");
 const {
   createTransactionOnLessonCreate,
 } = require("../../controllers/transactionController");
@@ -23,5 +26,7 @@ router
   .get(populate({ path: "group", select: "name" }), getOne)
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
+
+router.route("/:id/add-homeworks").patch(addHomeworks, updateOne);
 
 module.exports = router;

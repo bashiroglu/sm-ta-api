@@ -6,7 +6,7 @@ const studentPaymentText = (amount) =>
 const salaryText = (amount) =>
   `Deyerli TIME ACADEMY emekdasi,\n\nSize ${amount} AZN odenis heyata kecirilmisdir.\n\nTesekkur edirik!`;
 
-const homeworkText = `Deyerli TIME ACADEMY emekdasi,\n\nSize calismalariniz sizi gozleyir`;
+const homeworkText = `Deyerli TIME ACADEMY telebesi,\n\Calismalariniz sizi gozleyir`;
 
 module.exports = {
   oneLessonRemainedText,

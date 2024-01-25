@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const catchAsync = require("../utils/catchAsync");
 const GroupModel = require("../models/groupModel");
 const Model = require("../models/lessonModel");
+const HomeworkModel = require("../models/homeworkModel");
+const HomeworkTaskModel = require("../models/homeworkTaskModel");
 const AppError = require("../utils/appError");
 const { startTransSession, getCode } = require("../utils/helpers");
 
@@ -130,4 +132,45 @@ const getGroupLessons = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports = { prepareLesson, getGroupLessons };
+const addHomeworks = catchAsync(async (req, res, next) => {
+  let {
+    params: { id },
+    body: { exercises },
+    user,
+  } = req;
+
+  if (!exercises?.length) return next(new AppError("empty_body", 400));
+  const session = await startTransSession(req);
+
+  const lesson = await Model.findById(id).session(session);
+  if (!lesson) return next(new AppError("lesson_not_found", 404));
+
+  const { participations, teacher } = lesson;
+  if (`${teacher}` !== `${user.id}`)
+    return next(new AppError("not_lesson_teacher", 404));
+  if (!participations?.length)
+    return next(new AppError("participations_not_found", 404));
+
+  let homeworkTasks = [];
+  const homeworks = participations.map((participation) => {
+    const { student } = participation;
+    if (!student) return next(new AppError("student_not_found", 404));
+    const _id = mongoose.Types.ObjectId();
+    const tasks = exercises.map((e) => ({ ...e, homework: _id }));
+    homeworkTasks = [...homeworkTasks, ...tasks];
+
+    return {
+      _id,
+      lesson: id,
+      student,
+    };
+  });
+
+  await HomeworkModel.create(homeworks, { session });
+  await HomeworkTaskModel.create(homeworkTasks, { session });
+  req.body = { exercises };
+
+  next();
+});
+
+module.exports = { prepareLesson, getGroupLessons, addHomeworks };

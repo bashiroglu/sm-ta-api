@@ -61,9 +61,16 @@ exports.modules = [
   },
   { route: "users", model: "user", collectionName: "User" },
   { route: "enrollments", model: "enrollment", collectionName: "Enrollment" },
+  { model: "notification", collectionName: "Notification" },
   {
-    route: "notifications",
-    model: "notification",
-    collectionName: "Notification",
+    route: "exercise-catalogs",
+    model: "exerciseCatalog",
+    collectionName: "ExerciseCatalog",
+  },
+  { route: "exercises", model: "exercise", collectionName: "Exercise" },
+  {
+    route: "homework-tasks",
+    model: "homeworkTask",
+    collectionName: "HomeworkTask",
   },
 ];
