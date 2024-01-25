@@ -38,6 +38,7 @@ router
       { path: "teacher", select: "name surname code email" },
       Model.schema.statics.studentsPopOpts,
       { path: "room", select: "name number" },
+      { path: "branch", select: "name" },
       { path: "program", select: "name" },
     ]),
     getAll,
