@@ -62,11 +62,7 @@ app.use(bodyParser.json({ limit: "5mb" }));
 app.use("/api/v1", routes);
 
 app.all("*", (req, res, next) => {
-  const errorMessage = req.t("route_not_found", {
-    url: req.originalUrl,
-  });
-
-  next(new AppError(errorMessage, 404));
+  return next(new AppError("route_not_found", 404, { url: req.originalUrl }));
 });
 
 app.use(errorHandler);

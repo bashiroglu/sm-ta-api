@@ -5,10 +5,12 @@ const handlerFactory = require("../utils/handlerFactory");
 const { restrictTo } = require("../controllers/authController");
 const { checkMembership } = require("../controllers/userController");
 const { checkManagerExists } = require("../controllers/branchController");
+const AppError = require("../utils/appError");
 
 const mainRouter = express.Router();
 
 modules.forEach((module) => {
+  if (!module.route) return;
   const router = require(`./routers/${module.route}`);
 
   if (module.model) {
@@ -28,7 +30,17 @@ modules.forEach((module) => {
           deleteOne
         );
   }
-  router.use(sendRes);
+  router.use(
+    (req, res, next) =>
+      next(
+        !req.resObj
+          ? new AppError("route_not_found", 404, {
+              url: req.originalUrl,
+            })
+          : ""
+      ),
+    sendRes
+  );
 
   mainRouter.use(`/${module.route}`, router);
 });
