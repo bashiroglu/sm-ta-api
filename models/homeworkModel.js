@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const { homeworkText } = require("../utils/contents");
-const { notify } = require("../utils/helpers");
 
 const collectionName = "Homework";
 
@@ -35,18 +33,6 @@ const schema = new mongoose.Schema(
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
-});
-
-schema.post("save", async function (doc) {
-  const {
-    student: { tgChatId, email },
-  } = await doc.populate("student").execPopulate();
-
-  await notify({
-    via: tgChatId ? "telegram" : "email",
-    to: tgChatId || email,
-    content: homeworkText,
-  });
 });
 
 module.exports = mongoose.model(collectionName, schema);

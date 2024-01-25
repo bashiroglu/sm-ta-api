@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { homeworkText } = require("../utils/contents");
+const { notify } = require("../utils/helpers");
 
 const collectionName = "Lesson";
 
@@ -65,9 +67,35 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.virtual("homeworks", {
+  ref: "Homework",
+  foreignField: "lesson",
+  localField: "_id",
+});
+
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
+});
+
+schema.post("findOneAndUpdate", async function (doc) {
+  const update = this._update;
+  if (!("exercises" in update)) return;
+  const { homeworks } = await doc
+    .populate({ path: "homeworks", populate: "student" })
+    .execPopulate();
+
+  if (!homeworks?.length) return;
+  homeworks.forEach(async (homework) => {
+    const { student } = homework;
+    if (!student) return;
+    const { tgChatId, email } = student;
+    await notify({
+      via: tgChatId ? "telegram" : "email",
+      to: tgChatId || email,
+      content: homeworkText,
+    });
+  });
 });
 
 schema.statics.q = ["topic", "code"];
