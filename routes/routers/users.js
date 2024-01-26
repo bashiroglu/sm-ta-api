@@ -49,7 +49,7 @@ router
 
 router.route("/role/student/tiny").get(aliasTinyStudent, getAll);
 router
-  .route("/role/teacher/earnings-owerview")
+  .route("/role/teacher/earnings-overview")
   .get(getErnings, getAll, getProgreamNames);
 
 router.route("/:id/tags").get(setReqBody, getOne).patch(setReqBody, updateOne);
