@@ -50,9 +50,8 @@ const prepareLesson = catchAsync(async (req, res, next) => {
       student: { id },
     } = enrollment;
     // Find student from participations and destruct
-    const { absent, latency } = participations.find(
-      ({ student }) => `${student}` === `${id}`
-    );
+    const { absent, latency } =
+      participations?.find(({ student }) => `${student}` === `${id}`) ?? {};
 
     if (status === "active") {
       if (isExtra) {

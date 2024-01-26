@@ -30,6 +30,14 @@ const schema = new mongoose.Schema(
         latency: Number,
       },
     ],
+    startedAt: {
+      type: Date,
+      required: true,
+    },
+    endedAt: {
+      type: Date,
+      required: true,
+    },
 
     // TODO: In future versions topics also can be gotten from a Topic Module.
     topic: {
@@ -66,6 +74,10 @@ const schema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+schema.virtual("duration").get(function () {
+  return this.sendedAt - this.tartedAt;
+});
 
 schema.virtual("homeworks", {
   ref: "Homework",
