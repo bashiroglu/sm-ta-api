@@ -122,9 +122,9 @@ const prepareLesson = catchAsync(async (req, res, next) => {
 });
 
 const getGroupLessons = catchAsync(async (req, res, next) => {
-  const lessons = await Model.find({ group: req.params.id }).select(
-    "id createdAt topic teacher"
-  );
+  const lessons = await Model.find({ group: req.params.id })
+    .populate({ path: "homeworks", populate: "tasks" })
+    .select("id createdAt topic teacher");
   req.resObj.lessons = lessons;
   req.resObj.students = req.resObj.data;
   delete req.resObj.data;

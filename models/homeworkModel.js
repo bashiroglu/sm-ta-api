@@ -30,6 +30,12 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.virtual("tasks", {
+  ref: "HomeworkTask",
+  foreignField: "homework",
+  localField: "_id",
+});
+
 schema.pre(/^find/, function (next) {
   this.find({ deleted: { $ne: true } });
   next();
