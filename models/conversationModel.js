@@ -28,11 +28,8 @@ const schema = new mongoose.Schema(
     },
     levels: [
       {
-        type: String,
-        enum: ["BEG", "ELE", "PRE", "INT", "INT+", "UPI"],
-        validate: {
-          validator: (v) => {},
-        },
+        type: mongoose.Schema.ObjectId,
+        ref: "LowerCaregory",
       },
     ],
     maxLimit: {
@@ -73,10 +70,8 @@ const schema = new mongoose.Schema(
     },
     waitingList: [
       {
-        studentId: {
-          type: mongoose.Schema.ObjectId,
-          ref: "User",
-        },
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
       },
     ],
     date: {
@@ -110,7 +105,7 @@ schema.post("save", async function (doc) {
     .execPopulate();
   const obj = {
     via: "sms",
-    to: doc?.phoneNumbers.at(-1),
+    to: doc?.phoneNumbers?.at(-1),
     content: "you have registered",
   };
   await notify(obj);
