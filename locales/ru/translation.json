@@ -8,6 +8,7 @@
   "route_not_found": "Не удается найти рут: {{url}}",
   "teacher_not_found": "Учитель не найден",
   "upper_not_found": "Верхняя категория не найдена",
+  "earnings_not_found": "earnings_not_found",
 
   "invalid_credentials": "Неверные учетные данные, пожалуйста, войдите снова",
   "invalid_token": "Токен недействителен или срок его действия истек",

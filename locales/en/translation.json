@@ -14,6 +14,7 @@
   "route_not_found": "Can not find {{url}} route",
   "teacher_not_found": "Teacher not found",
   "upper_not_found": "Upper category not found",
+  "earnings_not_found": "earnings_not_found",
 
   "wait_activation": "Please wait for the activation of the profile, if you need, contact the programmer",
   "not_logged_in": "You are not logged in! Please log in to get access",

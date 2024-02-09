@@ -50,9 +50,10 @@ const getDirFileNames = (dirPath) =>
     return files.filter((file) => fs.statSync(dirPath + "/" + file).isFile());
   });
 
-const populate = (popOptions) =>
+const populate = (popOptions, fields) =>
   catchAsync(async (req, res, next) => {
     req.popOptions = popOptions;
+    if (fields) req.query.fields = fields;
     next();
   });
 

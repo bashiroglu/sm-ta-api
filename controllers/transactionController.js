@@ -20,12 +20,12 @@ const handleByCategory = async (req) => {
 
 const prepareTransaction = catchAsync(async (req, res, next) => {
   let result = await incrementPriority(req);
-  if (result.message) return next(new AppError(message, 404));
+  if (result.message) return next(new AppError(result.message, 404));
   if (req.body.internal) return next();
   result = await handleByCategory(req);
-  if (result.message) return next(new AppError(message, 404));
+  if (result.message) return next(new AppError(result.message, 404));
   result = await updateBalance(req);
-  if (result.message) return next(new AppError(message, 404));
+  if (result.message) return next(new AppError(result.message, 404));
 
   next();
 });

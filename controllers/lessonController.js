@@ -172,4 +172,23 @@ const addHomeworks = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports = { prepareLesson, getGroupLessons, addHomeworks };
+const checkTeacherLesson = catchAsync(async (req, res, next) => {
+  if (!req.isTeachers) return next();
+  const {
+    user,
+    params: { id },
+  } = req;
+
+  await user.populate("lessons").execPopulate();
+  const lessons = user.lessons.map((l) => "" + l.id);
+  if (!lessons.includes(id)) return next(new AppError("doc_not_found", 404));
+
+  next();
+});
+
+module.exports = {
+  prepareLesson,
+  getGroupLessons,
+  addHomeworks,
+  checkTeacherLesson,
+};

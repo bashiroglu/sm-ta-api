@@ -8,7 +8,7 @@ const { makeDeleted } = require("../../utils/helpers");
 
 const { getAll, createOne, getOne, updateOne } = handlerFactory(Model);
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.use(protect, restrictTo([roles.ADMIN, roles.MANAGER, roles.TEACHER]));
 

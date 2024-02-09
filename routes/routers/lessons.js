@@ -4,6 +4,7 @@ const handlerFactory = require("../../utils/handlerFactory");
 const {
   prepareLesson,
   addHomeworks,
+  checkTeacherLesson,
 } = require("../../controllers/lessonController");
 const {
   createTransactionOnLessonCreate,
@@ -23,10 +24,24 @@ router
   .post(prepareLesson, createTransactionOnLessonCreate, createOne);
 router
   .route("/:id")
-  .get(populate({ path: "group", select: "name" }), getOne)
+  .get(checkTeacherLesson, populate({ path: "group", select: "name" }), getOne)
   .patch(updateOne)
   .delete(makeDeleted, updateOne);
 
-router.route("/:id/add-homeworks").patch(addHomeworks, updateOne);
+router
+  .route("/:id/add-homeworks")
+  .patch(checkTeacherLesson, addHomeworks, updateOne);
+
+router.route("/:id/results").get(
+  checkTeacherLesson,
+  populate(
+    {
+      path: "homeworks",
+      populate: "tasks",
+    },
+    "homeworks"
+  ),
+  getOne
+);
 
 module.exports = router;

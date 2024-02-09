@@ -388,11 +388,11 @@ const checkBranch = (req, res, next) => {
     body,
     user: { roles: userRoles, branches },
   } = req;
-  const branch = `${req.recurrence?.branch}` || body?.branch;
+  const branch = req.recurrence?.branch || body?.branch;
   const isAdmin = userRoles.includes(roles.ADMIN);
   if (!isAdmin) {
     const notManager = !userRoles.includes(roles.MANAGER);
-    const notOwnBranch = !branches?.map((b) => b.id).includes(branch);
+    const notOwnBranch = !branches?.map((b) => "" + b.id).includes("" + branch);
     if (notManager || notOwnBranch)
       return next(new AppError("not_authorized", 401));
   }

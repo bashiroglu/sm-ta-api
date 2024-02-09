@@ -176,9 +176,37 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.virtual("fullName").get(function () {
+  return this.name + " " + this.surname;
+});
+
+schema.virtual("enrollments", {
+  ref: "Enrollment",
+  foreignField: "student",
+  localField: "_id",
+});
+
+schema.virtual("branches", {
+  ref: "Branch",
+  foreignField: "managers",
+  localField: "_id",
+});
+
+schema.virtual("lessons", {
+  ref: "Lesson",
+  foreignField: "teacher",
+  localField: "_id",
+});
+
 schema.virtual("teacherGroups", {
   ref: "Group",
   foreignField: "teacher",
+  localField: "_id",
+});
+
+schema.virtual("transactions", {
+  ref: "Transaction",
+  foreignField: "relatedTo",
   localField: "_id",
 });
 
@@ -192,20 +220,10 @@ schema.statics.q = [
   "phoneNumbers",
 ];
 
-schema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = undefined;
-
-  if (!this.isModified("password") || this.isNew) return next();
-  this.passwordChangedAt = Date.now() - 1000;
-  next();
-});
-
-schema.pre(/^find/, function (next) {
-  this.find({ deleted: { $ne: true } });
-  next();
-});
+schema.statics.codeOptions = {
+  field: collectionName,
+  modifier: "",
+};
 
 schema.methods.checkPassword = async function (cadidatePassword, userPassword) {
   return await bcrypt.compare(cadidatePassword, userPassword);
@@ -231,25 +249,19 @@ schema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-schema.virtual("fullName").get(function () {
-  return this.name + " " + this.surname;
+schema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
 });
 
-schema.virtual("enrollments", {
-  ref: "Enrollment",
-  foreignField: "student",
-  localField: "_id",
+schema.pre(/^find/, function (next) {
+  this.find({ deleted: { $ne: true } });
+  next();
 });
-
-schema.virtual("branches", {
-  ref: "Branch",
-  foreignField: "managers",
-  localField: "_id",
-});
-
-schema.statics.codeOptions = {
-  field: collectionName,
-  modifier: "",
-};
 
 module.exports = mongoose.model(collectionName, schema);
