@@ -10,7 +10,6 @@ const router = express.Router();
 
 const omTeacherRestrict = restrictTo(["admin", "manager", "teacher"]);
 const omRestrict = restrictTo(["admin", "manager"]);
-// const studentRestrict = restrictTo(["student"]);
 
 router.use(protect);
 

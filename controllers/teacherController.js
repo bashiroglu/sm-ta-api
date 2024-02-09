@@ -1,11 +1,15 @@
 const catchAsync = require("../utils/catchAsync");
 
 exports.getStudents = catchAsync(async (req, res, next) => {
-  await req.user.populate("teacherGroups").execPopulate();
+  await req.user
+    .populate({ path: "teacherGroups", populate: "enrollments" })
+    .execPopulate();
+
   const students = req.user.teacherGroups.reduce(
-    (_, cur) => [...cur.students],
+    (_, cur) => [...(cur.enrollments.map((e) => e.student) || [])],
     []
   );
+
   req.query._id = { $in: students };
   next();
 });
