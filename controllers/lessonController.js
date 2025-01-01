@@ -75,11 +75,11 @@ const prepareLesson = catchAsync(async (req, res, next) => {
       ...enrollment.history,
       {
         lesson: _id,
-        status,
+        isExtra,
         lessonCount: enrollment.lessonCount,
         permissionCount: enrollment.permissionCount,
+        status,
         latency,
-        isExtra,
       },
     ];
     enrollment.save({ session });

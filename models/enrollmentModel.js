@@ -34,7 +34,10 @@ const schema = new mongoose.Schema(
         },
         lessonCount: Number,
         permissionCount: Number,
-        status: String,
+        status: {
+          type: String,
+          enum: ["excused", "skipped", "attended"],
+        },
         latency: Number,
         isExtra: Boolean,
       },
